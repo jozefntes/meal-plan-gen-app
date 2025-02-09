@@ -1,0 +1,581 @@
+:root {
+    --primary-900: #002A1C;
+    --primary-500: #00C571;
+    --primary-300: #79E5C2;
+    --primary-50: #C9F7EC;
+    --gray-400: #505656;
+    --gray-300: #575C5C;
+    --gray-200: #9DA0A0;
+    --gray-100: #D2D4D4;
+    --gray-50: #EFF0F0;
+    --white-100: #FFFFFF;
+    --energy: #7C7C7C;
+    --protein: #14CB76;
+    --carbs: #00C2CF;
+    --fat: #F2371C;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins-SemiBold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Epilogue';
+    src: url('../fonts/Epilogue-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+h4 {
+    font-family: 'Epilogue', sans-serif;
+    font-weight: 700;
+    font-size: 33px;
+    line-height: 48px;
+    letter-spacing: 0.04em;
+    padding: 0;
+}
+
+h6 {
+    font-family: 'Epilogue', sans-serif;
+    font-weight: 700;
+    font-size: 23px;
+    line-height: 32px;
+    letter-spacing: 0.04em;
+    padding: 0;
+}
+
+.body-l {
+    font-family: 'Poppins', sans-serif;
+    font-weight: normal;
+    font-size: 19px;
+    line-height: 32px;
+    letter-spacing: 0.04em;
+    padding: 0;
+}
+
+.body-m {
+    font-family: 'Poppins', sans-serif;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0.04em;
+    padding: 0;
+}
+
+.body-s {
+    font-family: 'Poppins', sans-serif;
+    font-weight: normal;
+    font-size: 13px;
+    line-height: 20px;
+    letter-spacing: 0.08em;
+    padding: 0;
+}
+
+.btn-text {
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0.04em;
+    padding: 0;
+}
+
+.btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    padding: 10px 24px;
+    border-radius: 12px;
+    background-color: var(--primary-50);
+    color: var(--primary-500);
+    border: var(--primary-500) 1px solid;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
+
+/* Navbar */
+.sidenav {
+    height: 100%;
+    width: 280px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: var(--white-100);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 10px 10px 30px rgba(174, 174, 192, 0.4);
+}
+
+.brand-nav-list {
+    padding: 32px 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+}
+
+.brand {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 16px 0;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--primary-900);
+}
+
+.brand img {
+    width: 54px;
+    height: auto;
+}
+
+.nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-decoration: none;
+    padding: 0 8px;
+    border-radius: 4px;
+}
+
+.nav-item p {
+    color: var(--gray-400);
+    padding: 8px;
+}
+
+.nav-item img {
+    width: 32px;
+    height: auto;
+    padding: 8px;
+}
+
+.nav-item.active {
+    background-color: var(--primary-50);
+}
+
+.nav-item.active p {
+    color: var(--primary-500);
+}
+
+.nav-item.active img {
+    fill: var(--primary-500);
+}
+
+
+.logout-toggle {
+    padding: 0 24px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 24px;
+}
+
+.dark-mode {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.logout-btn {
+    width: 100%;  
+    border-radius: 4px;
+    background-color: var(--gray-300);
+    cursor: pointer;
+}
+
+.logout-btn p {
+    color: var(--white-100);
+}
+
+.menu-toggle {
+    position: absolute;
+    top: 32px;
+    right: 32px;
+    padding: 4px;
+    border-radius: 8px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.menu-toggle:hover {
+    background-color: var(--gray-50);
+}
+
+.menu-toggle img {
+    width: 32px;
+    height: auto;
+}
+
+
+/* Toggle switch*/
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--primary-50);
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: var(--primary-500);
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-300);
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--primary-300);
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(36px);
+    -ms-transform: translateX(36px);
+    transform: translateX(36px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Content container */
+.content {
+    margin-left: 325px;
+    padding: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 32px;
+}
+
+.day-selector {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 64px;
+    list-style: none;
+    border-radius: 16px;
+    background-color: var(--gray-50);
+    box-shadow: 10px 10px 30px rgba(174, 174, 192, 0.4), -10px -10px 30px rgb(255, 255, 255);
+}
+
+.day-selector li a {
+    text-decoration: none;
+}
+
+.day-selector li a p,
+.day-selector li a img {
+    color: var(--gray-200);
+    transition: transform 0.3s ease;
+}
+
+.day-selector li a p:hover,
+.day-selector li a img:hover {
+    transform: scale(1.12);
+}
+
+.day-selector .selected a p {
+    color: var(--primary-500);
+}
+
+.meals {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    list-style: none;
+    padding: 32px;
+    gap: 32px;
+}
+
+.meal-item {
+    width: 214px;
+    height: 272px;
+    padding: 10px;
+    border-radius: 16px;
+    background-color: var(--gray-400);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: var(--white-100);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.meal-item:hover {
+    transform: scale(1.05);
+}
+
+.meal-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.meal-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    width: 120px;
+    min-height: 70px;
+    gap: 10px;
+    padding: 0 10px;
+}
+
+.meal-info p:first-of-type {
+    color: var(--gray-200);
+}
+
+.meal-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 8px;
+}
+
+.breakfast {
+    background: linear-gradient(rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 50%), linear-gradient(45deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 50%),
+                url(../../images/cereal.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.lunch {
+    background: linear-gradient(rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 50%), linear-gradient(45deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 50%),
+                url(../../images/pizza.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.dinner {
+    background: linear-gradient(rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 50%), linear-gradient(45deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 50%),
+                url(../../images/pancakes.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.snack {
+    background: linear-gradient(rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 50%), linear-gradient(45deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 50%),
+                url(../../images/salad.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.summary {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    justify-content: space-between;
+    padding: 32px 48px;
+}
+
+.targets-smry {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    min-width: 495px;
+}
+
+.target {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+.progress-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.progress-bar {
+    background-color: var(--gray-100);
+    width: 360px;
+    height: 8px;
+    border-radius: 15px;
+}
+
+.progress {
+    padding: 1%;
+    border-radius: 16px;
+}
+
+.progress.energy {
+    background-color: var(--energy);
+    width: 52%;
+}
+.progress.protein {
+    background-color: var(--protein);
+    width: 47%;
+}
+.progress.carbs {
+    background-color: var(--carbs);
+    width: 38%;
+}
+.progress.fat {
+    background-color: var(--fat);
+    width: 75%;
+}
+
+.progress-container.energy progress {
+    background-color: var(--primary-500);
+}
+
+.energy-smry {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    justify-content: end;
+}
+
+.energy-smry h6 {
+    text-align: end;
+}
+
+.charts {
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.pie-chart-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 10px;
+}
+
+.pie-chart {
+    width: 152px;
+    height: 152px;
+    border-radius: 50%;
+    position: relative;
+}
+
+.pie-chart.consumed {
+    background: conic-gradient(var(--fat) 0% 44%, var(--carbs) 44% 73%, var(--protein) 73% 100%);
+}
+
+.pie-chart.remaining {
+    background: conic-gradient(var(--gray-100) 0% 48%, var(--gray-400) 48% 100%);
+}
+
+.pie-chart::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    background-color: var(--white-100);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.pie-chart-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -90%);
+    text-align: center;
+}
+
+.pie-chart-container p {
+    text-align: center;
+}
+
+.pie-chart-text p span {
+    display: block;
+    color: var(--gray-300);
+}
+
+.vertical-line {
+    width: 1px;
+    background-color: black;
+    height: 100%;
+    display: inline-block;
+}
+
