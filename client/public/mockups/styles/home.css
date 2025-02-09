@@ -333,6 +333,7 @@ input:checked + .slider:before {
 
 .day-selector li a p,
 .day-selector li a img {
+    text-align: center;
     color: var(--gray-200);
     transition: transform 0.3s ease;
 }
@@ -344,6 +345,10 @@ input:checked + .slider:before {
 
 .day-selector .selected a p {
     color: var(--primary-500);
+}
+
+.day-selector li a p span {
+    display: block;
 }
 
 .meals {
