@@ -1,0 +1,42 @@
+[
+    {
+        "id": 1,
+        "time": "Breakfast",
+        "name": "Cereal with Banana",
+        "description": "A delicious bowl of cereal with a sliced banana on top.",
+        "imageURL": "/images/cereal.jpg",
+        "protein": 17,
+        "carbs": 23,
+        "fat": 32
+    },
+    {
+        "id": 2,
+        "time": "Lunch",
+        "name": "Pizza with herbs",
+        "description": "Pizza with herbs and cheese on top.",
+        "imageURL": "/images/pizza.jpg",
+        "protein": 25,
+        "carbs": 55,
+        "fat": 40
+    },
+    {
+        "id": 3,
+        "time": "Dinner",
+        "name": "Pancake with honey",
+        "description": "Pancake with honey and blueberries on top.",
+        "imageURL": "/images/pancakes.jpg",
+        "protein": 21,
+        "carbs": 50,
+        "fat": 25
+    },
+    {
+        "id": 4,
+        "time": "Snack",
+        "name": "Salad",
+        "description": "A bowl of salad with a variety of vegetables.",
+        "imageURL": "/images/salad.jpg",
+        "protein": 2,
+        "carbs": 23,
+        "fat": 0
+    }
+]

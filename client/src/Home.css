@@ -1,0 +1,173 @@
+/* Content container */
+.content {
+    margin-left: 325px;
+    padding: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 32px;
+}
+
+.meals {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    list-style: none;
+    padding: 32px;
+    gap: 32px;
+}
+
+.summary {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    justify-content: space-between;
+    padding: 32px 48px;
+}
+
+.targets-smry {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    min-width: 495px;
+}
+
+.target {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+.progress-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.progress-bar {
+    background-color: var(--gray-100);
+    width: 360px;
+    height: 8px;
+    border-radius: 15px;
+}
+
+.progress {
+    padding: 1%;
+    border-radius: 16px;
+}
+
+.progress.energy {
+    background-color: var(--energy);
+    width: 52%;
+}
+
+.progress.protein {
+    background-color: var(--protein);
+    width: 47%;
+}
+
+.progress.carbs {
+    background-color: var(--carbs);
+    width: 38%;
+}
+
+.progress.fat {
+    background-color: var(--fat);
+    width: 75%;
+}
+
+.progress-container.energy progress {
+    background-color: var(--primary-500);
+}
+
+.energy-smry {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    justify-content: end;
+}
+
+.energy-smry h6 {
+    text-align: end;
+}
+
+.charts {
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.pie-chart-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 10px;
+}
+
+.pie-chart {
+    width: 152px;
+    height: 152px;
+    border-radius: 50%;
+    position: relative;
+}
+
+.pie-chart.consumed {
+    background: conic-gradient(var(--fat) 0% 44%, var(--carbs) 44% 73%, var(--protein) 73% 100%);
+}
+
+.pie-chart.remaining {
+    background: conic-gradient(var(--gray-100) 0% 48%, var(--gray-400) 48% 100%);
+}
+
+.pie-chart::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 100px;
+    background-color: var(--white-100);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.pie-chart-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -90%);
+    text-align: center;
+}
+
+.pie-chart-container p {
+    text-align: center;
+}
+
+.pie-chart-text p span {
+    display: block;
+    color: var(--gray-300);
+}
+
+.vertical-line {
+    width: 1px;
+    background-color: black;
+    height: 100%;
+    display: inline-block;
+}

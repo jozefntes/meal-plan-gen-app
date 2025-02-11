@@ -1,0 +1,36 @@
+.day-selector {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 64px;
+    list-style: none;
+    border-radius: 16px;
+    background-color: var(--gray-50);
+    box-shadow: 10px 10px 30px rgba(174, 174, 192, 0.4), -10px -10px 30px rgb(255, 255, 255);
+}
+
+.day-selector li button {
+    border: none;
+    cursor: pointer;
+}
+
+.day-selector li button p,
+.day-selector li button img {
+    text-align: center;
+    color: var(--gray-200);
+    transition: transform 0.3s ease;
+}
+
+.day-selector li button p:hover,
+.day-selector li button img:hover {
+    transform: scale(1.12);
+}
+
+.day-selector .selected button p {
+    color: var(--primary-500);
+}
+
+.day-selector li button p span {
+    display: block;
+}
