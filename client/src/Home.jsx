@@ -2,11 +2,13 @@ import "./Home.css";
 import DaySelector from "./components/DaySelector";
 import MealCard from "./components/MealCard";
 import Sidenav from "./components/Sidenav";
+import TargetSummary from "./components/TargetSummary";
 
-import fakeData from "./fakeData";
+import { dates, userData } from "./fakeData";
 import { MAX_WEEK, MIN_WEEK } from "./constants";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import EnergySummary from "./components/EnergySummary";
 
 export default function Home() {
   const getFormattedDate = (date) => {
@@ -21,6 +23,9 @@ export default function Home() {
 
   const [selectedDay, setSelectedDay] = useState(today);
   const [currentWeek, setCurrentWeek] = useState(0);
+
+  const [selectedDayMeals, setSelectedDayMeals] = useState(null);
+  const [selectedDayProgress, setSelectedDayProgress] = useState(null);
 
   const generateDays = (weekOffset) => {
     const now = new Date();
@@ -51,6 +56,23 @@ export default function Home() {
     }
   };
 
+  const handleMealDone = (id) => {
+    setSelectedDayMeals((prev) =>
+      prev.map((meal) =>
+        meal.id === id ? { ...meal, done: !meal.done } : meal
+      )
+    );
+  };
+
+  useEffect(() => {
+    const selectedDayRecords = dates.find((day) => day.date === selectedDay);
+
+    setSelectedDayMeals(selectedDayRecords ? selectedDayRecords.meals : null);
+    setSelectedDayProgress(
+      selectedDayRecords ? selectedDayRecords.progress : null
+    );
+  }, [selectedDay]);
+
   return (
     <>
       <Sidenav />
@@ -72,98 +94,34 @@ export default function Home() {
         />
 
         <ul className="meals">
-          {fakeData.map(({ id, time, name, imageURL, protein, carbs, fat }) => (
-            <MealCard
-              key={id}
-              id={id}
-              time={time}
-              name={name}
-              imageURL={imageURL}
-              protein={protein}
-              carbs={carbs}
-              fat={fat}
-            />
-          ))}
+          {selectedDayMeals ? (
+            selectedDayMeals.map(
+              ({ id, time, name, imageURL, protein, carbs, fat, done }) => (
+                <MealCard
+                  key={id}
+                  id={id}
+                  time={time}
+                  name={name}
+                  imageURL={imageURL}
+                  protein={protein}
+                  carbs={carbs}
+                  fat={fat}
+                  done={done}
+                  onMealDone={handleMealDone}
+                />
+              )
+            )
+          ) : (
+            <h4>No meals for this day</h4>
+          )}
         </ul>
 
         <div className="summary">
-          <div className="targets-smry">
-            <h6>Targets</h6>
-            <div className="target">
-              <p className="body-s">Energy</p>
-              <div className="progress-container">
-                <div className="progress-info">
-                  <p className="body-s">1,041.4 / 2,012 kcal</p>
-                  <p className="body-s">52%</p>
-                </div>
-                <div className="progress-bar">
-                  <div className="progress energy"></div>
-                </div>
-              </div>
-            </div>
-            <div className="target">
-              <p className="body-s">Protein</p>
-              <div className="progress-container">
-                <div className="progress-info">
-                  <p className="body-s">70.9 / 150.9 g</p>
-                  <p className="body-s">47%</p>
-                </div>
-                <div className="progress-bar">
-                  <div className="progress protein"></div>
-                </div>
-              </div>
-            </div>
-            <div className="target">
-              <p className="body-s">Net Carbs</p>
-              <div className="progress-container">
-                <div className="progress-info">
-                  <p className="body-s">76.5 / 201.2 g</p>
-                  <p className="body-s">38%</p>
-                </div>
-                <div className="progress-bar">
-                  <div className="progress carbs"></div>
-                </div>
-              </div>
-            </div>
-            <div className="target">
-              <p className="body-s">Fat</p>
-              <div className="progress-container">
-                <div className="progress-info">
-                  <p className="body-s">50.2 / 67.1 g</p>
-                  <p className="body-s">75%</p>
-                </div>
-                <div className="progress-bar">
-                  <div className="progress fat"></div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <TargetSummary progress={selectedDayProgress} userData={userData} />
 
-          <div className="vertical-line"></div>
+          <div className="vertical-line" style={{ height: "308px" }}></div>
 
-          <div className="energy-smry">
-            <h6>Energy Summary</h6>
-            <div className="charts">
-              <div className="pie-chart-container">
-                <div className="pie-chart consumed"></div>
-                <div className="pie-chart-text">
-                  <p className="btn-text">
-                    1,041 <span>kcal</span>
-                  </p>
-                </div>
-                <p className="body-m">Consumed</p>
-              </div>
-              <div className="pie-chart-container">
-                <div className="pie-chart remaining"></div>
-                <div className="pie-chart-text">
-                  <p className="btn-text">
-                    970 <span>kcal</span>
-                  </p>
-                </div>
-                <p className="body-m">Remaining</p>
-              </div>
-            </div>
-          </div>
+          <EnergySummary progress={selectedDayProgress} userData={userData} />
         </div>
       </div>
     </>
