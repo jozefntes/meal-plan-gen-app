@@ -1,4 +1,4 @@
-.meal-item {
+.meal-card {
     width: 214px;
     height: 272px;
     padding: 10px;
@@ -12,7 +12,7 @@
     cursor: pointer;
 }
 
-.meal-item:hover {
+.meal-card:hover {
     transform: scale(1.05);
 }
 
@@ -22,6 +22,12 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px;
+}
+
+.add-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
 }
 
 .meal-info {
