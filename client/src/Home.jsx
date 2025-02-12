@@ -4,7 +4,7 @@ import MealCard from "./components/MealCard";
 import Sidenav from "./components/Sidenav";
 import TargetSummary from "./components/TargetSummary";
 
-import { dates, userData } from "./fakeData";
+import { dates, userData } from "./fakedata.json";
 import { MAX_WEEK, MIN_WEEK } from "./constants";
 
 import { useEffect, useState } from "react";
