@@ -1,14 +1,14 @@
-import "./Home.css";
+import { useEffect, useState } from "react";
+
 import DaySelector from "./components/DaySelector";
 import MealCard from "./components/MealCard";
 import Sidenav from "./components/Sidenav";
 import TargetSummary from "./components/TargetSummary";
-
+import EnergySummary from "./components/EnergySummary";
 import { dates, userData } from "./fakedata.json";
 import { MAX_WEEK, MIN_WEEK } from "./constants";
 
-import { useEffect, useState } from "react";
-import EnergySummary from "./components/EnergySummary";
+import "./Home.css";
 
 export default function Home() {
   const getFormattedDate = (date) => {

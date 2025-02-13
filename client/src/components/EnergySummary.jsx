@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import "./EnergySummary.css";
 
 export default function EnergySummary({ progress, userData }) {

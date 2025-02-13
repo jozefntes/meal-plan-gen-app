@@ -1,8 +1,6 @@
 import "./TargetSummary.css";
 
 export default function TargetSummary({ progress, userData }) {
-  console.log("target");
-
   return (
     <div className="targets-smry">
       <h6>Targets</h6>

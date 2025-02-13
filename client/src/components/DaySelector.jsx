@@ -1,5 +1,6 @@
-import "./DaySelector.css";
 import { MAX_WEEK, MIN_WEEK } from "../constants";
+
+import "./DaySelector.css";
 
 export default function DaySelector({
   days,
