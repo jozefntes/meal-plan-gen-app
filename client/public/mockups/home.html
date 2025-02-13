@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles/home.css" />
+    <title>Home</title>
+  </head>
+  <body>
+    <div class="sidenav">
+      <div class="brand-nav-list">
+        <a href="#" class="brand">
+          <img src="../icons/logo.svg" />
+          <h6>Meal Plan</h6>
+        </a>
+        <div class="nav-list">
+          <a href="#" class="nav-item active">
+            <img src="../icons/home.svg" class="icon" />
+            <p class="body-m">Dashboard</p>
+          </a>
+          <a href="#" class="nav-item">
+            <img src="../icons/user.svg" />
+            <p class="body-m">Profile</p>
+          </a>
+          <a href="#" class="nav-item">
+            <img src="../icons/setting.svg" />
+            <p class="body-m">Settings</p>
+          </a>
+        </div>
+      </div>
+
+      <div class="logout-toggle">
+        <div class="dark-mode">
+          <div class="nav-item">
+            <img src="../icons/moon.svg" />
+            <p class="body-m">Dark Mode</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" />
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <button class="logout-btn nav-item">
+          <img src="../icons/logout.svg" />
+          <p class="btn-text">Logout</p>
+        </button>
+      </div>
+      <button class="menu-toggle">
+        <img src="../icons/sidebar.svg" />
+      </button>
+    </div>
+
+    <div class="content">
+      <div class="header">
+        <h4>Personal Meal Plan</h4>
+        <button class="btn">
+          <img src="../icons/plus-btn.svg" />
+          <p class="btn-text">Create Plan</p>
+        </button>
+      </div>
+      <ul class="day-selector">
+        <li>
+          <a href="#"><img src="../icons/chevron-left.svg" /></a>
+        </li>
+        <li>
+          <a href="#"
+            ><p class="body-l">Monday<span class="body-s">02/10</span></p></a
+          >
+        </li>
+        <li>
+          <a href="#"
+            ><p class="body-l">Tuesday<span class="body-s">02/11</span></p></a
+          >
+        </li>
+        <li class="selected">
+          <a href="#"
+            ><p class="body-l">Wednesday<span class="body-s">02/12</span></p></a
+          >
+        </li>
+        <li>
+          <a href="#"
+            ><p class="body-l">Thursday<span class="body-s">02/13</span></p></a
+          >
+        </li>
+        <li>
+          <a href="#"
+            ><p class="body-l">Friday<span class="body-s">02/14</span></p></a
+          >
+        </li>
+        <li>
+          <a href="#"
+            ><p class="body-l">Saturday<span class="body-s">02/15</span></p></a
+          >
+        </li>
+        <li>
+          <a href="#"
+            ><p class="body-l">Sunday<span class="body-s">02/16</span></p></a
+          >
+        </li>
+        <li>
+          <a href="#"><img src="../icons/chevron-right.svg" /></a>
+        </li>
+      </ul>
+      <ul class="meals">
+        <li class="meal-item breakfast">
+          <div class="meal-header">
+            <img src="../icons/check.svg" />
+            <div class="meal-info">
+              <p class="body-s">BREAKFAST</p>
+              <p class="body-s">Cereal with Banana</p>
+            </div>
+            <img src="../icons/heart.svg" />
+          </div>
+          <div class="meal-footer">
+            <p class="body-s">17 g protein</p>
+            <p class="body-s">23 g carbs</p>
+            <p class="body-s">32 g fat</p>
+          </div>
+        </li>
+        <li class="meal-item lunch">
+          <div class="meal-header">
+            <img src="../icons/check.svg" />
+            <div class="meal-info">
+              <p class="body-s">LUNCH</p>
+              <p class="body-s">Pizza with herbs</p>
+            </div>
+            <img src="../icons/heart-filled.svg" />
+          </div>
+          <div class="meal-footer">
+            <p class="body-s">25 g protein</p>
+            <p class="body-s">55 g carbs</p>
+            <p class="body-s">40 g fat</p>
+          </div>
+        </li>
+        <li class="meal-item dinner">
+          <div class="meal-header">
+            <img src="../icons/plus.svg" />
+            <div class="meal-info">
+              <p class="body-s">DINNER</p>
+              <p class="body-s">Pancake with honey</p>
+            </div>
+            <img src="../icons/heart.svg" />
+          </div>
+          <div class="meal-footer">
+            <p class="body-s">21 g protein</p>
+            <p class="body-s">50 g carbs</p>
+            <p class="body-s">25 g fat</p>
+          </div>
+        </li>
+        <li class="meal-item snack">
+          <div class="meal-header">
+            <img src="../icons/plus.svg" />
+            <div class="meal-info">
+              <p class="body-s">SNACK</p>
+              <p class="body-s">Salad</p>
+            </div>
+            <img src="../icons/heart-filled.svg" />
+          </div>
+          <div class="meal-footer">
+            <p class="body-s">2 g protein</p>
+            <p class="body-s">23 g carbs</p>
+            <p class="body-s">0 g fat</p>
+          </div>
+        </li>
+      </ul>
+      <div class="summary">
+        <div class="targets-smry">
+          <h6>Targets</h6>
+          <div class="target">
+            <p class="body-s">Energy</p>
+            <div class="progress-container">
+              <div class="progress-info">
+                <p class="body-s">1,041.4 / 2,012 kcal</p>
+                <p class="body-s">52%</p>
+              </div>
+              <div class="progress-bar">
+                <div class="progress energy"></div>
+              </div>
+            </div>
+          </div>
+          <div class="target">
+            <p class="body-s">Protein</p>
+            <div class="progress-container">
+              <div class="progress-info">
+                <p class="body-s">70.9 / 150.9 g</p>
+                <p class="body-s">47%</p>
+              </div>
+              <div class="progress-bar">
+                <div class="progress protein"></div>
+              </div>
+            </div>
+          </div>
+          <div class="target">
+            <p class="body-s">Net Carbs</p>
+            <div class="progress-container">
+              <div class="progress-info">
+                <p class="body-s">76.5 / 201.2 g</p>
+                <p class="body-s">38%</p>
+              </div>
+              <div class="progress-bar">
+                <div class="progress carbs"></div>
+              </div>
+            </div>
+          </div>
+          <div class="target">
+            <p class="body-s">Fat</p>
+            <div class="progress-container">
+              <div class="progress-info">
+                <p class="body-s">50.2 / 67.1 g</p>
+                <p class="body-s">75%</p>
+              </div>
+              <div class="progress-bar">
+                <div class="progress fat"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="vertical-line" style="height: 308px"></div>
+
+        <div class="energy-smry">
+          <h6>Energy Summary</h6>
+          <div class="charts">
+            <div class="pie-chart-container">
+              <div class="pie-chart consumed"></div>
+              <div class="pie-chart-text">
+                <p class="btn-text">1,041 <span>kcal</span></p>
+              </div>
+              <p class="body-m">Consumed</p>
+            </div>
+            <div class="pie-chart-container">
+              <div class="pie-chart remaining"></div>
+              <div class="pie-chart-text">
+                <p class="btn-text">970 <span>kcal</span></p>
+              </div>
+              <p class="body-m">Remaining</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
