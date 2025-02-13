@@ -1,68 +1,94 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --primary-900: #002A1C;
+  --primary-500: #00C571;
+  --primary-300: #79E5C2;
+  --primary-50: #C9F7EC;
+  --gray-400: #505656;
+  --gray-300: #575C5C;
+  --gray-200: #9DA0A0;
+  --gray-100: #D2D4D4;
+  --gray-50: #EFF0F0;
+  --white-100: #FFFFFF;
+  --energy: #7C7C7C;
+  --protein: #14CB76;
+  --carbs: #00C2CF;
+  --fat: #F2371C;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
+* {
   margin: 0;
+  padding: 0;
+}
+
+h4 {
+  font-family: 'Epilogue', sans-serif;
+  font-weight: 700;
+  font-size: 33px;
+  line-height: 48px;
+  letter-spacing: 0.04em;
+  padding: 0;
+}
+
+h6 {
+  font-family: 'Epilogue', sans-serif;
+  font-weight: 700;
+  font-size: 23px;
+  line-height: 32px;
+  letter-spacing: 0.04em;
+  padding: 0;
+}
+
+.body-l {
+  font-family: 'Poppins', sans-serif;
+  font-weight: normal;
+  font-size: 19px;
+  line-height: 32px;
+  letter-spacing: 0.04em;
+  padding: 0;
+}
+
+.body-m {
+  font-family: 'Poppins', sans-serif;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.04em;
+  padding: 0;
+}
+
+.body-s {
+  font-family: 'Poppins', sans-serif;
+  font-weight: normal;
+  font-size: 13px;
+  line-height: 20px;
+  letter-spacing: 0.08em;
+  padding: 0;
+}
+
+.btn-text {
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.04em;
+  padding: 0;
+}
+
+.btn {
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 10px 24px;
+  border-radius: 12px;
+  background-color: var(--primary-50);
+  color: var(--primary-500);
+  border: var(--primary-500) 1px solid;
+  transition: transform 0.3s ease;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.btn:hover {
+  transform: scale(1.05);
 }

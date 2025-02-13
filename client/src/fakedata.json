@@ -1,0 +1,153 @@
+{
+    "dates": [
+        {
+            "date": "02/13/2025",
+            "meals": [
+                {
+                    "id": 1,
+                    "time": "Breakfast",
+                    "name": "Cereal with Banana",
+                    "description": "A delicious bowl of cereal with a sliced banana on top.",
+                    "imageURL": "/images/cereal.jpg",
+                    "protein": 17,
+                    "carbs": 23,
+                    "fat": 32,
+                    "done": true
+                },
+                {
+                    "id": 2,
+                    "time": "Lunch",
+                    "name": "Pizza with herbs",
+                    "description": "Pizza with herbs and cheese on top.",
+                    "imageURL": "/images/pizza.jpg",
+                    "protein": 25,
+                    "carbs": 55,
+                    "fat": 40,
+                    "done": true
+                },
+                {
+                    "id": 3,
+                    "time": "Dinner",
+                    "name": "Pancake with honey",
+                    "description": "Pancake with honey and blueberries on top.",
+                    "imageURL": "/images/pancakes.jpg",
+                    "protein": 21,
+                    "carbs": 50,
+                    "fat": 25,
+                    "done": false
+                },
+                {
+                    "id": 4,
+                    "time": "Snack",
+                    "name": "Salad",
+                    "description": "A bowl of salad with a variety of vegetables.",
+                    "imageURL": "/images/salad.jpg",
+                    "protein": 2,
+                    "carbs": 23,
+                    "fat": 0,
+                    "done": false
+                }
+            ],
+            "progress": [
+                {
+                    "current": 1041.4,
+                    "percentage": 52
+                },
+                {
+                    "current": 70.9,
+                    "percentage": 47
+                },
+                {
+                    "current": 76.5,
+                    "percentage": 38
+                },
+                {
+                    "current": 50.2,
+                    "percentage": 75
+                }
+            ]
+        },
+        {
+            "date": "02/12/2025",
+            "meals": [
+                {
+                    "id": 5,
+                    "time": "Breakfast",
+                    "name": "Oatmeal with Berries",
+                    "description": "A warm bowl of oatmeal topped with fresh berries.",
+                    "imageURL": "/images/oatmeal.jpg",
+                    "protein": 15,
+                    "carbs": 30,
+                    "fat": 10,
+                    "done": false
+                },
+                {
+                    "id": 6,
+                    "time": "Lunch",
+                    "name": "Grilled Chicken Sandwich",
+                    "description": "A grilled chicken sandwich with lettuce and tomato.",
+                    "imageURL": "/images/chicken_sandwich.jpg",
+                    "protein": 35,
+                    "carbs": 40,
+                    "fat": 20,
+                    "done": false
+                },
+                {
+                    "id": 7,
+                    "time": "Dinner",
+                    "name": "Spaghetti with Meatballs",
+                    "description": "Spaghetti served with homemade meatballs and marinara sauce.",
+                    "imageURL": "/images/spaghetti.jpg",
+                    "protein": 25,
+                    "carbs": 60,
+                    "fat": 30,
+                    "done": false
+                },
+                {
+                    "id": 8,
+                    "time": "Snack",
+                    "name": "Fruit Salad",
+                    "description": "A mix of fresh fruits.",
+                    "imageURL": "/images/fruit_salad.jpg",
+                    "protein": 1,
+                    "carbs": 20,
+                    "fat": 0,
+                    "done": false
+                }
+            ]
+        }
+    ],
+    "userData": {
+        "name": "John Doe",
+        "age": 30,
+        "targets": [
+            {
+                "name": "Energy",
+                "total": 2012,
+                "unit": "kcal",
+                "className": "energy"
+
+            },
+            {
+                "name": "Protein",
+                "total": 150.9,
+                "unit": "g",
+                "className": "protein"
+
+            },
+            {
+                "name": "Net Carbs",
+                "total": 201.2,
+                "unit": "g",
+                "className": "carbs"
+
+            },
+            {
+                "name": "Fat",
+                "total": 67.1,
+                "unit": "g",
+                "className": "fat"
+            }
+        ]
+    }
+}

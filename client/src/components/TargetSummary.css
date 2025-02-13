@@ -1,0 +1,50 @@
+.targets-smry {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    min-width: 495px;
+}
+
+.target {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+.progress-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.progress-bar {
+    background-color: var(--gray-100);
+    width: 360px;
+    height: 8px;
+    border-radius: 15px;
+}
+
+.progress {
+    padding: 1%;
+    border-radius: 16px;
+}
+
+.progress.energy {
+    background-color: var(--energy);
+}
+
+.progress.protein {
+    background-color: var(--protein);
+}
+
+.progress.carbs {
+    background-color: var(--carbs);
+}
+
+.progress.fat {
+    background-color: var(--fat);
+}

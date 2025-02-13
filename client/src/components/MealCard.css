@@ -1,0 +1,52 @@
+.meal-card {
+    width: 214px;
+    height: 272px;
+    padding: 10px;
+    border-radius: 16px;
+    background-color: var(--gray-400);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: var(--white-100);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.meal-card:hover {
+    transform: scale(1.05);
+}
+
+.meal-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.add-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.meal-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    width: 120px;
+    min-height: 70px;
+    gap: 10px;
+    padding: 0 10px;
+}
+
+.meal-info p:first-of-type {
+    color: var(--gray-200);
+}
+
+.meal-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 8px;
+}
