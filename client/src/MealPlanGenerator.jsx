@@ -1,17 +1,26 @@
 import { useState } from "react";
 
 import Sidenav from "./components/Sidenav";
-import { recipes } from "./fakedata.json";
-
-import "./Create.css";
+import CreateRecipe from "./components/CreateRecipe";
 import WeekPicker from "./components/WeekSelector";
+import { recipes } from "./fakedata.json";
+import "./MealPlanGenerator.css";
 
-export default function About() {
+export default function MealPlanGenerator() {
   const [selectedWeek, setSelectedWeek] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleWeekSelect = (index) => {
     setSelectedWeek(index);
     console.log(index);
+  };
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -32,7 +41,7 @@ export default function About() {
             <h6>Breakfast</h6>
 
             <div className="picker">
-              <div className="create-new-btn">
+              <div className="create-new-btn" onClick={handleOpenModal}>
                 <div>
                   <img
                     className="create-icon"
@@ -128,6 +137,7 @@ export default function About() {
           <p className="btn-text">Generate 🔀</p>
         </button>
       </div>
+      {isModalOpen && <CreateRecipe onClose={handleCloseModal} />}
     </>
   );
 }

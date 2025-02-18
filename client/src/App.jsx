@@ -2,21 +2,21 @@ import { useState, useEffect } from "react";
 import page from "page";
 
 import Home from "./Home";
-import Create from "./Create";
+import MealPlanGenerator from "./MealPlanGenerator";
 
 function App() {
   const [route, setRoute] = useState("home");
 
   useEffect(() => {
     page("/", () => setRoute("home"));
-    page("/create", () => setRoute("create"));
+    page("/generate", () => setRoute("generate"));
     page.start();
   }, []);
 
   return (
     <>
       {route === "home" && <Home />}
-      {route === "create" && <Create />}
+      {route === "generate" && <MealPlanGenerator />}
     </>
   );
 }
