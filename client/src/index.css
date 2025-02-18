@@ -87,6 +87,7 @@ h6 {
   border: var(--primary-500) 1px solid;
   transition: transform 0.3s ease;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .btn:hover {

@@ -80,10 +80,10 @@ export default function Home() {
       <div className="content">
         <div className="header">
           <h4>Personal Meal Plan</h4>
-          <button className="btn">
+          <a className="btn" href="/generate">
             <img src="../icons/plus-btn.svg" />
             <p className="btn-text">Create Plan</p>
-          </button>
+          </a>
         </div>
 
         <DaySelector

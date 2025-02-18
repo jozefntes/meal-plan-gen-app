@@ -149,5 +149,307 @@
                 "className": "fat"
             }
         ]
-    }
+    },
+    "recipes" : [
+        {
+            "id": 1,
+            "title": "Chicken Alfredo",
+            "readyInMinutes": 30,
+            "imageURL": "/images/chicken_alfredo.jpg",
+            "protein": 40,
+            "carbs": 50,
+            "fat": 20,
+            "ingredients": [
+                "2 chicken breasts",
+                "1 cup heavy cream",
+                "1 cup grated Parmesan cheese",
+                "2 cloves garlic",
+                "8 oz fettuccine pasta",
+                "Salt and pepper to taste"
+            ],
+            "instructions": [
+                "Cook the fettuccine pasta according to package instructions.",
+                "In a large skillet, cook the chicken breasts until golden brown and cooked through.",
+                "Remove the chicken from the skillet and set aside.",
+                "In the same skillet, add the garlic and cook until fragrant.",
+                "Add the heavy cream and bring to a simmer.",
+                "Stir in the Parmesan cheese until melted and smooth.",
+                "Slice the cooked chicken and add it to the skillet.",
+                "Toss the cooked pasta with the sauce and chicken.",
+                "Season with salt and pepper to taste.",
+                "Serve hot."
+            ]
+        },
+        {
+            "id": 2,
+            "title": "Vegetable Stir Fry",
+            "readyInMinutes": 20,
+            "imageURL": "/images/vegetable_stir_fry.jpg",
+            "protein": 10,
+            "carbs": 30,
+            "fat": 10,
+            "ingredients": [
+                "1 cup broccoli florets",
+                "1 cup sliced bell peppers",
+                "1 cup snap peas",
+                "1 cup sliced carrots",
+                "2 tbsp soy sauce",
+                "1 tbsp olive oil",
+                "2 cloves garlic",
+                "1 tsp grated ginger"
+            ],
+            "instructions": [
+                "Heat the olive oil in a large skillet over medium-high heat.",
+                "Add the garlic and ginger and cook until fragrant.",
+                "Add the broccoli, bell peppers, snap peas, and carrots to the skillet.",
+                "Stir fry the vegetables until tender-crisp.",
+                "Add the soy sauce and toss to coat the vegetables.",
+                "Cook for an additional 2-3 minutes.",
+                "Serve hot."
+            ]
+        },
+        {
+            "id": 3,
+            "title": "Beef Tacos",
+            "readyInMinutes": 25,
+            "imageURL": "/images/beef_tacos.jpg",
+            "protein": 20,
+            "carbs": 40,
+            "fat": 15,
+            "ingredients": [
+                "1 lb ground beef",
+                "1 packet taco seasoning",
+                "8 taco shells",
+                "1 cup shredded lettuce",
+                "1 cup diced tomatoes",
+                "1 cup shredded cheese",
+                "1/2 cup sour cream",
+                "1/2 cup salsa"
+            ],
+            "instructions": [
+                "Cook the ground beef in a skillet over medium heat until browned.",
+                "Drain any excess fat.",
+                "Add the taco seasoning and water according to package instructions.",
+                "Simmer until the sauce thickens.",
+                "Warm the taco shells according to package instructions.",
+                "Assemble the tacos by filling each shell with the seasoned beef.",
+                "Top with shredded lettuce, diced tomatoes, shredded cheese, sour cream, and salsa.",
+                "Serve immediately."
+            ]
+        },
+        {
+            "id": 4,
+            "title": "Salmon with Asparagus",
+            "readyInMinutes": 25,
+            "imageURL": "/images/salmon_asparagus.jpg",
+            "protein": 30,
+            "carbs": 20,
+            "fat": 15,
+            "ingredients": [
+                "2 salmon fillets",
+                "1 bunch asparagus",
+                "2 tbsp olive oil",
+                "2 cloves garlic",
+                "1 lemon",
+                "Salt and pepper to taste"
+            ],
+            "instructions": [
+                "Preheat the oven to 400°F.",
+                "Place the salmon fillets on a baking sheet lined with parchment paper.",
+                "Drizzle with olive oil and season with salt and pepper.",
+                "Slice the lemon and place a few slices on top of each fillet.",
+                "Bake for 15-20 minutes, or until the salmon is cooked through.",
+                "While the salmon is baking, trim the asparagus and toss with olive oil, garlic, salt, and pepper.",
+                "Roast the asparagus in the oven for 10-15 minutes, or until tender.",
+                "Serve the salmon with the roasted asparagus."
+            ]
+        },
+        {
+            "id": 5,
+            "title": "Quinoa Salad",
+            "readyInMinutes": 15,
+            "imageURL": "/images/quinoa_salad.jpg",
+            "protein": 8,
+            "carbs": 35,
+            "fat": 10,
+            "ingredients": [
+                "1 cup quinoa",
+                "2 cups water",
+                "1 cup cherry tomatoes",
+                "1 cucumber",
+                "1/4 cup red onion",
+                "1/4 cup feta cheese",
+                "2 tbsp olive oil",
+                "1 tbsp lemon juice",
+                "Salt and pepper to taste"
+            ],
+            "instructions": [
+                "Rinse the quinoa under cold water.",
+                "In a medium saucepan, bring the water to a boil.",
+                "Add the quinoa, reduce the heat to low, and cover.",
+                "Simmer for 15 minutes or until the water is absorbed.",
+                "Fluff the quinoa with a fork and let it cool.",
+                "In a large bowl, combine the quinoa, cherry tomatoes, cucumber, red onion, and feta cheese.",
+                "Drizzle with olive oil and lemon juice.",
+                "Season with salt and pepper to taste.",
+                "Toss to combine and serve."
+            ]
+        },
+        {
+            "id": 6,
+            "title": "Chicken Caesar Salad",
+            "readyInMinutes": 20,
+            "imageURL": "/images/chicken_caesar_salad.jpg",
+            "protein": 30,
+            "carbs": 10,
+            "fat": 20,
+            "ingredients": [
+                "2 chicken breasts",
+                "1 head romaine lettuce",
+                "1/4 cup grated Parmesan cheese",
+                "1/2 cup croutons",
+                "1/4 cup Caesar dressing",
+                "Salt and pepper to taste"
+            ],
+            "instructions": [
+                "Season the chicken breasts with salt and pepper.",
+                "Grill the chicken over medium heat until cooked through.",
+                "Let the chicken rest for a few minutes, then slice it.",
+                "Chop the romaine lettuce and place it in a large bowl.",
+                "Add the sliced chicken, Parmesan cheese, and croutons.",
+                "Drizzle with Caesar dressing and toss to combine.",
+                "Serve immediately."
+            ]
+        },
+        {
+            "id": 7,
+            "title": "Shrimp Scampi",
+            "readyInMinutes": 25,
+            "imageURL": "/images/shrimp_scampi.jpg",
+            "protein": 25,
+            "carbs": 40,
+            "fat": 15,
+            "ingredients": [
+                "1 lb shrimp, peeled and deveined",
+                "4 cloves garlic",
+                "1/4 cup white wine",
+                "1/4 cup chicken broth",
+                "1/4 cup lemon juice",
+                "1/4 cup butter",
+                "1/4 cup parsley",
+                "8 oz linguine pasta",
+                "Salt and pepper to taste"
+            ],
+            "instructions": [
+                "Cook the linguine pasta according to package instructions.",
+                "In a large skillet, melt the butter over medium heat.",
+                "Add the garlic and cook until fragrant.",
+                "Add the shrimp and cook until pink and opaque.",
+                "Remove the shrimp from the skillet and set aside.",
+                "Add the white wine, chicken broth, and lemon juice to the skillet.",
+                "Bring to a simmer and cook until the sauce is reduced by half.",
+                "Return the shrimp to the skillet and toss to coat with the sauce.",
+                "Add the cooked pasta and parsley to the skillet.",
+                "Toss to combine and season with salt and pepper to taste.",
+                "Serve hot."
+            ]
+        },
+        {
+            "id": 8,
+            "title": "Vegetable Curry",
+            "readyInMinutes": 30,
+            "imageURL": "/images/vegetable_curry.jpg",
+            "protein": 10,
+            "carbs": 50,
+            "fat": 15,
+            "ingredients": [
+                "1 cup cauliflower florets",
+                "1 cup diced potatoes",
+                "1 cup sliced carrots",
+                "1 cup green peas",
+                "1 onion",
+                "2 cloves garlic",
+                "1 tbsp ginger",
+                "1 tbsp curry powder",
+                "1 can coconut milk",
+                "1 cup vegetable broth",
+                "2 tbsp olive oil",
+                "Salt and pepper to taste"
+            ],
+            "instructions": [
+                "Heat the olive oil in a large pot over medium heat.",
+                "Add the onion, garlic, and ginger and cook until fragrant.",
+                "Add the curry powder and cook for another minute.",
+                "Add the cauliflower, potatoes, carrots, and green peas to the pot.",
+                "Stir to coat the vegetables with the spices.",
+                "Add the coconut milk and vegetable broth to the pot.",
+                "Bring to a simmer and cook until the vegetables are tender.",
+                "Season with salt and pepper to taste.",
+                "Serve hot with rice or naan bread."
+            ]
+        },
+        {
+            "id": 9,
+            "title": "Beef Stroganoff",
+            "readyInMinutes": 35,
+            "imageURL": "/images/beef_stroganoff.jpg",
+            "protein": 30,
+            "carbs": 40,
+            "fat": 20,
+            "ingredients": [
+                "1 lb beef sirloin, sliced",
+                "1 onion",
+                "2 cloves garlic",
+                "1 cup mushrooms",
+                "1 cup beef broth",
+                "1 cup sour cream",
+                "2 tbsp flour",
+                "2 tbsp butter",
+                "8 oz egg noodles",
+                "Salt and pepper to taste"
+            ],
+            "instructions": [
+                "Cook the egg noodles according to package instructions.",
+                "In a large skillet, melt the butter over medium heat.",
+                "Add the onion and garlic and cook until softened.",
+                "Add the mushrooms and cook until browned.",
+                "Add the beef and cook until browned on all sides.",
+                "Sprinkle the flour over the beef and stir to coat.",
+                "Add the beef broth and bring to a simmer.",
+                "Cook until the sauce thickens.",
+                "Stir in the sour cream and cook until heated through.",
+                "Season with salt and pepper to taste.",
+                "Serve the beef stroganoff over the cooked egg noodles."
+            ]
+        },
+        {
+            "id": 10,
+            "title": "Pancakes",
+            "readyInMinutes": 20,
+            "imageURL": "/images/pancakes.jpg",
+            "protein": 8,
+            "carbs": 45,
+            "fat": 10,
+            "ingredients": [
+                "1 cup flour",
+                "1 tbsp sugar",
+                "1 tsp baking powder",
+                "1/2 tsp baking soda",
+                "1/4 tsp salt",
+                "1 cup buttermilk",
+                "1 egg",
+                "2 tbsp melted butter",
+                "1 tsp vanilla extract"
+            ],
+            "instructions": [
+                "In a large bowl, whisk together the flour, sugar, baking powder, baking soda, and salt.",
+                "In another bowl, whisk together the buttermilk, egg, melted butter, and vanilla extract.",
+                "Pour the wet ingredients into the dry ingredients and stir until just combined.",
+                "Heat a non-stick skillet over medium heat.",
+                "Pour 1/4 cup of batter onto the skillet for each pancake.",
+                "Cook until bubbles form on the surface, then flip and cook until golden brown.",
+                "Serve the pancakes with your favorite toppings."
+            ]
+        }
+    ]
 }
