@@ -81,10 +81,10 @@ const CreateRecipe = ({ onClose }) => {
             ></input>
           </div>
           <div className="form-actions">
-            <button type="button" onClick={onClose}>
+            <button type="button" onClick={onClose} className="btn-text">
               Cancel
             </button>
-            <button type="submit" onClick={createRecipe}>
+            <button type="submit" onClick={createRecipe} className="btn-text">
               Create
             </button>
           </div>
