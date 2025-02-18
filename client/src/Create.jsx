@@ -124,7 +124,9 @@ export default function About() {
             </div>
           </div>
         </div>
-        <button className="btn">Generate 🔀</button>
+        <button className="btn">
+          <p className="btn-text">Generate 🔀</p>
+        </button>
       </div>
     </>
   );
