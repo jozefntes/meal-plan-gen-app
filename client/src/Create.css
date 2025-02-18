@@ -1,4 +1,4 @@
-.content {
+.generate-page {
     margin-left: 325px;
     padding: 48px;
     display: flex;
@@ -7,7 +7,7 @@
     position: relative;
 }
 
-.header {
+.generate-page .header {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -20,6 +20,7 @@
     flex-direction: column;
     justify-content: center;
     gap: 8px;
+    padding: 32px 48px;
 }
 
 .meal-group {
@@ -31,7 +32,18 @@
     gap: 0;
 }
 
-.picker, .picker ul {
+.picker {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.picker ul {
     display: flex;
     width: 100%;
     flex-direction: row;
@@ -66,7 +78,18 @@
     width: 176px;
     height: 256px;
     border-radius: 8px;
-    box-shadow: 10px 10px 30px rgba(174, 174, 192, 0.4);
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.picker__item:hover, .create-new-btn:hover {
+    transform: scale(1.05);
+}
+
+.picker__item:active,
+.create-new-btn:active {
+    transform: scale(0.95);
 }
 
 .picker__item img {
@@ -79,9 +102,13 @@
 
 .picker__item p, .create-new-btn p {
     padding-left: 8px;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: normal;
+    word-wrap: break-word;
 }
 
-.content .btn {
+.generate-page .btn {
     position: fixed;
     bottom: 20px;
     left: 50%;
