@@ -38,9 +38,6 @@ app.get("/", (req, res) => {
 app.post("/api/generate_recipe", async (req, res) => {
   const { ingredients, minProtein, maxCarbs, maxFat } = req.body;
 
-  console.log("Request body:", req.body);
-  console.log(ingredients, minProtein, maxCarbs, maxFat);
-
   if (!ingredients || !minProtein || !maxCarbs || !maxFat) {
     return res.status(400).json({ error: "All fields are required" });
   }
@@ -66,9 +63,7 @@ app.post("/api/generate_recipe", async (req, res) => {
     const recipeText = await result.response.text();
 
     const recipe = JSON.parse(recipeText);
-    console.log("Text: ", recipeText);
-    console.log("Full Array: ", recipe);
-    console.log("First: ", recipe[0]);
+
     res.status(200).json({
       message: "Recipe generated successfully",
       recipe: recipe[0],
