@@ -15,7 +15,7 @@ let db;
   });
 })();
 
-const app = express();
+app = express();
 app.use(express.static(path.join(__dirname, "static")));
 app.use(express.json());
 app.use(cors());
