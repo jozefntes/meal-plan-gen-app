@@ -2,7 +2,7 @@ const express = require("express");
 const path = require("path");
 const sqlite3 = require("sqlite3");
 const { open } = require("sqlite");
-const cors = require("cors"); 
+const cors = require("cors");
 
 PORT = 8080;
 
