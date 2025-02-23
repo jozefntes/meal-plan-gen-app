@@ -1,12 +1,12 @@
-const express = require("express");
-const path = require("path");
-const sqlite3 = require("sqlite3");
-const { open } = require("sqlite");
-const cors = require("cors");
-const dotenv = require("dotenv");
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
+import cors from "cors";
+import dotenv from "dotenv";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({
@@ -16,16 +16,7 @@ const model = genAI.getGenerativeModel({
   },
 });
 
-// connect to db
-let db;
-(async () => {
-  db = await open({
-    filename: "db/data.sqlite",
-    driver: sqlite3.Database,
-  });
-})();
-
-app = express();
+const app = express();
 app.use(express.static(path.join(__dirname, "static")));
 app.use(express.json());
 app.use(cors());
