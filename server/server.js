@@ -70,10 +70,10 @@ app.post("/api/generate_recipe", async (req, res) => {
     const result = await model.generateContent(prompt);
     const recipeText = await result.response.text();
 
-    let parsedRecipe = JSON.parse(recipeText);
+    const parsedRecipe = JSON.parse(recipeText);
     let recipe;
 
-    // Check if returned recipe is an array or object
+    // Check if returned recipe is an array or object and extract recipe
     if (Array.isArray(parsedRecipe)) {
       recipe = parsedRecipe[0];
     } else {
