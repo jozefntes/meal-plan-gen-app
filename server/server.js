@@ -4,8 +4,6 @@ import { fileURLToPath } from "url";
 import cors from "cors";
 import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { initializeApp } from "firebase/app";
-import { getFirestore, addDoc, collection } from "firebase/firestore";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,19 +16,6 @@ const model = genAI.getGenerativeModel({
     response_mime_type: "application/json",
   },
 });
-
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAsk_VUHx8tLbXVXhew-3zlQc_omJpPt6Y",
-  authDomain: "mealplangenerator-2c4bb.firebaseapp.com",
-  projectId: "mealplangenerator-2c4bb",
-  storageBucket: "mealplangenerator-2c4bb.firebasestorage.app",
-  messagingSenderId: "800241720030",
-  appId: "1:800241720030:web:6ab7c20f179fb463c7804f",
-  measurementId: "G-HV9PRZR3PZ",
-};
-const firebaseApp = initializeApp(firebaseConfig);
-const db = getFirestore(firebaseApp);
 
 const app = express();
 app.use(express.static(path.join(__dirname, "static")));
