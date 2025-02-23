@@ -15,7 +15,6 @@ async function run() {
 
     const prompt = `Generate a dish, Return your response in this format, Calories: ,Ingredients: ,Protien: ,Carbs: , Sodium: ,Sugar: . Dont say anymore after that`
 
-
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text(); // This is the response from the AI about the prompt
