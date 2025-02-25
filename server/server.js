@@ -49,8 +49,8 @@ app.get("/", (req, res) => {
   res.send(`Hello ${name}!`);
 });
 
-app.get("/api/recipes", async (req, res) => {
-  const { uid } = req.body;
+app.get("/api/recipes/:uid", async (req, res) => {
+  const uid = parseInt(req.params.uid);
 
   if (!uid) {
     return res.status(400).json({ error: "User ID is required" });
