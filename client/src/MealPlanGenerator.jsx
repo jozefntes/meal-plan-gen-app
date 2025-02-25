@@ -18,7 +18,7 @@ export default function MealPlanGenerator() {
 
   useEffect(() => {
     // Fetch initial recipes data from the server
-    fetch(`${SERVER_URL}/api/recipes`)
+    fetch(`${SERVER_URL}/api/recipes/79`)
       .then((response) => response.json())
       .then((data) => setRecipes(data))
       .catch((error) => console.error("Error fetching recipes:", error));
@@ -59,23 +59,23 @@ export default function MealPlanGenerator() {
         <div className="meal-picker">
           <MealGroup
             title="Breakfast"
-            recipes={recipes.filter((recipe) => recipe.mealGroup === 0)}
-            onCreateNew={() => handleOpenModal(0)}
-          />
-          <MealGroup
-            title="Lunch"
             recipes={recipes.filter((recipe) => recipe.mealGroup === 1)}
             onCreateNew={() => handleOpenModal(1)}
           />
           <MealGroup
-            title="Dinner"
+            title="Lunch"
             recipes={recipes.filter((recipe) => recipe.mealGroup === 2)}
             onCreateNew={() => handleOpenModal(2)}
           />
           <MealGroup
-            title="Snack"
+            title="Dinner"
             recipes={recipes.filter((recipe) => recipe.mealGroup === 3)}
             onCreateNew={() => handleOpenModal(3)}
+          />
+          <MealGroup
+            title="Snack"
+            recipes={recipes.filter((recipe) => recipe.mealGroup === 4)}
+            onCreateNew={() => handleOpenModal(4)}
           />
         </div>
         <button className="btn">
