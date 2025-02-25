@@ -3,24 +3,29 @@ import { useState } from "react";
 import Sidenav from "./components/Sidenav";
 import CreateRecipe from "./components/CreateRecipe";
 import WeekPicker from "./components/WeekSelector";
+import MealGroup from "./components/MealGroup";
+
 import { recipes } from "./fakedata.json";
 import "./MealPlanGenerator.css";
 
 export default function MealPlanGenerator() {
   const [selectedWeek, setSelectedWeek] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedMealGroup, setSelectedMealGroup] = useState(null);
 
   const handleWeekSelect = (index) => {
     setSelectedWeek(index);
     console.log(index);
   };
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (mealGroup) => {
+    setSelectedMealGroup(mealGroup);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setSelectedMealGroup(null);
   };
 
   return (
@@ -37,107 +42,37 @@ export default function MealPlanGenerator() {
         />
 
         <div className="meal-picker">
-          <div className="meal-group">
-            <h6>Breakfast</h6>
-
-            <div className="picker">
-              <div className="create-new-btn" onClick={handleOpenModal}>
-                <div>
-                  <img
-                    className="create-icon"
-                    src="/icons/circle-dashed-plus.svg"
-                  />
-                </div>
-                <p className="body-s">+ Create New</p>
-              </div>
-              <ul>
-                {recipes.map((recipe) => (
-                  <li className="picker__item" key={recipe.id}>
-                    <img src={recipe.imageURL} />
-                    <p className="body-s">{recipe.title}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="meal-group">
-            <h6>Lunch</h6>
-
-            <div className="picker">
-              <div className="create-new-btn">
-                <div>
-                  <img
-                    className="create-icon"
-                    src="/icons/circle-dashed-plus.svg"
-                  />
-                </div>
-                <p className="body-s">+ Create New</p>
-              </div>
-              <ul>
-                {recipes.map((recipe) => (
-                  <li className="picker__item" key={recipe.id}>
-                    <img src={recipe.imageURL} />
-                    <p className="body-s">{recipe.title}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="meal-group">
-            <h6>Dinner</h6>
-
-            <div className="picker">
-              <div className="create-new-btn">
-                <div>
-                  <img
-                    className="create-icon"
-                    src="/icons/circle-dashed-plus.svg"
-                  />
-                </div>
-                <p className="body-s">+ Create New</p>
-              </div>
-              <ul>
-                {recipes.map((recipe) => (
-                  <li className="picker__item" key={recipe.id}>
-                    <img src={recipe.imageURL} />
-                    <p className="body-s">{recipe.title}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="meal-group">
-            <h6>Snack</h6>
-
-            <div className="picker">
-              <div className="create-new-btn">
-                <div>
-                  <img
-                    className="create-icon"
-                    src="/icons/circle-dashed-plus.svg"
-                  />
-                </div>
-                <p className="body-s">+ Create New</p>
-              </div>
-              <ul>
-                {recipes.map((recipe) => (
-                  <li className="picker__item" key={recipe.id}>
-                    <img src={recipe.imageURL} />
-                    <p className="body-s">{recipe.title}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+          <MealGroup
+            title="Breakfast"
+            recipes={recipes}
+            onCreateNew={() => handleOpenModal(0)}
+          />
+          <MealGroup
+            title="Lunch"
+            recipes={recipes}
+            onCreateNew={() => handleOpenModal(1)}
+          />
+          <MealGroup
+            title="Dinner"
+            recipes={recipes}
+            onCreateNew={() => handleOpenModal(2)}
+          />
+          <MealGroup
+            title="Snack"
+            recipes={recipes}
+            onCreateNew={() => handleOpenModal(3)}
+          />
         </div>
         <button className="btn">
           <p className="btn-text">Generate 🔀</p>
         </button>
       </div>
-      {isModalOpen && <CreateRecipe onClose={handleCloseModal} />}
+      {isModalOpen && (
+        <CreateRecipe
+          onClose={handleCloseModal}
+          mealGroup={selectedMealGroup}
+        />
+      )}
     </>
   );
 }
