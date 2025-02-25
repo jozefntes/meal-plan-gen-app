@@ -43,7 +43,8 @@ app.get("/", (req, res) => {
 });
 
 app.post("/api/generate_recipe", async (req, res) => {
-  const { ingredients, minProtein, maxCarbs, maxFat } = req.body;
+  const { uid, ingredients, minProtein, maxCarbs, maxFat, mealGroup } =
+    req.body;
 
   if (!ingredients || !minProtein || !maxCarbs || !maxFat) {
     return res.status(400).json({ error: "All fields are required" });
@@ -69,13 +70,33 @@ app.post("/api/generate_recipe", async (req, res) => {
     const result = await model.generateContent(prompt);
     const recipeText = await result.response.text();
 
-    const recipe = JSON.parse(recipeText);
+    const parsedRecipe = JSON.parse(recipeText);
+    let recipe;
+
+    // Check if returned recipe is an array or object and extract recipe
+    if (Array.isArray(parsedRecipe)) {
+      recipe = parsedRecipe[0];
+    } else {
+      recipe = parsedRecipe;
+    }
+
+    recipe.mealGroup = mealGroup;
+    recipe.uid = uid;
+
+    // Save recipe to database
+    try {
+      const docRef = await addDoc(collection(db, "recipes"), recipe);
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
 
     res.status(200).json({
       message: "Recipe generated successfully",
-      recipe: recipe[0],
+      recipe,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Failed to create recipe" });
   }
 });
