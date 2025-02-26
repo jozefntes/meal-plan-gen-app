@@ -50,10 +50,14 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/recipes/:uid", async (req, res) => {
+  if (!req.params.uid) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
   const uid = parseInt(req.params.uid);
 
-  if (!uid) {
-    return res.status(400).json({ error: "User ID is required" });
+  if (isNaN(uid)) {
+    return res.status(400).json({ error: "Invalid User ID" });
   }
 
   try {
@@ -81,7 +85,12 @@ app.post("/api/generate_recipe", async (req, res) => {
     req.body;
 
   if (
-    (!uid, !ingredients || !minProtein || !maxCarbs || !maxFat || !mealGroup)
+    !uid ||
+    !ingredients ||
+    !minProtein ||
+    !maxCarbs ||
+    !maxFat ||
+    !mealGroup
   ) {
     return res.status(400).json({ error: "All fields are required" });
   }
