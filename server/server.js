@@ -5,7 +5,14 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { initializeApp } from "firebase/app";
-import { getFirestore, addDoc, collection } from "firebase/firestore";
+import {
+  getFirestore,
+  addDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,11 +49,49 @@ app.get("/", (req, res) => {
   res.send(`Hello ${name}!`);
 });
 
+app.get("/api/recipes/:uid", async (req, res) => {
+  if (!req.params.uid) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  const uid = parseInt(req.params.uid);
+
+  if (isNaN(uid)) {
+    return res.status(400).json({ error: "Invalid User ID" });
+  }
+
+  try {
+    const q = query(collection(db, "recipes"), where("uid", "==", uid));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      return res.status(404).json({ error: "No recipes found for this user" });
+    }
+
+    const recipes = [];
+    querySnapshot.forEach((doc) => {
+      recipes.push({ id: doc.id, ...doc.data() });
+    });
+
+    res.status(200).json(recipes);
+  } catch (error) {
+    console.error("Error fetching recipes: ", error);
+    res.status(500).json({ error: "Failed to fetch recipes" });
+  }
+});
+
 app.post("/api/generate_recipe", async (req, res) => {
   const { uid, ingredients, minProtein, maxCarbs, maxFat, mealGroup } =
     req.body;
 
-  if (!ingredients || !minProtein || !maxCarbs || !maxFat) {
+  if (
+    !uid ||
+    !ingredients ||
+    !minProtein ||
+    !maxCarbs ||
+    !maxFat ||
+    !mealGroup
+  ) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
