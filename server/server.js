@@ -5,6 +5,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase-admin/auth";
 import {
   getFirestore,
   addDoc,
@@ -38,6 +39,12 @@ const firebaseConfig = {
 };
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
+
+// Initialize Firebase Admin SDK with service account, required to access Firestore and verify auth post
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
 const app = express();
 app.use(express.static(path.join(__dirname, "static")));
@@ -80,8 +87,28 @@ app.get("/api/recipes/:uid", async (req, res) => {
   }
 });
 
+app.post("/api/authenticate", async (req, res) => {
+  const { token } = req.body;
+
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    const uid = decodedToken.uid;
+
+    // Save the UID to the database if needed
+    // Example: Save to a "users" collection
+    const userRef = collection(db, "users");
+    await addDoc(userRef, { uid });
+
+    res.status(200).json({ uid });
+  } catch (error) {
+    console.error("Error verifying token: ", error);
+    res.status(401).json({ error: "Invalid token" });
+  }
+});
+
 app.post("/api/generate_recipe", async (req, res) => {
-  const { uid, ingredients, minProtein, maxCarbs, maxFat, mealGroup } =
+  const { uid } = req.params;
+  const { ingredients, minProtein, maxCarbs, maxFat, mealGroup } =
     req.body;
 
   if (
