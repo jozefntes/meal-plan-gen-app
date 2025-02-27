@@ -13,20 +13,21 @@
     display: flex;
     height: 100vh;
     width: 100vw;
+    flex-wrap: wrap;
   }
   
   .photo-section {
-    flex: 3;
+    flex: 2;
     display: flex;
     align-items: stretch;
     justify-content: stretch;
-    height: 100vh;
+    min-height: 100vh;
     overflow: hidden;
   }
   
   .photo-section img {
-    width: auto;
-    height: auto;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
   }
   
@@ -35,7 +36,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     justify-content: flex-start;
     background-color: #f8f8f8;
     padding: 4rem 2rem;
@@ -43,17 +44,19 @@
     
   }
   
-
   .form-section header {
     font-size: 25px;
     font-weight: bold;
     margin-bottom: 40px;
     white-space: nowrap;
+    align-self: flex-start;
+
   }
   .form-section h2 {
     font-size: 20px;
     margin-bottom: 40px;
     white-space: nowrap;
+    align-self: flex-start;
   }
   
   .form-section form {
@@ -112,11 +115,17 @@
     font-size: 14px;
 }
 
-.link a {
+.link span {
     color: #007bff;
     text-decoration: none;
 }
 
-.link a:hover {
+.link span:hover {
     text-decoration: underline;
+}
+
+.google-button-container, .google-button-container > div, .google-login-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }

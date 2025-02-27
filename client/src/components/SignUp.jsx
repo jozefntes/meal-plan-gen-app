@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { GoogleLogin } from '@react-oauth/google';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import page from "page";
 import './SignUp.css'
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
+  
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -21,16 +21,16 @@ const SignUp = () => {
     setShowPassword((prev) => !prev);
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    navigate("/home");
+    page("/home");
 
     
   };
 
   const handleGoogleSuccess = (credentialResponse) => {
     console.log("Google Sign-In Success", credentialResponse);
-    navigate("/home");
+    page("/home");
   };
 
   const handleGoogleFailure = () => {
@@ -61,10 +61,19 @@ const SignUp = () => {
             />
           </div>
           <button type="submit">Create Account</button>
-          <GoogleLogin onSuccess={handleGoogleSuccess} onError={handleGoogleFailure} />
+          <div className="google-button-container">
+            <GoogleOAuthProvider clientId="897780206216-avqvo622dv42vmj5anoqcnrahdvqqtl2.apps.googleusercontent.com">
+                <div className="google-login-wrapper">
+                    <GoogleLogin
+                        onSuccess={handleGoogleSuccess}
+                        onError={handleGoogleFailure}
+                    />
+                </div>
+            </GoogleOAuthProvider>
+          </div>
         </form>
         <p className="link">
-            Already have an account? <Link to='/signin'>Sign in</Link>
+            Already have an account? <span onClick={() => page("/signin")}>Sign in</span>
 
         </p>
       </div>

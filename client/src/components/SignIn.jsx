@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import page from "page";
 import './SignUp.css'
 
 
@@ -7,7 +7,6 @@ const SignIn = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const navigate = useNavigate();
   
     const handleEmailChange = (e) => {
       setEmail(e.target.value);
@@ -21,11 +20,9 @@ const SignIn = () => {
         setShowPassword((prev) => !prev);
       }
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
       e.preventDefault();
-      navigate("/home");
-  
-      
+      page("/home");
     };
   
     return (
@@ -50,7 +47,7 @@ const SignIn = () => {
               className="toggle-password-button" 
               onClick={passwordVisibility} 
             />
-          </div>
+            </div>
             <button type="submit">Sign In</button>
           </form>
           
