@@ -1,7 +1,9 @@
+import { SERVER_URL } from "../constants";
+
 import "./CreateRecipe.css";
 
-const CreateRecipe = ({ onClose }) => {
-  const createRecipe = (event) => {
+const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
+  const createRecipe = async (event) => {
     event.preventDefault();
 
     const ingredients = document.getElementById("ingredients").value;
@@ -22,10 +24,37 @@ const CreateRecipe = ({ onClose }) => {
     }
 
     console.log("Creating new recipe with the following data:");
+    console.log("Meal Group:", mealGroup);
+    console.log("User ID:", 79);
     console.log("Ingredients:", ingredients);
     console.log("Min Protein:", minProtein);
     console.log("Max Carbs:", maxCarbs);
     console.log("Max Fat:", maxFat);
+
+    const response = await fetch(`${SERVER_URL}/api/generate_recipe`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        uid: 79,
+        ingredients,
+        minProtein: parseInt(minProtein),
+        maxCarbs: parseInt(maxCarbs),
+        maxFat: parseInt(maxFat),
+        mealGroup,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to generate recipe");
+    }
+
+    const data = await response.json();
+    console.log(data);
+    console.log("Generated recipe:", data.recipe);
+
+    onAddRecipe(data.recipe);
 
     onClose();
   };
