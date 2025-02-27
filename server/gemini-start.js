@@ -10,26 +10,45 @@ let height = "5'9";
 let goal = "lose weight";
 let favorites = "pizza, burgers, chicken nuggets, quesadillas";
 
-// console.log("Using API Key:", process.env.API_KEY);
-
 async function run() {
     const model = genAI.getGenerativeModel({ model: "gemini-pro"});
 
-    // const prompt = `Age: ${age},
-    //                 Weight: ${weight} lbs,
-    //                 Hieght: ${height}",
-    //                 Goal: ${goal},
-    //                 Favorite Foods: ${favorites}, 
-    //                 Please generate 1 meal plan where the person can 
-    //                 reach their goal and a meal that includes a little 
-    //                 bit of similarity from their favorite foods.`; // This prompt gets sent to AI
-    const prompt = `Can you read all the data off of this online api website, spoonacular.com by yourself to be able to suggest me pre made meal plans from there?`
-
+    const prompt = `Generate a dish, Return your response in this format, Calories: ,Ingredients: ,Protien: ,Carbs: , Sodium: ,Sugar: . Dont say anymore after that`
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text(); // This is the response from the AI about the prompt
-    console.log(text);
+
+    // console.log("AI response", text);
+
+    const nutrition = extractNutritionData(text);
+
+    console.log("Extracted Nutrition Data:", nutrition);
+
+    // console.log(text);
+}
+
+
+function extractNutritionData(input) {
+  const nutritionData = {};
+  
+  const regexPatterns = {
+    calories: /Calories:\s*(\d+)/,
+    ingredients: /Ingredients:\s*(.*)/,
+    protein: /Protein:\s*(\d+g)/,
+    carbs: /Carbs:\s*(\d+g)/,
+    sodium: /Sodium:\s*(\d+mg)/,
+    sugar: /Sugar:\s*(\d+g)/
+  };
+  
+  for (const [key, regex] of Object.entries(regexPatterns)) {
+    const match = input.match(regex);
+    if (match) {
+      nutritionData[key] = match[1].trim();
+    }
+  }
+  
+  return nutritionData;
 }
 
 run();
