@@ -28,9 +28,33 @@ const SignUp = () => {
     
   };
 
-  const handleGoogleSuccess = (credentialResponse) => {
+  // const handleGoogleSuccess = (credentialResponse) => {
+  //   console.log("Google Sign-In Success", credentialResponse);
+  //   page("/home");
+  // };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
     console.log("Google Sign-In Success", credentialResponse);
-    page("/home");
+    
+    try {
+      const response = await fetch("/api/authenticate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: credentialResponse.credential }),
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        console.log("User authenticated with UID:", data.uid);
+        page(`/home?uid=${data.uid}`);
+      } else {
+        console.error("Failed to authenticate user");
+      }
+    } catch (error) {
+      console.error("Error during authentication:", error);
+    }
   };
 
   const handleGoogleFailure = () => {
