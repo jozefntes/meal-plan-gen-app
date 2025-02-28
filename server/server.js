@@ -4,15 +4,9 @@ import { fileURLToPath } from "url";
 import cors from "cors";
 import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { initializeApp } from "firebase/app";
-import {
-  getFirestore,
-  addDoc,
-  collection,
-  query,
-  where,
-  getDocs,
-} from "firebase/firestore";
+import { getAuth } from "firebase-admin/auth";
+import admin from "firebase-admin";
+import serviceAccount from "./mealplangenerator-2c4bb-firebase-adminsdk-fbsvc-840941d879.json" with {type: "json"};
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,18 +20,11 @@ const model = genAI.getGenerativeModel({
   },
 });
 
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAsk_VUHx8tLbXVXhew-3zlQc_omJpPt6Y",
-  authDomain: "mealplangenerator-2c4bb.firebaseapp.com",
-  projectId: "mealplangenerator-2c4bb",
-  storageBucket: "mealplangenerator-2c4bb.firebasestorage.app",
-  messagingSenderId: "800241720030",
-  appId: "1:800241720030:web:6ab7c20f179fb463c7804f",
-  measurementId: "G-HV9PRZR3PZ",
-};
-const firebaseApp = initializeApp(firebaseConfig);
-const db = getFirestore(firebaseApp);
+// Firebase Admin SDK
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+const db = admin.firestore();
 
 const app = express();
 app.use(express.static(path.join(__dirname, "static")));
@@ -61,8 +48,8 @@ app.get("/api/recipes/:uid", async (req, res) => {
   }
 
   try {
-    const q = query(collection(db, "recipes"), where("uid", "==", uid));
-    const querySnapshot = await getDocs(q);
+    const q = db.collection("recipes").where("uid", "==", uid);
+    const querySnapshot = await q.get();
 
     if (querySnapshot.empty) {
       return res.status(404).json({ error: "No recipes found for this user" });
@@ -130,7 +117,7 @@ app.post("/api/generate_recipe", async (req, res) => {
 
     // Save recipe to database
     try {
-      const docRef = await addDoc(collection(db, "recipes"), recipe);
+      const docRef = await db.collection("recipes").add(recipe);
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
