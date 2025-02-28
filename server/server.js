@@ -56,7 +56,7 @@ app.get("/", (req, res) => {
   res.send(`Hello ${name}!`);
 });
 
-app.get("/api/recipes/:uid", async (req, res) => {
+app.get("/api/recipes/:uid", verifyToken, async (req, res) => {
   if (!req.params.uid) {
     return res.status(400).json({ error: "User ID is required" });
   }
@@ -87,7 +87,7 @@ app.get("/api/recipes/:uid", async (req, res) => {
   }
 });
 
-app.post("/api/generate_recipe", async (req, res) => {
+app.post("/api/generate_recipe", verifyToken, async (req, res) => {
   const { uid, ingredients, minProtein, maxCarbs, maxFat, mealGroup } =
     req.body;
 
