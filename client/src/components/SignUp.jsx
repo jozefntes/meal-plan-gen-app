@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "../firebase";
 import page from "page";
 import "./SignUp.css";
 
@@ -20,18 +21,23 @@ const SignUp = () => {
     setShowPassword((prev) => !prev);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    page("/home");
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      page("/home");
+    } catch (error) {
+      console.error("Error signing up:", error);
+    }
   };
 
-  const handleGoogleSuccess = (credentialResponse) => {
-    console.log("Google Sign-In Success", credentialResponse);
-    page("/home");
-  };
-
-  const handleGoogleFailure = () => {
-    console.log("Google Sign-In Failed");
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+      page("/home");
+    } catch (error) {
+      console.error("Error signing in with Google:", error);
+    }
   };
 
   return (
@@ -67,7 +73,11 @@ const SignUp = () => {
               required
             />
             <img
-              src={showPassword ? "/noShowPassword.svg" : "/showPassword.svg"}
+              src={
+                showPassword
+                  ? "icons/noShowPassword.svg"
+                  : "icons/showPassword.svg"
+              }
               alt="Toggle Password Visibility"
               className="toggle-password-button"
               onClick={passwordVisibility}
@@ -75,14 +85,12 @@ const SignUp = () => {
           </div>
           <button type="submit">Create Account</button>
           <div className="google-button-container">
-            <GoogleOAuthProvider clientId="897780206216-avqvo622dv42vmj5anoqcnrahdvqqtl2.apps.googleusercontent.com">
-              <div className="google-login-wrapper">
-                <GoogleLogin
-                  onSuccess={handleGoogleSuccess}
-                  onError={handleGoogleFailure}
-                />
-              </div>
-            </GoogleOAuthProvider>
+            <button
+              onClick={handleGoogleSignIn}
+              className="google-signin-button"
+            >
+              Sign in with Google
+            </button>
           </div>
         </form>
         <p className="link">

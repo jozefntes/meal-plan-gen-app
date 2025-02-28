@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "../firebase";
 import page from "page";
 import "./SignUp.css";
 
@@ -19,9 +21,23 @@ const SignIn = () => {
     setShowPassword((prev) => !prev);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    page("/home");
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      page("/home");
+    } catch (error) {
+      console.error("Error signing in:", error);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+      page("/home");
+    } catch (error) {
+      console.error("Error signing in with Google:", error);
+    }
   };
 
   return (
@@ -57,7 +73,11 @@ const SignIn = () => {
               required
             />
             <img
-              src={showPassword ? "/noShowPassword.svg" : "/showPassword.svg"}
+              src={
+                showPassword
+                  ? "icons/noShowPassword.svg"
+                  : "icons/showPassword.svg"
+              }
               alt="Toggle Password Visibility"
               className="toggle-password-button"
               onClick={passwordVisibility}
@@ -65,6 +85,11 @@ const SignIn = () => {
           </div>
           <button type="submit">Sign In</button>
         </form>
+        <div className="google-button-container">
+          <button onClick={handleGoogleSignIn} className="google-signin-button">
+            Sign in with Google
+          </button>
+        </div>
       </div>
     </div>
   );
