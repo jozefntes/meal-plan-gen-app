@@ -6,7 +6,8 @@ import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getAuth } from "firebase-admin/auth";
 import admin from "firebase-admin";
-import serviceAccount from "./mealplangenerator-2c4bb-firebase-adminsdk-fbsvc-840941d879.json" with {type: "json"};
+import { applicationDefault } from "firebase-admin/app";
+import { readFile } from "fs/promises";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,10 +21,28 @@ const model = genAI.getGenerativeModel({
   },
 });
 
-// Firebase Admin SDK
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+try {
+  if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    // Local development: Use the service account file
+    const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+    const serviceAccount = JSON.parse(
+      await readFile(serviceAccountPath, "utf8")
+    );
+
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+    });
+
+    console.log("Firebase Admin SDK initialized (local development).");
+  } else {
+    // Cloud Run: Use ADC (Application Default Credentials)
+    admin.initializeApp();
+    console.log("Firebase Admin SDK initialized using ADC (Cloud Run).");
+  }
+} catch (error) {
+  console.error("Error initializing Firebase Admin SDK:", error);
+}
+
 const db = admin.firestore();
 
 const app = express();
@@ -31,12 +50,32 @@ app.use(express.static(path.join(__dirname, "static")));
 app.use(express.json());
 app.use(cors());
 
+// Middleware to verify the Firebase ID token
+async function verifyToken(req, res, next) {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const idToken = authHeader.split("Bearer ")[1];
+
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    req.user = decodedToken;
+    next();
+  } catch (error) {
+    console.error("Error verifying token:", error);
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+}
+
 app.get("/", (req, res) => {
   const name = process.env.NAME || "World";
   res.send(`Hello ${name}!`);
 });
 
-app.get("/api/recipes/:uid", async (req, res) => {
+app.get("/api/recipes/:uid", verifyToken, async (req, res) => {
   if (!req.params.uid) {
     return res.status(400).json({ error: "User ID is required" });
   }
@@ -67,7 +106,7 @@ app.get("/api/recipes/:uid", async (req, res) => {
   }
 });
 
-app.post("/api/generate_recipe", async (req, res) => {
+app.post("/api/generate_recipe", verifyToken, async (req, res) => {
   const { uid, ingredients, minProtein, maxCarbs, maxFat, mealGroup } =
     req.body;
 
