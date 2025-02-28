@@ -31,12 +31,16 @@ try {
 
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
+      projectId: "mealplangenerator-2c4bb",
     });
 
     console.log("Firebase Admin SDK initialized (local development).");
   } else {
     // Cloud Run: Use ADC (Application Default Credentials)
-    admin.initializeApp();
+    admin.initializeApp({
+      credential: admin.credential.applicationDefault(),
+      projectId: "mealplangenerator-2c4bb",
+    });
     console.log("Firebase Admin SDK initialized using ADC (Cloud Run).");
   }
 } catch (error) {
