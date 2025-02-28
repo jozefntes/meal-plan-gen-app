@@ -7,6 +7,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getAuth } from "firebase-admin/auth";
 import admin from "firebase-admin";
 import { applicationDefault } from "firebase-admin/app";
+import { readFile } from "fs/promises";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,10 +21,28 @@ const model = genAI.getGenerativeModel({
   },
 });
 
-// Firebase Admin SDK
-admin.initializeApp({
-  credential: applicationDefault(),
-});
+try {
+  if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    // Local development: Use the service account file
+    const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+    const serviceAccount = JSON.parse(
+      await readFile(serviceAccountPath, "utf8")
+    );
+
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+    });
+
+    console.log("Firebase Admin SDK initialized (local development).");
+  } else {
+    // Cloud Run: Use ADC (Application Default Credentials)
+    admin.initializeApp();
+    console.log("Firebase Admin SDK initialized using ADC (Cloud Run).");
+  }
+} catch (error) {
+  console.error("Error initializing Firebase Admin SDK:", error);
+}
+
 const db = admin.firestore();
 
 const app = express();
