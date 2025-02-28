@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getAuth } from "firebase-admin/auth";
 import admin from "firebase-admin";
-import serviceAccount from "./mealplangenerator-2c4bb-firebase-adminsdk-fbsvc-840941d879.json" with {type: "json"};
+import { applicationDefault } from "firebase-admin/app";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,7 +22,7 @@ const model = genAI.getGenerativeModel({
 
 // Firebase Admin SDK
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: applicationDefault(),
 });
 const db = admin.firestore();
 
