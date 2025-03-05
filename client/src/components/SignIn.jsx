@@ -25,7 +25,7 @@ const SignIn = () => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      page("/home");
+      page("/");
     } catch (error) {
       console.error("Error signing in:", error);
     }
@@ -34,7 +34,7 @@ const SignIn = () => {
   const handleGoogleSignIn = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
-      page("/home");
+      page("/");
     } catch (error) {
       console.error("Error signing in with Google:", error);
     }
