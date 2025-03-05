@@ -59,22 +59,34 @@ export default function MealPlanGenerator() {
         <div className="meal-picker">
           <MealGroup
             title="Breakfast"
-            recipes={recipes.filter((recipe) => recipe.mealGroup === 1)}
+            recipes={
+              recipes.length > 0 &&
+              recipes.filter((recipe) => recipe.mealGroup === 1)
+            }
             onCreateNew={() => handleOpenModal(1)}
           />
           <MealGroup
             title="Lunch"
-            recipes={recipes.filter((recipe) => recipe.mealGroup === 2)}
+            recipes={
+              recipes.length > 0 &&
+              recipes.filter((recipe) => recipe.mealGroup === 2)
+            }
             onCreateNew={() => handleOpenModal(2)}
           />
           <MealGroup
             title="Dinner"
-            recipes={recipes.filter((recipe) => recipe.mealGroup === 3)}
+            recipes={
+              recipes.length > 0 &&
+              recipes.filter((recipe) => recipe.mealGroup === 3)
+            }
             onCreateNew={() => handleOpenModal(3)}
           />
           <MealGroup
             title="Snack"
-            recipes={recipes.filter((recipe) => recipe.mealGroup === 4)}
+            recipes={
+              recipes.length > 0 &&
+              recipes.filter((recipe) => recipe.mealGroup === 4)
+            }
             onCreateNew={() => handleOpenModal(4)}
           />
         </div>
