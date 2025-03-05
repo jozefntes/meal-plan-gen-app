@@ -29,7 +29,7 @@ export default function MealPlanGenerator() {
 
         console.log(uid);
 
-        fetch(`http://localhost:8080/api/recipes/${uid}`, {
+        fetch(`${SERVER_URL}/api/recipes/${uid}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${idToken}`,
@@ -37,7 +37,7 @@ export default function MealPlanGenerator() {
         })
           .then((response) => {
             if (response.status === 404) {
-              return;
+              return [];
             }
 
             return response.json();

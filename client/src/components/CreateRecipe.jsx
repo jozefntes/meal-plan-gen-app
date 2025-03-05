@@ -39,24 +39,21 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
       console.log("Max Carbs:", maxCarbs);
       console.log("Max Fat:", maxFat);
 
-      const response = await fetch(
-        "http://localhost:8080/api/generate_recipe",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${idToken}`,
-          },
-          body: JSON.stringify({
-            uid,
-            ingredients,
-            minProtein: parseInt(minProtein),
-            maxCarbs: parseInt(maxCarbs),
-            maxFat: parseInt(maxFat),
-            mealGroup,
-          }),
-        }
-      );
+      const response = await fetch(`${SERVER_URL}/api/generate_recipe`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({
+          uid,
+          ingredients,
+          minProtein: parseInt(minProtein),
+          maxCarbs: parseInt(maxCarbs),
+          maxFat: parseInt(maxFat),
+          mealGroup,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to generate recipe");
