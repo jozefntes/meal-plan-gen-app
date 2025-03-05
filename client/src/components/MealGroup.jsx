@@ -17,12 +17,13 @@ export default function MealGroup({ title, recipes, onCreateNew }) {
           <p className="body-s">+ Create New</p>
         </div>
         <ul>
-          {recipes.map((recipe) => (
-            <li className="picker__item" key={recipe.id}>
-              <img src={recipe.imageURL} alt={recipe.title} />
-              <p className="body-s">{recipe.title}</p>
-            </li>
-          ))}
+          {recipes.length > 0 &&
+            recipes.map((recipe) => (
+              <li className="picker__item" key={recipe.id}>
+                <img src={recipe.imageURL} alt={recipe.title} />
+                <p className="body-s">{recipe.title}</p>
+              </li>
+            ))}
         </ul>
       </div>
     </div>
