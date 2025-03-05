@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { getAuth } from "firebase/auth";
 
 import Sidenav from "./components/Sidenav";
 import CreateRecipe from "./components/CreateRecipe";
@@ -18,10 +19,36 @@ export default function MealPlanGenerator() {
 
   useEffect(() => {
     // Fetch initial recipes data from the server
-    fetch(`${SERVER_URL}/api/recipes/79`)
-      .then((response) => response.json())
-      .then((data) => setRecipes(data))
-      .catch((error) => console.error("Error fetching recipes:", error));
+    (async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (user) {
+        const idToken = await user.getIdToken();
+        const uid = user.uid;
+
+        console.log(uid);
+
+        fetch(`${SERVER_URL}/api/recipes/${uid}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        })
+          .then((response) => {
+            if (response.status === 404) {
+              return [];
+            }
+
+            return response.json();
+          })
+          .then((data) => setRecipes(data))
+          .catch((error) => console.error("Error fetching recipes:", error));
+        console.log(recipes);
+      } else {
+        console.log("No user is signed in.");
+      }
+    })();
   }, []);
 
   const handleWeekSelect = (index) => {
@@ -40,7 +67,9 @@ export default function MealPlanGenerator() {
   };
 
   const handleAddRecipe = (newRecipe) => {
-    setRecipes((prevRecipes) => [...prevRecipes, newRecipe]);
+    setRecipes((prevRecipes) =>
+      prevRecipes ? [...prevRecipes, newRecipe] : [newRecipe]
+    );
   };
 
   return (
