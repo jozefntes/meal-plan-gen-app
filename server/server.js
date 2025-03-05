@@ -79,7 +79,7 @@ app.get("/", (req, res) => {
   res.send(`Hello ${name}!`);
 });
 
-app.get("/api/recipes/:uid", async (req, res) => {
+app.get("/api/recipes/:uid", verifyToken, async (req, res) => {
   const uid = req.params.uid;
 
   if (!uid) {
@@ -106,7 +106,7 @@ app.get("/api/recipes/:uid", async (req, res) => {
   }
 });
 
-app.post("/api/generate_recipe", async (req, res) => {
+app.post("/api/generate_recipe", verifyToken, async (req, res) => {
   const { uid, ingredients, minProtein, maxCarbs, maxFat, mealGroup } =
     req.body;
 
