@@ -18,9 +18,12 @@ export default function MealGroup({ title, recipes, onCreateNew }) {
         </div>
         <ul>
           {recipes.length > 0 &&
-            recipes.map((recipe) => (
-              <li className="picker__item" key={recipe.id}>
-                <img src={recipe.imageURL} alt={recipe.title} />
+            recipes.map((recipe, idx) => (
+              <li className="picker__item" key={idx}>
+                <img
+                  src={`data:image/png;base64,${recipe.image}`}
+                  alt={recipe.title}
+                />
                 <p className="body-s">{recipe.title}</p>
               </li>
             ))}
