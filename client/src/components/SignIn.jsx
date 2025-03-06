@@ -94,6 +94,10 @@ const SignIn = () => {
             Sign in with Google
           </button>
         </div>
+        <p className="link">
+          Don't have an account?{" "}
+          <span onClick={() => page("/signup")}>Sign Up</span>
+        </p>
       </div>
     </div>
   );

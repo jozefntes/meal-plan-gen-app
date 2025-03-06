@@ -41,6 +41,9 @@
                     Sign in with Google
                 </button>
             </div>
+            <p class="link">
+                Don't have an account? <span onclick="redirectToSignUp()">Sign Up</span>
+            </p>
         </div>
     </div>
     <script>
@@ -69,6 +72,10 @@
         function handleGoogleSignIn() {
             console.log("Google Sign-In Triggered");
             window.location.href = "/home"; 
+        }
+
+        function redirectToSignUp() {
+            window.location.href = "/signup";
         }
     </script>
 </body>
