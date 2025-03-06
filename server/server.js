@@ -8,6 +8,7 @@ import { getAuth } from "firebase-admin/auth";
 import admin from "firebase-admin";
 import { applicationDefault } from "firebase-admin/app";
 import { readFile } from "fs/promises";
+import { HfInference } from "@huggingface/inference";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,6 +21,8 @@ const model = genAI.getGenerativeModel({
     response_mime_type: "application/json",
   },
 });
+
+const hf = new HfInference(process.env.HUGGINGFACE_API_KEY);
 
 try {
   const usingEmulator =
@@ -152,6 +155,26 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
     recipe.mealGroup = mealGroup;
     recipe.uid = uid;
 
+    // Generate an image for the recipe
+    try {
+      const imageBlob = await hf.textToImage({
+        model: "black-forest-labs/FLUX.1-dev",
+        inputs: recipe.title,
+      });
+
+      const arrayBuffer = await imageBlob.arrayBuffer();
+      const imageBuffer = Buffer.from(arrayBuffer);
+
+      // Convert the image buffer to a base64 string
+      const base64Image = imageBuffer.toString("base64");
+
+      // Add the base64 image to the recipe object
+      recipe.image = base64Image;
+    } catch (error) {
+      console.error("Error generating image:", error);
+      recipe.image = null;
+    }
+
     // Save recipe to database
     try {
       const docRef = await db.collection("recipes").add(recipe);
@@ -171,4 +194,9 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
 });
 
 const port = parseInt(process.env.PORT) || 8080;
-app.listen(port, () => console.log(`Server listening on port ${port}`));
+const server = app.listen(port, () =>
+  console.log(`Server listening on port ${port}`)
+);
+
+// Increase server timeout to 5 minutes (300000 milliseconds)
+server.timeout = 300000;
