@@ -22,15 +22,13 @@ const model = genAI.getGenerativeModel({
 });
 
 try {
-  if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-    // Local development: Use the service account file
-    const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
-    const serviceAccount = JSON.parse(
-      await readFile(serviceAccountPath, "utf8")
-    );
+  const usingEmulator =
+    process.env.FUNCTIONS_EMULATOR === "true" ||
+    process.env.FIRESTORE_EMULATOR_HOST;
 
+  if (usingEmulator) {
+    // Local development: Use emulator
     admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
       projectId: "mealplangenerator-2c4bb",
     });
 
