@@ -80,14 +80,10 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/recipes/:uid", async (req, res) => {
-  if (!req.params.uid) {
+  const uid = req.params.uid;
+
+  if (!uid) {
     return res.status(400).json({ error: "User ID is required" });
-  }
-
-  const uid = parseInt(req.params.uid);
-
-  if (isNaN(uid)) {
-    return res.status(400).json({ error: "Invalid User ID" });
   }
 
   try {
