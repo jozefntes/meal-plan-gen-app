@@ -5,6 +5,7 @@ import Home from "./Home";
 import MealPlanGenerator from "./MealPlanGenerator";
 import SignUp from "./components/SignUp";
 import SignIn from "./components/SignIn";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const [route, setRoute] = useState("home");
@@ -19,8 +20,16 @@ function App() {
 
   return (
     <>
-      {route === "home" && <Home />}
-      {route === "generate" && <MealPlanGenerator />}
+      {route === "home" && (
+        <ProtectedRoute>
+          <Home />
+        </ProtectedRoute>
+      )}
+      {route === "generate" && (
+        <ProtectedRoute>
+          <MealPlanGenerator />
+        </ProtectedRoute>
+      )}
       {route === "signin" && <SignIn />}
       {route === "register" && <SignUp />}
     </>
