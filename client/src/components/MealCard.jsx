@@ -1,3 +1,5 @@
+import page from "page";
+
 import "./MealCard.css";
 
 export default function MealCard({
@@ -19,15 +21,29 @@ export default function MealCard({
     backgroundSize: "cover",
   };
 
+  const handleCardClick = () => {
+    page(`/recipe/${id}`);
+  };
+
   return (
     <>
-      <li className="meal-card" style={backgroundStyle}>
+      <li
+        className="meal-card"
+        style={backgroundStyle}
+        onClick={handleCardClick}
+      >
         <div className="meal-header">
           <div className="meal-info">
             <p className="body-s">{time}</p>
             <p className="body-s">{name}</p>
           </div>
-          <button className="add-btn" onClick={() => onMealDone(id)}>
+          <button
+            className="add-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              onMealDone(id);
+            }}
+          >
             {done ? (
               <img src="../icons/check.svg" />
             ) : (
