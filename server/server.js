@@ -131,6 +131,7 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
         ingredients: string[],
         instructions: string[],
         nutrition: {
+          calories: number,
           protein: number,
           carbs: number,
           fat: number
