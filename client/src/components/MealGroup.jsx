@@ -1,6 +1,11 @@
 import "./MealGroup.css";
 
-export default function MealGroup({ title, recipes, onCreateNew }) {
+export default function MealGroup({
+  title,
+  recipes,
+  onCreateNew,
+  onSelectRecipe,
+}) {
   return (
     <div className="meal-group">
       <h6>{title}</h6>
@@ -18,13 +23,21 @@ export default function MealGroup({ title, recipes, onCreateNew }) {
         </div>
         <ul>
           {recipes.length > 0 &&
-            recipes.map((recipe, idx) => (
-              <li className="picker__item" key={idx}>
-                <img
-                  src={`data:image/png;base64,${recipe.image}`}
-                  alt={recipe.title}
-                />
-                <p className="body-s">{recipe.title}</p>
+            recipes.map((recipe) => (
+              <li className="picker__item" key={recipe.id}>
+                <label>
+                  <input
+                    type="checkbox"
+                    onChange={(e) =>
+                      onSelectRecipe(recipe.id, e.target.checked)
+                    }
+                  />
+                  <img
+                    src={`data:image/png;base64,${recipe.image}`}
+                    alt={recipe.title}
+                  />
+                  <p className="body-s">{recipe.title}</p>
+                </label>
               </li>
             ))}
         </ul>
