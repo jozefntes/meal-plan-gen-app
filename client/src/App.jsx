@@ -5,6 +5,7 @@ import Home from "./Home";
 import MealPlanGenerator from "./MealPlanGenerator";
 import SignUp from "./components/SignUp";
 import SignIn from "./components/SignIn";
+import MealInfo from "./MealInfo";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -15,6 +16,9 @@ function App() {
     page("/generate", () => setRoute("generate"));
     page("/signin", () => setRoute("signin"));
     page("/register", () => setRoute("register"));
+    page("/recipe/:id", (ctx) =>
+      setRoute({ name: "recipe", id: ctx.params.id })
+    );
     page.start();
   }, []);
 
@@ -32,6 +36,11 @@ function App() {
       )}
       {route === "signin" && <SignIn />}
       {route === "register" && <SignUp />}
+      {route.name === "recipe" && (
+        <ProtectedRoute>
+          <MealInfo id={route.id} />
+        </ProtectedRoute>
+      )}
     </>
   );
 }
