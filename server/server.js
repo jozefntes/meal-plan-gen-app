@@ -142,6 +142,91 @@ app.get("/api/recipe/:id", verifyToken, async (req, res) => {
   }
 });
 
+app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
+  const { uid, selectedMeals, weekNumber } = req.body;
+
+  if (!uid || !selectedMeals || weekNumber === undefined) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  // Calculate the start date based on the weekNumber
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // 0 (Sunday) to 6 (Saturday)
+  const diffToMonday = (dayOfWeek + 6) % 7; // Calculate the difference to Monday
+  const mondayOfCurrentWeek = new Date(today.setDate(today.getDate() - diffToMonday));
+  const weekStartDate = new Date(mondayOfCurrentWeek.setDate(mondayOfCurrentWeek.getDate() + weekNumber * 7)).toISOString().split("T")[0];
+
+  try {
+    const prompt = `Generate a meal plan for the week starting on ${weekStartDate} 
+                    using the following meals: ${JSON.stringify(selectedMeals)}. 
+                    The meal plan should be balanced and include breakfast, lunch, 
+                    dinner, and snacks for each day.
+                    The response should be a JSON object with the following schema:
+                    dates: [
+                      {
+                        date: string,
+                        meals: {
+                          breakfast: string,
+                          lunch: string,
+                          dinner: string,
+                          snack: string
+                        }
+                      }
+                    ]`;
+
+    const result = await model.generateContent(prompt);
+    const mealPlanText = await result.response.text();
+
+    const mealPlan = JSON.parse(mealPlanText);
+
+    // Save meal plan to Firebase
+    const userDocRef = db.collection("plans").doc(uid);
+    const datesCollectionRef = userDocRef.collection("dates");
+
+    for (const day of mealPlan.dates) {
+      const dateDocRef = datesCollectionRef.doc(day.date);
+      const mealsCollectionRef = dateDocRef.collection("meals");
+
+      for (const [mealType, mealTitle] of Object.entries(day.meals)) {
+        const mealDocRef = mealsCollectionRef.doc();
+        await mealDocRef.set({
+          title: mealTitle,
+          mealGroup: getMealGroup(mealType),
+          done: false,
+        });
+      }
+
+      await dateDocRef.set({
+        date: day.date,
+      });
+    }
+
+    await userDocRef.set({
+      uid: uid,
+    });
+
+    res.status(200).json({ message: "Meal plan generated successfully", mealPlan });
+  } catch (error) {
+    console.error("Error generating meal plan:", error);
+    res.status(500).json({ error: "Failed to generate meal plan" });
+  }
+});
+
+function getMealGroup(mealType) {
+  switch (mealType) {
+    case "breakfast":
+      return 1;
+    case "lunch":
+      return 2;
+    case "dinner":
+      return 3;
+    case "snack":
+      return 4;
+    default:
+      return 0;
+  }
+}
+
 app.post("/api/generate_recipe", verifyToken, async (req, res) => {
   const { uid, ingredients, minProtein, maxCarbs, maxFat, mealGroup } =
     req.body;
