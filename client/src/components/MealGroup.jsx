@@ -25,13 +25,13 @@ export default function MealGroup({
           {recipes.length > 0 &&
             recipes.map((recipe) => (
               <li className="picker__item" key={recipe.id}>
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) =>
-                      onSelectRecipe(recipe.id, e.target.checked)
-                    }
-                  />
+                <input
+                  type="checkbox"
+                  className="hidden-checkbox"
+                  id={`recipe-${recipe.id}`}
+                  onChange={(e) => onSelectRecipe(recipe.id, e.target.checked)}
+                />
+                <label className="recipe-label" htmlFor={`recipe-${recipe.id}`}>
                   <img
                     src={`data:image/png;base64,${recipe.image}`}
                     alt={recipe.title}

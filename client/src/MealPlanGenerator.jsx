@@ -82,7 +82,9 @@ export default function MealPlanGenerator() {
     setSelectedRecipes((prevSelectedRecipes) => {
       const updatedRecipes = { ...prevSelectedRecipes };
       if (isSelected) {
-        updatedRecipes[mealGroup].push(recipeId);
+        if (!updatedRecipes[mealGroup].includes(recipeId)) {
+          updatedRecipes[mealGroup].push(recipeId);
+        }
       } else {
         updatedRecipes[mealGroup] = updatedRecipes[mealGroup].filter(
           (id) => id !== recipeId
