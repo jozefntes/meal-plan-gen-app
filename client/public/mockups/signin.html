@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Meal Plan Generator</title>
+    <link rel="stylesheet" href="/src/components/SignUp.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <div class="container">
+        <div class="photo-section">
+            <img src="/images/signupimg.jpeg" alt="Meal Prep Photo">
+        </div>
+        <div class="form-section">
+            <div class="header-container">
+            <img src="/icons/logo.svg" alt="Meal Prep Logo" />
+            <header>Welcome Back to Meal Plan</header>
+            </div>
+            <h2>Sign In to Meal Plan Generator</h2>
+            <form onsubmit="handleSubmit(event)">
+                <div>
+                    <label for="email">Email</label><br/>
+                    <input type="email" id="email" name="email" placeholder="Email or Phone Number" required>
+                </div>
+                <div class="password-container">
+                    <label for="password">Password</label><br/>
+                    <input type="password" id="password" name="password" placeholder="Enter Password" required>
+                    <img 
+                        src="/images/showPassword.svg" 
+                        alt="Toggle Password Visibility" 
+                        class="toggle-password-button" 
+                        onclick="togglePasswordVisibility()"
+                    />
+                </div>
+                <button type="submit">Sign In</button>
+            </form>
+            <div class="google-button-container">
+                <button onclick="handleGoogleSignIn()" class="google-signin-button">
+                    <img src="/icons/google.svg" alt="Google Icon" className="google-icon" />
+                    Sign in with Google
+                </button>
+            </div>
+            <p class="link">
+                Don't have an account? <span onclick="redirectToSignUp()">Sign Up</span>
+            </p>
+        </div>
+    </div>
+    <script>
+        function handleSubmit(event) {
+            event.preventDefault();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            
+            console.log("Signing in with:", email, password);
+            window.location.href = "/home"; 
+        }
+
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById("password");
+            const toggleIcon = document.querySelector(".toggle-password-button");
+
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                toggleIcon.src = "/images/noShowPassword.svg"; 
+            } else {
+                passwordInput.type = "password";
+                toggleIcon.src = "/images/showPassword.svg"; 
+            }
+        }
+
+        function handleGoogleSignIn() {
+            console.log("Google Sign-In Triggered");
+            window.location.href = "/home"; 
+        }
+
+        function redirectToSignUp() {
+            window.location.href = "/register";
+        }
+    </script>
+</body>
+</html>

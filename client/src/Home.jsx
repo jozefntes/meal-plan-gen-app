@@ -96,13 +96,13 @@ export default function Home() {
         <ul className="meals">
           {selectedDayMeals ? (
             selectedDayMeals.map(
-              ({ id, time, name, imageURL, protein, carbs, fat, done }) => (
+              ({ id, time, name, image, protein, carbs, fat, done }) => (
                 <MealCard
                   key={id}
                   id={id}
                   time={time}
                   name={name}
-                  imageURL={imageURL}
+                  image={image}
                   protein={protein}
                   carbs={carbs}
                   fat={fat}
