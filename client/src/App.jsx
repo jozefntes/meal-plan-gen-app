@@ -7,6 +7,7 @@ import SignUp from "./components/SignUp";
 import SignIn from "./components/SignIn";
 import MealInfo from "./MealInfo";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Forbidden from "./components/Forbidden";
 
 function App() {
   const [route, setRoute] = useState("home");
@@ -19,6 +20,8 @@ function App() {
     page("/recipe/:id", (ctx) =>
       setRoute({ name: "recipe", id: ctx.params.id })
     );
+    page("/forbidden", () => setRoute("forbidden"));
+    page("*", () => setRoute("home"));
     page.start();
   }, []);
 
@@ -39,6 +42,11 @@ function App() {
       {route.name === "recipe" && (
         <ProtectedRoute>
           <MealInfo id={route.id} />
+        </ProtectedRoute>
+      )}
+      {route === "forbidden" && (
+        <ProtectedRoute>
+          <Forbidden />
         </ProtectedRoute>
       )}
     </>

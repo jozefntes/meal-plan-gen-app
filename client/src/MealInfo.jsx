@@ -31,6 +31,10 @@ export default function MealPlanGenerator({ id }) {
             if (response.status === 404) {
               page("/");
               return null;
+            } else if (response.status === 403) {
+              console.error("Access forbidden: insufficient permissions.");
+              page("/forbidden");
+              return null;
             }
 
             return response.json();
