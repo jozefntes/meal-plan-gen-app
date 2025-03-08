@@ -87,6 +87,11 @@ app.get("/api/recipes/:uid", verifyToken, async (req, res) => {
     return res.status(400).json({ error: "User ID is required" });
   }
 
+  // Verify that the uid from the token matches the uid parameter
+  if (req.user.uid !== uid) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
   try {
     const q = db.collection("recipes").where("uid", "==", uid);
     const querySnapshot = await q.get();
@@ -107,6 +112,36 @@ app.get("/api/recipes/:uid", verifyToken, async (req, res) => {
   }
 });
 
+// Fetch a specific recipe by document ID
+app.get("/api/recipe/:id", verifyToken, async (req, res) => {
+  const recipeId = req.params.id;
+
+  if (!recipeId) {
+    return res.status(400).json({ error: "Recipe ID is required" });
+  }
+
+  try {
+    const docRef = db.collection("recipes").doc(recipeId);
+    const doc = await docRef.get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ error: "Recipe not found" });
+    }
+
+    const recipe = doc.data();
+
+    // Verify that the uid from the token matches the uid in the recipe
+    if (req.user.uid !== recipe.uid) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    res.status(200).json(recipe);
+  } catch (error) {
+    console.error("Error fetching recipe: ", error);
+    res.status(500).json({ error: "Failed to fetch recipe" });
+  }
+});
+
 app.post("/api/generate_recipe", verifyToken, async (req, res) => {
   const { uid, ingredients, minProtein, maxCarbs, maxFat, mealGroup } =
     req.body;
@@ -120,6 +155,11 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
     !mealGroup
   ) {
     return res.status(400).json({ error: "All fields are required" });
+  }
+
+  // Verify that the uid from the token matches the uid parameter
+  if (req.user.uid !== uid) {
+    return res.status(403).json({ error: "Forbidden" });
   }
 
   try {
