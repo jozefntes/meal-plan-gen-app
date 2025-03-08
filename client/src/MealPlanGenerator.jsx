@@ -16,6 +16,12 @@ export default function MealPlanGenerator() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMealGroup, setSelectedMealGroup] = useState(null);
   const [recipes, setRecipes] = useState([]);
+  const [selectedRecipes, setSelectedRecipes] = useState({
+    breakfast: [],
+    lunch: [],
+    dinner: [],
+    snack: [],
+  });
 
   useEffect(() => {
     // Fetch initial recipes data from the server
@@ -72,6 +78,23 @@ export default function MealPlanGenerator() {
     );
   };
 
+  const handleSelectRecipe = (mealGroup, recipeId, isSelected) => {
+    setSelectedRecipes((prevSelectedRecipes) => {
+      const updatedRecipes = { ...prevSelectedRecipes };
+      if (isSelected) {
+        if (!updatedRecipes[mealGroup].includes(recipeId)) {
+          updatedRecipes[mealGroup].push(recipeId);
+        }
+      } else {
+        updatedRecipes[mealGroup] = updatedRecipes[mealGroup].filter(
+          (id) => id !== recipeId
+        );
+      }
+      console.log(updatedRecipes);
+      return updatedRecipes;
+    });
+  };
+
   return (
     <>
       <Sidenav />
@@ -93,6 +116,9 @@ export default function MealPlanGenerator() {
               recipes.filter((recipe) => recipe.mealGroup === 1)
             }
             onCreateNew={() => handleOpenModal(1)}
+            onSelectRecipe={(recipeId, isSelected) =>
+              handleSelectRecipe("breakfast", recipeId, isSelected)
+            }
           />
           <MealGroup
             title="Lunch"
@@ -101,6 +127,9 @@ export default function MealPlanGenerator() {
               recipes.filter((recipe) => recipe.mealGroup === 2)
             }
             onCreateNew={() => handleOpenModal(2)}
+            onSelectRecipe={(recipeId, isSelected) =>
+              handleSelectRecipe("lunch", recipeId, isSelected)
+            }
           />
           <MealGroup
             title="Dinner"
@@ -109,6 +138,9 @@ export default function MealPlanGenerator() {
               recipes.filter((recipe) => recipe.mealGroup === 3)
             }
             onCreateNew={() => handleOpenModal(3)}
+            onSelectRecipe={(recipeId, isSelected) =>
+              handleSelectRecipe("dinner", recipeId, isSelected)
+            }
           />
           <MealGroup
             title="Snack"
@@ -117,6 +149,9 @@ export default function MealPlanGenerator() {
               recipes.filter((recipe) => recipe.mealGroup === 4)
             }
             onCreateNew={() => handleOpenModal(4)}
+            onSelectRecipe={(recipeId, isSelected) =>
+              handleSelectRecipe("snack", recipeId, isSelected)
+            }
           />
         </div>
         <button className="btn">
