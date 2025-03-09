@@ -304,7 +304,7 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
   }
 });
 
-app.post("/api/generate_recipe", async (req, res) => {
+app.post("/api/generate_recipe", verifyToken, async (req, res) => {
   const { uid, ingredients, minProtein, maxCarbs, maxFat, mealGroup } =
     req.body;
 
