@@ -145,89 +145,166 @@ app.get("/api/recipe/:id", verifyToken, async (req, res) => {
 app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
   const { uid, selectedMeals, weekNumber } = req.body;
 
-  if (!uid || !selectedMeals || weekNumber === undefined) {
+  if (!uid || !selectedMeals || !weekNumber) {
     return res.status(400).json({ error: "All fields are required" });
+  }
+
+  if (typeof weekNumber !== "number" || weekNumber < 0 || weekNumber > 3) {
+    return res.status(400).json({ error: "Invalid week number" });
+  }
+
+  if (req.user.uid !== uid) {
+    return res.status(403).json({ error: "Forbidden" });
   }
 
   // Calculate the start date based on the weekNumber
   const today = new Date();
   const dayOfWeek = today.getDay(); // 0 (Sunday) to 6 (Saturday)
   const diffToMonday = (dayOfWeek + 6) % 7; // Calculate the difference to Monday
-  const mondayOfCurrentWeek = new Date(today.setDate(today.getDate() - diffToMonday));
-  const weekStartDate = new Date(mondayOfCurrentWeek.setDate(mondayOfCurrentWeek.getDate() + weekNumber * 7)).toISOString().split("T")[0];
+  const mondayOfCurrentWeek = new Date(today);
+  mondayOfCurrentWeek.setDate(today.getDate() - diffToMonday);
+  const weekStartDate = new Date(mondayOfCurrentWeek);
+  weekStartDate.setDate(mondayOfCurrentWeek.getDate() + weekNumber * 7);
+  const formattedWeekStartDate = weekStartDate.toLocaleDateString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    year: "numeric",
+  });
 
   try {
-    const prompt = `Generate a meal plan for the week starting on ${weekStartDate} 
-                    using the following meals: ${JSON.stringify(selectedMeals)}. 
-                    The meal plan should be balanced and include breakfast, lunch, 
-                    dinner, and snacks for each day.
+    const recipes = [];
+    for (const mealId of selectedMeals) {
+      const docRef = db.collection("recipes").doc(mealId);
+      const doc = await docRef.get();
+
+      if (!doc.exists) {
+        return res.status(404).json({ error: "Recipe not found" });
+      }
+
+      if (doc.data().uid !== uid) {
+        return res.status(403).json({ error: "Forbidden" });
+      }
+
+      const recipe = doc.data();
+      recipe.id = doc.id;
+      recipes.push(recipe);
+    }
+
+    // filter recipes by meal group
+    const breakfastRecipes = recipes.filter((recipe) => recipe.mealGroup === 1);
+    const lunchRecipes = recipes.filter((recipe) => recipe.mealGroup === 2);
+    const dinnerRecipes = recipes.filter((recipe) => recipe.mealGroup === 3);
+    const snackRecipes = recipes.filter((recipe) => recipe.mealGroup === 4);
+
+    console.log("Breakfast recipes:", breakfastRecipes);
+    console.log("Lunch recipes:", lunchRecipes);
+    console.log("Dinner recipes:", dinnerRecipes);
+    console.log("Snack recipes:", snackRecipes);
+
+    try {
+      const prompt = `Generate a meal plan for the week starting on ${formattedWeekStartDate} (a Monday)
+                    using the following meals:
+                    Breakfast - ${breakfastRecipes
+                      .map(
+                        (r) =>
+                          `${r.id}: ${r.title} (${r.nutrition.calories}cal, ${r.nutrition.protein}p, ${r.nutrition.carbs}c, ${r.nutrition.fat}f)`
+                      )
+                      .join(" | ")}
+                    Lunch - ${lunchRecipes
+                      .map(
+                        (r) =>
+                          `${r.id}: ${r.title} (${r.nutrition.calories}cal, ${r.nutrition.protein}p, ${r.nutrition.carbs}c, ${r.nutrition.fat}f)`
+                      )
+                      .join(" | ")}
+                    Dinner - ${dinnerRecipes
+                      .map(
+                        (r) =>
+                          `${r.id}: ${r.title} (${r.nutrition.calories}cal, ${r.nutrition.protein}p, ${r.nutrition.carbs}c, ${r.nutrition.fat}f)`
+                      )
+                      .join(" | ")}
+                    Snack - ${snackRecipes
+                      .map(
+                        (r) =>
+                          `${r.id}: ${r.title} (${r.nutrition.calories}cal, ${r.nutrition.protein}p, ${r.nutrition.carbs}c, ${r.nutrition.fat}f)`
+                      )
+                      .join(" | ")}
+                    The meal plan should be balanced using the nutritional values included.
                     The response should be a JSON object with the following schema:
                     dates: [
                       {
                         date: string,
-                        meals: {
-                          breakfast: string,
-                          lunch: string,
-                          dinner: string,
-                          snack: string
-                        }
+                        meals: [
+                          {
+                            id: string,
+                          }
+                        ]
                       }
                     ]`;
 
-    const result = await model.generateContent(prompt);
-    const mealPlanText = await result.response.text();
+      const result = await model.generateContent(prompt);
+      const mealPlanText = await result.response.text();
 
-    const mealPlan = JSON.parse(mealPlanText);
+      const mealPlan = JSON.parse(mealPlanText);
 
-    // Save meal plan to Firebase
-    const userDocRef = db.collection("plans").doc(uid);
-    const datesCollectionRef = userDocRef.collection("dates");
+      // Populate the mealPlan array with the required format
+      const populatedMealPlan = mealPlan.dates.map((day) => ({
+        date: day.date,
+        meals: day.meals.map((meal) => {
+          const recipe = recipes.find((r) => r.id === meal.id);
+          return {
+            id: recipe.id,
+            groupMeal: recipe.mealGroup,
+            title: recipe.title,
+            image: recipe.image || "",
+            nutrition: {
+              calories: recipe.nutrition.calories,
+              protein: recipe.nutrition.protein,
+              carbs: recipe.nutrition.carbs,
+              fat: recipe.nutrition.fat,
+            },
+            done: false,
+          };
+        }),
+      }));
 
-    for (const day of mealPlan.dates) {
-      const dateDocRef = datesCollectionRef.doc(day.date);
-      const mealsCollectionRef = dateDocRef.collection("meals");
+      // Save meal plan to Firebase
+      const userDocRef = db.collection("plans").doc(uid);
+      const userDoc = await userDocRef.get();
 
-      for (const [mealType, mealTitle] of Object.entries(day.meals)) {
-        const mealDocRef = mealsCollectionRef.doc();
-        await mealDocRef.set({
-          title: mealTitle,
-          mealGroup: getMealGroup(mealType),
-          done: false,
+      if (!userDoc.exists) {
+        await userDocRef.set({ uid: uid });
+      }
+
+      const datesCollectionRef = userDocRef.collection("dates");
+
+      for (const day of populatedMealPlan) {
+        const dateDocRef = await datesCollectionRef.add({ date: day.date });
+        const mealsCollectionRef = dateDocRef.collection("meals");
+
+        for (const meal of day.meals) {
+          const mealDocRef = mealsCollectionRef.doc();
+          await mealDocRef.set(meal);
+        }
+
+        await dateDocRef.set({
+          date: day.date,
         });
       }
 
-      await dateDocRef.set({
-        date: day.date,
+      res.status(200).json({
+        message: "Meal plan generated successfully",
       });
+    } catch (error) {
+      console.error("Error generating meal plan:", error);
+      res.status(500).json({ error: "Failed to generate meal plan" });
     }
-
-    await userDocRef.set({
-      uid: uid,
-    });
-
-    res.status(200).json({ message: "Meal plan generated successfully", mealPlan });
   } catch (error) {
-    console.error("Error generating meal plan:", error);
-    res.status(500).json({ error: "Failed to generate meal plan" });
+    console.error("Error fetching recipes:", error);
+    return res.status(500).json({ error: "Failed to fetch recipes" });
   }
 });
 
-function getMealGroup(mealType) {
-  switch (mealType) {
-    case "breakfast":
-      return 1;
-    case "lunch":
-      return 2;
-    case "dinner":
-      return 3;
-    case "snack":
-      return 4;
-    default:
-      return 0;
-  }
-}
-
-app.post("/api/generate_recipe", verifyToken, async (req, res) => {
+app.post("/api/generate_recipe", async (req, res) => {
   const { uid, ingredients, minProtein, maxCarbs, maxFat, mealGroup } =
     req.body;
 
@@ -243,9 +320,9 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
   }
 
   // Verify that the uid from the token matches the uid parameter
-  if (req.user.uid !== uid) {
-    return res.status(403).json({ error: "Forbidden" });
-  }
+  // if (req.user.uid !== uid) {
+  //   return res.status(403).json({ error: "Forbidden" });
+  // }
 
   try {
     const prompt = `Generate a recipe using the following ingredients: ${ingredients}. The recipe should have at least ${minProtein} g of protein, and as much as ${maxCarbs} g of carbs, and ${maxFat} g of fat. Using this JSON schema:
@@ -281,6 +358,7 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
     recipe.mealGroup = mealGroup;
     recipe.uid = uid;
 
+    /*
     // Generate an image for the recipe
     try {
       const imageBlob = await hf.textToImage({
@@ -300,6 +378,7 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
       console.error("Error generating image:", error);
       recipe.image = null;
     }
+    */
 
     // Save recipe to database
     try {
