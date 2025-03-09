@@ -320,9 +320,9 @@ app.post("/api/generate_recipe", async (req, res) => {
   }
 
   // Verify that the uid from the token matches the uid parameter
-  // if (req.user.uid !== uid) {
-  //   return res.status(403).json({ error: "Forbidden" });
-  // }
+  if (req.user.uid !== uid) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
 
   try {
     const prompt = `Generate a recipe using the following ingredients: ${ingredients}. The recipe should have at least ${minProtein} g of protein, and as much as ${maxCarbs} g of carbs, and ${maxFat} g of fat. Using this JSON schema:
@@ -358,7 +358,6 @@ app.post("/api/generate_recipe", async (req, res) => {
     recipe.mealGroup = mealGroup;
     recipe.uid = uid;
 
-    /*
     // Generate an image for the recipe
     try {
       const imageBlob = await hf.textToImage({
@@ -378,7 +377,6 @@ app.post("/api/generate_recipe", async (req, res) => {
       console.error("Error generating image:", error);
       recipe.image = null;
     }
-    */
 
     // Save recipe to database
     try {
