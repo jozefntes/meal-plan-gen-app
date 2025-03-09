@@ -132,7 +132,7 @@ export default function MealPlanGenerator() {
         body: JSON.stringify({
           uid: uid,
           selectedMeals: selectedRecipeIds,
-          weekNumber: 0,
+          weekNumber: selectedWeek,
         }),
       })
         .then((response) => response.json())
