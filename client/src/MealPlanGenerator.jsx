@@ -12,6 +12,7 @@ import { SERVER_URL } from "./constants";
 import "./MealPlanGenerator.css";
 
 export default function MealPlanGenerator() {
+  const [errorMessage, setErrorMessage] = useState(null);
   const [selectedWeek, setSelectedWeek] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMealGroup, setSelectedMealGroup] = useState(null);
@@ -95,6 +96,60 @@ export default function MealPlanGenerator() {
     });
   };
 
+  const handleGenerateMealPlan = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (user) {
+      const idToken = await user.getIdToken();
+      const uid = user.uid;
+
+      const selectedRecipeIds = [
+        ...selectedRecipes.breakfast,
+        ...selectedRecipes.lunch,
+        ...selectedRecipes.dinner,
+        ...selectedRecipes.snack,
+      ];
+
+      // Validation logic
+      const mealGroups = ["breakfast", "lunch", "dinner", "snack"];
+      for (const group of mealGroups) {
+        const count = selectedRecipes[group].length;
+        if (count < 2 || count > 3) {
+          setErrorMessage(
+            `Please select between 2 and 3 recipes for ${group}.`
+          );
+          return;
+        }
+      }
+
+      fetch(`${SERVER_URL}/api/generate_meal_plan`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          uid: uid,
+          selectedMeals: selectedRecipeIds,
+          weekNumber: selectedWeek,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            setErrorMessage(data.error);
+          } else {
+            console.log("Meal plan generated:", data);
+            setErrorMessage(null);
+          }
+        })
+        .catch((error) => console.error("Error generating meal plan:", error));
+    } else {
+      console.log("No user is signed in.");
+    }
+  };
+
   return (
     <>
       <Sidenav />
@@ -154,7 +209,12 @@ export default function MealPlanGenerator() {
             }
           />
         </div>
-        <button className="btn">
+        {errorMessage && (
+          <div className="error-message">
+            <p>{errorMessage}</p>
+          </div>
+        )}
+        <button className="btn" onClick={handleGenerateMealPlan}>
           <p className="btn-text">Generate 🔀</p>
         </button>
       </div>
