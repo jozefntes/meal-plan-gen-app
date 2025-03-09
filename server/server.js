@@ -145,7 +145,12 @@ app.get("/api/recipe/:id", verifyToken, async (req, res) => {
 app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
   const { uid, selectedMeals, weekNumber } = req.body;
 
-  if (!uid || !selectedMeals || !weekNumber) {
+  if (
+    !uid ||
+    !selectedMeals ||
+    weekNumber === undefined ||
+    weekNumber === null
+  ) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
