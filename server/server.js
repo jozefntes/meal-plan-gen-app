@@ -142,6 +142,46 @@ app.get("/api/recipe/:id", verifyToken, async (req, res) => {
   }
 });
 
+app.get("/api/meal_plans/:uid", verifyToken, async (req, res) => {
+  const uid = req.params.uid;
+
+  if (!uid) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  if (req.user.uid !== uid) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
+  try {
+    const q = db.collection("plans").doc(uid).collection("dates");
+    const querySnapshot = await q.get();
+
+    if (querySnapshot.empty) {
+      return res
+        .status(404)
+        .json({ error: "No meal plans found for this user" });
+    }
+
+    const mealPlans = [];
+    for (const doc of querySnapshot.docs) {
+      const dateData = { id: doc.id, ...doc.data() };
+      const mealsSnapshot = await doc.ref.collection("meals").get();
+      const meals = mealsSnapshot.docs.map((mealDoc) => ({
+        id: mealDoc.id,
+        ...mealDoc.data(),
+      }));
+      dateData.meals = meals;
+      mealPlans.push(dateData);
+    }
+
+    res.status(200).json(mealPlans);
+  } catch (error) {
+    console.error("Error fetching meal plans: ", error);
+    res.status(500).json({ error: "Failed to fetch meal plans" });
+  }
+});
+
 app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
   const { uid, selectedMeals, weekNumber } = req.body;
 
