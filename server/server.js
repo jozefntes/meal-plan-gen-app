@@ -201,11 +201,6 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
     const dinnerRecipes = recipes.filter((recipe) => recipe.mealGroup === 3);
     const snackRecipes = recipes.filter((recipe) => recipe.mealGroup === 4);
 
-    console.log("Breakfast recipes:", breakfastRecipes);
-    console.log("Lunch recipes:", lunchRecipes);
-    console.log("Dinner recipes:", dinnerRecipes);
-    console.log("Snack recipes:", snackRecipes);
-
     try {
       const prompt = `Generate a meal plan for the week starting on ${formattedWeekStartDate} (a Monday)
                     using the following meals:
