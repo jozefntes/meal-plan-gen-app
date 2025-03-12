@@ -25,9 +25,9 @@ export default function Home() {
   const [selectedDay, setSelectedDay] = useState(today);
   const [currentWeek, setCurrentWeek] = useState(0);
   const [mealPlans, setMealPlans] = useState([]);
-
   const [selectedDayMeals, setSelectedDayMeals] = useState(null);
   const [selectedDayProgress, setSelectedDayProgress] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const generateDays = (weekOffset) => {
     const now = new Date();
@@ -87,8 +87,14 @@ export default function Home() {
             }
             return response.json();
           })
-          .then((data) => setMealPlans(data))
-          .catch((error) => console.error("Error fetching meal plans:", error));
+          .then((data) => {
+            setMealPlans(data);
+            setLoading(false);
+          })
+          .catch((error) => {
+            console.error("Error fetching meal plans:", error);
+            setLoading(false);
+          });
       }
     })();
   }, []);
@@ -124,26 +130,30 @@ export default function Home() {
           currentWeek={currentWeek}
         />
 
-        <ul className="meals">
-          {selectedDayMeals ? (
-            [...selectedDayMeals]
-              .sort((a, b) => a.groupMeal - b.groupMeal)
-              .map(({ id, groupMeal, title, image, nutrition, done }) => (
-                <MealCard
-                  key={id}
-                  id={id}
-                  groupMeal={groupMeal}
-                  title={title}
-                  image={image}
-                  nutrition={nutrition}
-                  done={done}
-                  onMealDone={handleMealDone}
-                />
-              ))
-          ) : (
-            <h4>No meals for this day</h4>
-          )}
-        </ul>
+        {loading ? (
+          <h1>Loading...</h1>
+        ) : (
+          <ul className="meals">
+            {selectedDayMeals ? (
+              [...selectedDayMeals]
+                .sort((a, b) => a.groupMeal - b.groupMeal)
+                .map(({ id, groupMeal, title, image, nutrition, done }) => (
+                  <MealCard
+                    key={id}
+                    id={id}
+                    groupMeal={groupMeal}
+                    title={title}
+                    image={image}
+                    nutrition={nutrition}
+                    done={done}
+                    onMealDone={handleMealDone}
+                  />
+                ))
+            ) : (
+              <h4>No meals for this day</h4>
+            )}
+          </ul>
+        )}
 
         <div className="summary">
           <TargetSummary progress={selectedDayProgress} userData={userData} />
