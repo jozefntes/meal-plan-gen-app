@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
+import { getAuth } from "firebase/auth";
 
 import DaySelector from "./components/DaySelector";
 import MealCard from "./components/MealCard";
 import Sidenav from "./components/Sidenav";
 import TargetSummary from "./components/TargetSummary";
 import EnergySummary from "./components/EnergySummary";
-import { dates, userData } from "./fakedata.json";
-import { MAX_WEEK, MIN_WEEK } from "./constants";
+import { userData } from "./fakedata.json";
+import { SERVER_URL, MAX_WEEK, MIN_WEEK } from "./constants";
 
 import "./Home.css";
 
@@ -23,6 +24,7 @@ export default function Home() {
 
   const [selectedDay, setSelectedDay] = useState(today);
   const [currentWeek, setCurrentWeek] = useState(0);
+  const [mealPlans, setMealPlans] = useState([]);
 
   const [selectedDayMeals, setSelectedDayMeals] = useState(null);
   const [selectedDayProgress, setSelectedDayProgress] = useState(null);
@@ -65,13 +67,42 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const selectedDayRecords = dates.find((day) => day.date === selectedDay);
+    (async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (user) {
+        const idToken = await user.getIdToken();
+        const uid = user.uid;
+        // Fetch all meal plans when the component mounts
+        fetch(`${SERVER_URL}/api/meal_plans/${uid}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        })
+          .then((response) => {
+            if (response.status === 404) {
+              return [];
+            }
+            return response.json();
+          })
+          .then((data) => setMealPlans(data))
+          .catch((error) => console.error("Error fetching meal plans:", error));
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    const selectedDayRecords = mealPlans.find(
+      (day) => day.date === selectedDay
+    );
 
     setSelectedDayMeals(selectedDayRecords ? selectedDayRecords.meals : null);
     setSelectedDayProgress(
       selectedDayRecords ? selectedDayRecords.progress : null
     );
-  }, [selectedDay]);
+  }, [selectedDay, mealPlans]);
 
   return (
     <>
@@ -95,22 +126,20 @@ export default function Home() {
 
         <ul className="meals">
           {selectedDayMeals ? (
-            selectedDayMeals.map(
-              ({ id, time, name, image, protein, carbs, fat, done }) => (
+            [...selectedDayMeals]
+              .sort((a, b) => a.groupMeal - b.groupMeal)
+              .map(({ id, groupMeal, title, image, nutrition, done }) => (
                 <MealCard
                   key={id}
                   id={id}
-                  time={time}
-                  name={name}
+                  groupMeal={groupMeal}
+                  title={title}
                   image={image}
-                  protein={protein}
-                  carbs={carbs}
-                  fat={fat}
+                  nutrition={nutrition}
                   done={done}
                   onMealDone={handleMealDone}
                 />
-              )
-            )
+              ))
           ) : (
             <h4>No meals for this day</h4>
           )}
