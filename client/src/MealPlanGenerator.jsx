@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
+import page from "page";
 
 import Sidenav from "./components/Sidenav";
 import CreateRecipe from "./components/CreateRecipe";
@@ -8,7 +9,6 @@ import MealGroup from "./components/MealGroup";
 
 import { SERVER_URL } from "./constants";
 
-// import { recipes } from "./fakedata.json";
 import "./MealPlanGenerator.css";
 
 export default function MealPlanGenerator() {
@@ -23,6 +23,7 @@ export default function MealPlanGenerator() {
     dinner: [],
     snack: [],
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // Fetch initial recipes data from the server
@@ -123,6 +124,8 @@ export default function MealPlanGenerator() {
         }
       }
 
+      setLoading(true);
+
       fetch(`${SERVER_URL}/api/generate_meal_plan`, {
         method: "POST",
         headers: {
@@ -142,9 +145,13 @@ export default function MealPlanGenerator() {
           } else {
             console.log("Meal plan generated:", data);
             setErrorMessage(null);
+            page("/");
           }
         })
-        .catch((error) => console.error("Error generating meal plan:", error));
+        .catch((error) => console.error("Error generating meal plan:", error))
+        .finally(() => {
+          setLoading(false);
+        });
     } else {
       console.log("No user is signed in.");
     }
@@ -214,8 +221,14 @@ export default function MealPlanGenerator() {
             <p>{errorMessage}</p>
           </div>
         )}
-        <button className="btn" onClick={handleGenerateMealPlan}>
-          <p className="btn-text">Generate 🔀</p>
+        <button
+          className="btn"
+          onClick={handleGenerateMealPlan}
+          disabled={loading}
+        >
+          <p className="btn-text">
+            {loading ? "Generating..." : "Generate 🔀"}
+          </p>
         </button>
       </div>
       {isModalOpen && (
