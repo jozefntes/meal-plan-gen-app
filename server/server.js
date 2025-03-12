@@ -172,6 +172,18 @@ app.get("/api/meal_plans/:uid", verifyToken, async (req, res) => {
         ...mealDoc.data(),
       }));
       dateData.meals = meals;
+
+      // Format the date before adding it to the mealPlans array
+      const formattedDate = new Date(dateData.date).toLocaleDateString(
+        "en-US",
+        {
+          month: "2-digit",
+          day: "2-digit",
+          year: "numeric",
+        }
+      );
+      dateData.date = formattedDate;
+
       mealPlans.push(dateData);
     }
 
