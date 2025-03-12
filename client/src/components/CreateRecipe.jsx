@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { getAuth } from "firebase/auth";
 import { SERVER_URL } from "../constants";
 
 import "./CreateRecipe.css";
 
 const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
+  const [loading, setLoading] = useState(false);
+
   const createRecipe = async (event) => {
     event.preventDefault();
 
@@ -39,33 +42,41 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
       console.log("Max Carbs:", maxCarbs);
       console.log("Max Fat:", maxFat);
 
-      const response = await fetch(`${SERVER_URL}/api/generate_recipe`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${idToken}`,
-        },
-        body: JSON.stringify({
-          uid,
-          ingredients,
-          minProtein: parseInt(minProtein),
-          maxCarbs: parseInt(maxCarbs),
-          maxFat: parseInt(maxFat),
-          mealGroup,
-        }),
-      });
+      setLoading(true);
 
-      if (!response.ok) {
-        throw new Error("Failed to generate recipe");
+      try {
+        const response = await fetch(`${SERVER_URL}/api/generate_recipe`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${idToken}`,
+          },
+          body: JSON.stringify({
+            uid,
+            ingredients,
+            minProtein: parseInt(minProtein),
+            maxCarbs: parseInt(maxCarbs),
+            maxFat: parseInt(maxFat),
+            mealGroup,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to generate recipe");
+        }
+
+        const data = await response.json();
+        console.log(data);
+        console.log("Generated recipe:", data.recipe);
+
+        onAddRecipe(data.recipe);
+        onClose();
+      } catch (error) {
+        console.error("Error generating recipe:", error);
+        alert("Failed to generate recipe. Please try again.");
+      } finally {
+        setLoading(false);
       }
-
-      const data = await response.json();
-      console.log(data);
-      console.log("Generated recipe:", data.recipe);
-
-      onAddRecipe(data.recipe);
-
-      onClose();
     } else {
       console.log("User not signed in");
     }
@@ -125,8 +136,13 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
             <button type="button" onClick={onClose} className="btn-text">
               Cancel
             </button>
-            <button type="submit" onClick={createRecipe} className="btn-text">
-              Create
+            <button
+              type="submit"
+              onClick={createRecipe}
+              className="btn-text"
+              disabled={loading}
+            >
+              {loading ? "Creating..." : "Create"}
             </button>
           </div>
         </form>
