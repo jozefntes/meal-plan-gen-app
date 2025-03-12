@@ -8,7 +8,7 @@ import { SERVER_URL } from "./constants";
 
 import "./MealInfo.css";
 
-export default function MealPlanGenerator({ id }) {
+export default function MealInfo({ id }) {
   const [meal, setMeal] = useState(null);
   const [loading, setLoading] = useState(true);
 
