@@ -3,6 +3,9 @@ import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
 import page from "page";
 import "./SignUp.css";
+import EyeIcon from "../icons/EyeIcon";
+import NoEyeIcon from "../icons/NoEyeIcon";
+import LogoIcon from "../icons/LogoIcon";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -47,7 +50,7 @@ const SignIn = () => {
       </div>
       <div className="form-section">
         <div className="header-container">
-          <img src="/icons/logo.svg" alt="Meal Prep Logo" />
+          <LogoIcon />
           <header>Welcome Back to Meal Plan</header>
           <h2>Sign In to Meal Plan Generator</h2>
         </div>
@@ -75,16 +78,21 @@ const SignIn = () => {
               onChange={handlePasswordChange}
               required
             />
-            <img
-              src={
-                showPassword
-                  ? "icons/noShowPassword.svg"
-                  : "icons/showPassword.svg"
-              }
-              alt="Toggle Password Visibility"
-              className="toggle-password-button"
-              onClick={passwordVisibility}
-            />
+            {showPassword ? (
+              <NoEyeIcon
+                color="var(--icon-color)"
+                size={24}
+                className="toggle-password-button"
+                onClick={passwordVisibility}
+              />
+            ) : (
+              <EyeIcon
+                color="var(--icon-color)"
+                size={24}
+                className="toggle-password-button"
+                onClick={passwordVisibility}
+              />
+            )}
           </div>
           <button type="submit">Sign In</button>
         </form>
@@ -99,7 +107,7 @@ const SignIn = () => {
           </button>
         </div>
         <p className="link">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <span onClick={() => page("/register")}>Sign Up</span>
         </p>
       </div>

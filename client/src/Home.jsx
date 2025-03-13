@@ -9,6 +9,7 @@ import { userData } from "./fakedata.json";
 import { SERVER_URL, MAX_WEEK, MIN_WEEK } from "./constants";
 
 import "./Home.css";
+import PlusIcon from "./icons/PlusIcon";
 
 export default function Home() {
   const getFormattedDate = (date) => {
@@ -115,7 +116,7 @@ export default function Home() {
         <div className="header">
           <h4>Personal Meal Plan</h4>
           <a className="btn" href="/generate">
-            <img src="../icons/plus-btn.svg" />
+            <PlusIcon />
             <p className="btn-text">Create Plan</p>
           </a>
         </div>

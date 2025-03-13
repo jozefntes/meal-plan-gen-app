@@ -45,11 +45,6 @@ ul {
     background-color: var(--target-bar);
 }
 
-.create-icon {
-    width: 80px;
-    height: auto;
-}
-
 .recipe-label,
 .create-new-btn {
     display: inline-flex;

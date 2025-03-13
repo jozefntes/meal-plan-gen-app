@@ -4,6 +4,12 @@ import { auth } from "../firebase";
 import page from "page";
 import useTheme from "../hooks/useTheme";
 import "./Sidenav.css";
+import HomeIcon from "../icons/HomeIcon";
+import UserIcon from "../icons/UserIcon";
+import SettingIcon from "../icons/SettingIcon";
+import MoonIcon from "../icons/MoonIcon";
+import LogoIcon from "../icons/LogoIcon";
+import SidebarIcon from "../icons/SidebarIcon";
 
 export default function Sidenav({ onToggleTheme }) {
   const { theme } = useTheme();
@@ -27,20 +33,20 @@ export default function Sidenav({ onToggleTheme }) {
       <div className="sidenav">
         <div className="brand-nav-list">
           <a href="#" className="brand" onClick={() => page("/")}>
-            <img src="../icons/logo.svg" />
+            <LogoIcon />
             <h6>Meal Plan</h6>
           </a>
           <div className="nav-list">
             <a href="#" className="nav-item active" onClick={() => page("/")}>
-              <img src="../icons/home.svg" className="icon" />
+              <HomeIcon color="var(--icon-color)" />
               <p className="body-m">Dashboard</p>
             </a>
             <a href="#" className="nav-item" onClick={() => page("/profile")}>
-              <img src="../icons/user.svg" />
+              <UserIcon color="var(--icon-color)" />
               <p className="body-m">Profile</p>
             </a>
             <a href="#" className="nav-item" onClick={() => page("/settings")}>
-              <img src="../icons/setting.svg" />
+              <SettingIcon color="var(--icon-color)" />
               <p className="body-m">Settings</p>
             </a>
           </div>
@@ -49,7 +55,7 @@ export default function Sidenav({ onToggleTheme }) {
         <div className="logout-toggle">
           <div className="dark-mode">
             <div className="nav-item">
-              <img src="../icons/moon.svg" />
+              <MoonIcon />
               <p className="body-m">Dark Mode</p>
             </div>
             <label className="switch">
@@ -67,7 +73,7 @@ export default function Sidenav({ onToggleTheme }) {
           </button>
         </div>
         <button className="menu-toggle">
-          <img src="../icons/sidebar.svg" />
+          <SidebarIcon color="var(--icon-color)" />
         </button>
       </div>
     </>

@@ -1,4 +1,5 @@
 import "./MealGroup.css";
+import CircledPlusIcon from "../icons/CircledPlusIcon";
 
 export default function MealGroup({
   title,
@@ -13,11 +14,7 @@ export default function MealGroup({
       <div className="picker">
         <div className="create-new-btn" onClick={onCreateNew}>
           <div>
-            <img
-              className="create-icon"
-              src="/icons/circle-dashed-plus.svg"
-              alt="Create New"
-            />
+            <CircledPlusIcon size={80} />
           </div>
           <p className="body-s">+ Create New</p>
         </div>

@@ -31,6 +31,7 @@
   --energy: var(--gray-300);
   --box-shadow: 10px 10px 30px rgba(174, 174, 192, 0.4), -10px -10px 30px rgb(255, 255, 255);
   --sidenav-shadow: 10px 10px 30px rgba(174, 174, 192, 0.4);
+  --icon-color: var(--gray-400);
 }
 
 * {
@@ -54,6 +55,7 @@
   --energy: var(--white-200);
   --box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.4), -10px -10px 30px rgba(0, 0, 0, 0.2);
   --sidenav-shadow: 10px 10px 30px rgba(0, 0, 0, 0.2);
+  --icon-color: var(--white-200);
 }
 
 body {
