@@ -17,7 +17,7 @@ export default function Sidenav() {
     <>
       <div className="sidenav">
         <div className="brand-nav-list">
-          <a href="#" className="brand">
+          <a href="#" className="brand" onClick={() => page("/")}>
             <img src="../icons/logo.svg" />
             <h6>Meal Plan</h6>
           </a>
