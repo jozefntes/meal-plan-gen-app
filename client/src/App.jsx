@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useTheme } from "./ThemeContext";
+import useTheme from "./hooks/useTheme";
 import page from "page";
 
 import Home from "./Home";
