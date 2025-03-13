@@ -17,20 +17,20 @@ export default function Sidenav() {
     <>
       <div className="sidenav">
         <div className="brand-nav-list">
-          <a href="#" className="brand">
+          <a href="#" className="brand" onClick={() => page("/")}>
             <img src="../icons/logo.svg" />
             <h6>Meal Plan</h6>
           </a>
           <div className="nav-list">
-            <a href="#" className="nav-item active">
+          <a href="#" className="nav-item active" onClick={() => page("/")}>
               <img src="../icons/home.svg" className="icon" />
               <p className="body-m">Dashboard</p>
             </a>
-            <a href="#" className="nav-item">
+            <a href="#" className="nav-item" onClick={() => page("/profile")}>
               <img src="../icons/user.svg" />
               <p className="body-m">Profile</p>
             </a>
-            <a href="#" className="nav-item">
+            <a href="#" className="nav-item" onClick={() => page("/settings")}>
               <img src="../icons/setting.svg" />
               <p className="body-m">Settings</p>
             </a>
