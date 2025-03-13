@@ -3,7 +3,6 @@ import { getAuth } from "firebase/auth";
 
 import DaySelector from "./components/DaySelector";
 import MealCard from "./components/MealCard";
-import Sidenav from "./components/Sidenav";
 import TargetSummary from "./components/TargetSummary";
 import EnergySummary from "./components/EnergySummary";
 import { userData } from "./fakedata.json";
@@ -112,8 +111,6 @@ export default function Home() {
 
   return (
     <>
-      <Sidenav />
-
       <div className="content">
         <div className="header">
           <h4>Personal Meal Plan</h4>

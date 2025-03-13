@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
 import page from "page";
 
-import Sidenav from "./components/Sidenav";
 import CreateRecipe from "./components/CreateRecipe";
 import WeekPicker from "./components/WeekSelector";
 import MealGroup from "./components/MealGroup";
@@ -159,7 +158,6 @@ export default function MealPlanGenerator() {
 
   return (
     <>
-      <Sidenav />
       <div className="generate-page">
         <div className="header">
           <h4>Generate Meal Plan</h4>

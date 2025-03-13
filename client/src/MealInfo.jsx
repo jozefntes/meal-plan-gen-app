@@ -56,7 +56,6 @@ export default function MealInfo({ id }) {
 
   return (
     <>
-      <Sidenav />
       <div className="meal-info-page">
         {loading ? (
           <p>Loading...</p> // Render loading indicator
