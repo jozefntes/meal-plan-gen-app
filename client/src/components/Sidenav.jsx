@@ -3,7 +3,7 @@ import { auth } from "../firebase";
 import page from "page";
 import "./Sidenav.css";
 
-export default function Sidenav() {
+export default function Sidenav({ onToggleTheme }) {
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -22,7 +22,7 @@ export default function Sidenav() {
             <h6>Meal Plan</h6>
           </a>
           <div className="nav-list">
-          <a href="#" className="nav-item active" onClick={() => page("/")}>
+            <a href="#" className="nav-item active" onClick={() => page("/")}>
               <img src="../icons/home.svg" className="icon" />
               <p className="body-m">Dashboard</p>
             </a>
@@ -44,7 +44,7 @@ export default function Sidenav() {
               <p className="body-m">Dark Mode</p>
             </div>
             <label className="switch">
-              <input type="checkbox" />
+              <input type="checkbox" onChange={onToggleTheme} />
               <span className="slider round"></span>
             </label>
           </div>
