@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import useTheme from "./hooks/useTheme";
 import page from "page";
 
 import Home from "./Home";
@@ -8,9 +9,15 @@ import SignIn from "./components/SignIn";
 import MealInfo from "./MealInfo";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Forbidden from "./components/Forbidden";
+import Sidenav from "./components/Sidenav";
 
 function App() {
   const [route, setRoute] = useState("home");
+  const { theme, toggleTheme } = useTheme();
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
 
   useEffect(() => {
     page("/", () => setRoute("home"));
@@ -29,11 +36,13 @@ function App() {
     <>
       {route === "home" && (
         <ProtectedRoute>
+          <Sidenav onToggleTheme={toggleTheme} />
           <Home />
         </ProtectedRoute>
       )}
       {route === "generate" && (
         <ProtectedRoute>
+          <Sidenav onToggleTheme={toggleTheme} />
           <MealPlanGenerator />
         </ProtectedRoute>
       )}
@@ -41,6 +50,7 @@ function App() {
       {route === "register" && <SignUp />}
       {route.name === "recipe" && (
         <ProtectedRoute>
+          <Sidenav onToggleTheme={toggleTheme} />
           <MealInfo id={route.id} />
         </ProtectedRoute>
       )}

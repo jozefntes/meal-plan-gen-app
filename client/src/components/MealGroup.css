@@ -42,7 +42,7 @@ ul {
     justify-content: center;
     align-items: center;
     border-radius: 8px 8px 0 0;
-    background-color: var(--gray-100);
+    background-color: var(--target-bar);
 }
 
 .create-icon {

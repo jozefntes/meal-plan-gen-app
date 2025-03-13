@@ -32,7 +32,7 @@
     height: 152px;
     border-radius: 50%;
     position: relative;
-    background: conic-gradient(var(--gray-100) 0% 100%)
+    background: conic-gradient(var(--target-bar) 0% 100%)
 }
 
 .pie-chart::before {
@@ -42,7 +42,7 @@
     left: 50%;
     width: 100px;
     height: 100px;
-    background-color: var(--white-100);
+    background-color: var(--pie-bg);
     border-radius: 50%;
     transform: translate(-50%, -50%);
 }

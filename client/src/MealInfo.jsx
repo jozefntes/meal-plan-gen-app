@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
 import page from "page";
 
-import Sidenav from "./components/Sidenav";
-
 import { SERVER_URL } from "./constants";
 
 import "./MealInfo.css";
@@ -56,7 +54,6 @@ export default function MealInfo({ id }) {
 
   return (
     <>
-      <Sidenav />
       <div className="meal-info-page">
         {loading ? (
           <p>Loading...</p> // Render loading indicator

@@ -5,11 +5,11 @@
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: var(--white-100);
+    background-color: var(--background-color);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: 10px 10px 30px rgba(174, 174, 192, 0.4);
+    box-shadow: var(--sidenav-shadow)
 }
 
 .brand-nav-list {
@@ -26,7 +26,7 @@
     padding: 16px 0;
     gap: 8px;
     text-decoration: none;
-    color: var(--primary-900);
+    color: var(--brand-color);
 }
 
 .brand img {
@@ -50,7 +50,7 @@
 }
 
 .nav-item p {
-    color: var(--gray-400);
+    color: var(--text-color);
     padding: 8px;
 }
 
@@ -61,15 +61,15 @@
 }
 
 .nav-item.active {
-    background-color: var(--primary-50);
+    background-color: var(--active-nav-item);
 }
 
 .nav-item.active p {
-    color: var(--primary-500);
+    color: var(--active-nav-text);
 }
 
 .nav-item.active img {
-    fill: var(--primary-500);
+    fill: var(--active-nav-icon);
 }
 
 
@@ -141,7 +141,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--primary-50);
+    background-color: var(--btn-primary);
     -webkit-transition: .4s;
     transition: .4s;
 }
@@ -153,17 +153,17 @@
     width: 16px;
     left: 4px;
     bottom: 4px;
-    background-color: var(--primary-500);
+    background-color: var(--btn-primary-outline);
     -webkit-transition: .4s;
     transition: .4s;
 }
 
 input:checked+.slider {
-    background-color: var(--primary-300);
+    background-color: var(--btn-primary);
 }
 
 input:focus+.slider {
-    box-shadow: 0 0 1px var(--primary-300);
+    box-shadow: 0 0 1px var(--btn-primary);
 }
 
 input:checked+.slider:before {
