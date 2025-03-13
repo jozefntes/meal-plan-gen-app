@@ -47,9 +47,9 @@ const SignIn = () => {
       </div>
       <div className="form-section">
         <div className="header-container">
-        <img src="/icons/logo.svg" alt="Meal Prep Logo" />
-        <header>Welcome Back to Meal Plan</header>
-        <h2>Sign In to Meal Plan Generator</h2>
+          <img src="/icons/logo.svg" alt="Meal Prep Logo" />
+          <header>Welcome Back to Meal Plan</header>
+          <h2>Sign In to Meal Plan Generator</h2>
         </div>
         <form onSubmit={handleSubmit}>
           <div>
@@ -90,8 +90,12 @@ const SignIn = () => {
         </form>
         <div className="google-button-container">
           <button onClick={handleGoogleSignIn} className="google-signin-button">
-          <img src="/icons/google.svg" alt="Google Icon" className="google-icon" />
-            Sign in with Google
+            <img
+              src="/icons/google.svg"
+              alt="Google Icon"
+              className="google-icon"
+            />
+            <p>Sign in with Google</p>
           </button>
         </div>
         <p className="link">
