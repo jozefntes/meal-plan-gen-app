@@ -3,6 +3,7 @@
   --primary-500: #00C571;
   --primary-300: #79E5C2;
   --primary-50: #C9F7EC;
+  --gray-900: #1A231F;
   --gray-400: #505656;
   --gray-300: #575C5C;
   --gray-200: #9DA0A0;
@@ -11,12 +12,12 @@
   --black-800: #333333;
   --white-200: #F6FEFC;
   --white-100: #FFFFFF;
-  --energy: #7C7C7C;
   --protein: #14CB76;
   --carbs: #00C2CF;
   --fat: #F2371C;
   --background-color: var(--white-100);
   --text-color: var(--gray-400);
+  --light-text: var(--gray-200);
   --brand-color: var(--primary-900);
   --active-nav-item: var(--primary-50);
   --active-nav-text: var(--primary-500);
@@ -24,6 +25,12 @@
   --btn-primary: var(--primary-50);
   --btn-primary-outline: var(--primary-500);
   --btn-primary-text: var(--primary-500);
+  --component-bg: var(--gray-50);
+  --target-bar: var(--gray-100);
+  --pie-bg: var(--white-100);
+  --energy: var(--gray-300);
+  --box-shadow: 10px 10px 30px rgba(174, 174, 192, 0.4), -10px -10px 30px rgb(255, 255, 255);
+  --sidenav-shadow: 10px 10px 30px rgba(174, 174, 192, 0.4);
 }
 
 * {
@@ -32,7 +39,7 @@
 }
 
 [data-theme="dark"] {
-  --background-color: var(--primary-900);
+  --background-color: var(--gray-900);
   --text-color: var(--white-200);
   --brand-color: var(--white-200);
   --active-nav-item: var(--gray-300);
@@ -41,6 +48,12 @@
   --btn-primary: var(--gray-300);
   --btn-primary-outline: var(--white-200);
   --btn-primary-text: var(--white-200);
+  --component-bg: var(--gray-400);
+  --target-bar: var(--gray-400);
+  --pie-bg: var(--gray-200);
+  --energy: var(--white-200);
+  --box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.4), -10px -10px 30px rgba(0, 0, 0, 0.2);
+  --sidenav-shadow: 10px 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 body {
