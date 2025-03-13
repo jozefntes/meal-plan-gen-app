@@ -113,11 +113,10 @@
 .toggle-password-button {
   position: absolute;
   right: 10px;
-  top: 50%;
+  top: 40%;
   cursor: pointer;
-  width: 20px;
-  height: 20px;
-
+  width: 24px;
+  height: 24px;
 }
 
 .link {

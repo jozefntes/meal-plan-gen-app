@@ -3,6 +3,9 @@ import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
 import page from "page";
 import "./SignUp.css";
+import EyeIcon from "../icons/EyeIcon";
+import NoEyeIcon from "../icons/NoEyeIcon";
+import LogoIcon from "../icons/LogoIcon";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -47,9 +50,9 @@ const SignUp = () => {
       </div>
       <div className="form-section">
         <div className="header-container">
-        <img src="/icons/logo.svg" alt="Meal Prep Logo" />
-        <header>Welcome to Meal Plan</header>
-        <h2>Sign Up to Meal Plan Generator</h2>
+          <LogoIcon />
+          <header>Welcome to Meal Plan</header>
+          <h2>Sign Up to Meal Plan Generator</h2>
         </div>
         <form onSubmit={handleSubmit}>
           <div>
@@ -75,16 +78,21 @@ const SignUp = () => {
               onChange={handlePasswordChange}
               required
             />
-            <img
-              src={
-                showPassword
-                  ? "icons/noShowPassword.svg"
-                  : "icons/showPassword.svg"
-              }
-              alt="Toggle Password Visibility"
-              className="toggle-password-button"
-              onClick={passwordVisibility}
-            />
+            {showPassword ? (
+              <NoEyeIcon
+                color="var(--icon-color)"
+                size={24}
+                className="toggle-password-button"
+                onClick={passwordVisibility}
+              />
+            ) : (
+              <EyeIcon
+                color="var(--icon-color)"
+                size={24}
+                className="toggle-password-button"
+                onClick={passwordVisibility}
+              />
+            )}
           </div>
           <button type="submit">Create Account</button>
           <div className="google-button-container">
@@ -92,7 +100,11 @@ const SignUp = () => {
               onClick={handleGoogleSignIn}
               className="google-signin-button"
             >
-              <img src="/icons/google.svg" alt="Google Icon" className="google-icon" />
+              <img
+                src="/icons/google.svg"
+                alt="Google Icon"
+                className="google-icon"
+              />
               Sign in with Google
             </button>
           </div>
