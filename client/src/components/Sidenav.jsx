@@ -10,6 +10,8 @@ import SettingIcon from "../icons/SettingIcon";
 import MoonIcon from "../icons/MoonIcon";
 import LogoIcon from "../icons/LogoIcon";
 import SidebarIcon from "../icons/SidebarIcon";
+import ChefHatIcon from "../icons/ChefHatIcon";
+import CalendarIcon from "../icons/CalendarIcon";
 
 export default function Sidenav({ onToggleTheme }) {
   const { theme } = useTheme();
@@ -32,20 +34,28 @@ export default function Sidenav({ onToggleTheme }) {
     <>
       <div className="sidenav">
         <div className="brand-nav-list">
-          <a href="#" className="brand" onClick={() => page("/")}>
+          <a href="/" className="brand">
             <LogoIcon />
             <h6>Meal Plan</h6>
           </a>
           <div className="nav-list">
-            <a href="#" className="nav-item active" onClick={() => page("/")}>
+            <a href="/" className="nav-item active">
               <HomeIcon color="var(--icon-color)" />
               <p className="body-m">Dashboard</p>
             </a>
-            <a href="#" className="nav-item" onClick={() => page("/profile")}>
+            <a href="/myrecipes" className="nav-item">
+              <ChefHatIcon color="var(--icon-color)" />
+              <p className="body-m">My Recipes</p>
+            </a>
+            <a href="/generate" className="nav-item">
+              <CalendarIcon color="var(--icon-color)" />
+              <p className="body-m">Generate Plan</p>
+            </a>
+            <a href="/profile" className="nav-item">
               <UserIcon color="var(--icon-color)" />
               <p className="body-m">Profile</p>
             </a>
-            <a href="#" className="nav-item" onClick={() => page("/settings")}>
+            <a href="/settings" className="nav-item">
               <SettingIcon color="var(--icon-color)" />
               <p className="body-m">Settings</p>
             </a>
