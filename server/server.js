@@ -166,12 +166,6 @@ app.get("/api/meal_plans/:uid", verifyToken, async (req, res) => {
     const mealPlans = [];
     for (const doc of querySnapshot.docs) {
       const dateData = { id: doc.id, ...doc.data() };
-      const mealsSnapshot = await doc.ref.collection("meals").get();
-      const meals = mealsSnapshot.docs.map((mealDoc) => ({
-        id: mealDoc.id,
-        ...mealDoc.data(),
-      }));
-      dateData.meals = meals;
 
       // Format the date before adding it to the mealPlans array
       const formattedDate = new Date(dateData.date).toLocaleDateString(
@@ -281,6 +275,7 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
                       )
                       .join(" | ")}
                     The meal plan should be balanced using the nutritional values included.
+                    The date should be in YYYY-MM-DD format
                     The response should be a JSON object with the following schema:
                     dates: [
                       {
@@ -298,49 +293,36 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
 
       const mealPlan = JSON.parse(mealPlanText);
 
-      // Populate the mealPlan array with the required format
-      const populatedMealPlan = mealPlan.dates.map((day) => ({
-        date: day.date,
-        meals: day.meals.map((meal) => {
-          const recipe = recipes.find((r) => r.id === meal.id);
-          return {
-            id: recipe.id,
-            groupMeal: recipe.mealGroup,
-            title: recipe.title,
-            image: recipe.image || "",
-            nutrition: {
-              calories: recipe.nutrition.calories,
-              protein: recipe.nutrition.protein,
-              carbs: recipe.nutrition.carbs,
-              fat: recipe.nutrition.fat,
-            },
-            done: false,
-          };
-        }),
+      const populatedMealPlan = mealPlan.dates.map(({ date, meals }) => ({
+        date,
+        meals: meals.map(({ id }) => ({
+          id,
+          done: false,
+        })),
       }));
 
       // Save meal plan to Firebase
-      const userDocRef = db.collection("plans").doc(uid);
-      const userDoc = await userDocRef.get();
+      try {
+        const userDocRef = db.collection("plans").doc(uid);
+        const userDoc = await userDocRef.get();
 
-      if (!userDoc.exists) {
-        await userDocRef.set({ uid: uid });
-      }
-
-      const datesCollectionRef = userDocRef.collection("dates");
-
-      for (const day of populatedMealPlan) {
-        const dateDocRef = await datesCollectionRef.add({ date: day.date });
-        const mealsCollectionRef = dateDocRef.collection("meals");
-
-        for (const meal of day.meals) {
-          const mealDocRef = mealsCollectionRef.doc();
-          await mealDocRef.set(meal);
+        if (!userDoc.exists) {
+          await userDocRef.set({ uid });
         }
 
-        await dateDocRef.set({
-          date: day.date,
-        });
+        const datesCollectionRef = userDocRef.collection("dates");
+
+        for (const day of populatedMealPlan) {
+          const dateDocRef = await datesCollectionRef.doc(day.date);
+
+          await dateDocRef.set({
+            date: day.date,
+            meals: day.meals,
+          });
+        }
+      } catch (error) {
+        console.error("Error saving meal plan:", error);
+        return res.status(500).json({ error: "Failed to save meal plan" });
       }
 
       res.status(200).json({
