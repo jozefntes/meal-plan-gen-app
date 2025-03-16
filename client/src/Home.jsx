@@ -25,6 +25,7 @@ export default function Home() {
   const [selectedDay, setSelectedDay] = useState(today);
   const [currentWeek, setCurrentWeek] = useState(0);
   const [mealPlans, setMealPlans] = useState([]);
+  const [recipes, setRecipes] = useState([]);
   const [selectedDayMeals, setSelectedDayMeals] = useState(null);
   const [selectedDayProgress, setSelectedDayProgress] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -74,27 +75,55 @@ export default function Home() {
       if (user) {
         const idToken = await user.getIdToken();
         const uid = user.uid;
-        // Fetch all meal plans when the component mounts
-        fetch(`${SERVER_URL}/api/meal_plans/${uid}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-          },
-        })
-          .then((response) => {
-            if (response.status === 404) {
-              return [];
-            }
-            return response.json();
-          })
-          .then((data) => {
-            setMealPlans(data);
-            setLoading(false);
-          })
-          .catch((error) => {
-            console.error("Error fetching meal plans:", error);
-            setLoading(false);
-          });
+
+        try {
+          // Fetch meal plans and recipes in parallel
+          const [mealPlansResponse, recipesResponse] = await Promise.all([
+            fetch(`${SERVER_URL}/api/meal_plans/${uid}`, {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${idToken}`,
+              },
+            }),
+            fetch(`${SERVER_URL}/api/recipes/${uid}`, {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${idToken}`,
+              },
+            }),
+          ]);
+
+          // Process meal plans response
+          let mealPlans = [];
+          if (mealPlansResponse.status !== 404) {
+            mealPlans = await mealPlansResponse.json();
+          }
+
+          // Extract unique recipe IDs from meal plans
+          const mealRecipeIds = new Set();
+          mealPlans.forEach((day) =>
+            day.meals.forEach((meal) => mealRecipeIds.add(meal.id))
+          );
+
+          // Process recipes response
+          let recipes = [];
+          if (recipesResponse.status !== 404) {
+            recipes = await recipesResponse.json();
+          }
+
+          // Filter recipes to only include the ones in meal plans
+          const filteredRecipes = recipes.filter((recipe) =>
+            mealRecipeIds.has(recipe.id)
+          );
+
+          // Update state
+          setMealPlans(mealPlans);
+          setRecipes(filteredRecipes);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        } finally {
+          setLoading(false);
+        }
       }
     })();
   }, []);
@@ -104,11 +133,19 @@ export default function Home() {
       (day) => day.date === selectedDay
     );
 
-    setSelectedDayMeals(selectedDayRecords ? selectedDayRecords.meals : null);
-    setSelectedDayProgress(
-      selectedDayRecords ? selectedDayRecords.progress : null
-    );
-  }, [selectedDay, mealPlans]);
+    if (selectedDayRecords) {
+      const mealsWithRecipes = selectedDayRecords.meals.map((meal) => {
+        const recipe = recipes.find((r) => r.id === meal.id);
+        return recipe ? { ...meal, ...recipe } : meal;
+      });
+
+      setSelectedDayMeals(mealsWithRecipes);
+      setSelectedDayProgress(selectedDayRecords.progress);
+    } else {
+      setSelectedDayMeals(null);
+      setSelectedDayProgress(null);
+    }
+  }, [selectedDay, mealPlans, recipes]);
 
   return (
     <>
