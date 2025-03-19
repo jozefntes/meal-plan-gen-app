@@ -1,3 +1,4 @@
+import { useState } from "react";
 import page from "page";
 
 import "./MealCard.css";
@@ -10,7 +11,11 @@ export default function MealCard({
   nutrition,
   done,
   onMealDone,
+  applicationContext,
+  onDeleteRecipe,
 }) {
+  const [deleteIcon, setDeleteIcon] = useState("../icons/trash-filled.svg");
+
   const getMealLabel = (mealCategory) => {
     switch (mealCategory) {
       case 1:
@@ -47,24 +52,43 @@ export default function MealCard({
       >
         <div className="meal-header">
           <div className="meal-info">
-            <p className="body-s">{getMealLabel(mealGroup)}</p>
+            {applicationContext !== "recipes" && (
+              <p className="body-s meal-group-info">
+                {getMealLabel(mealGroup)}
+              </p>
+            )}
             <p className="body-s">{title}</p>
           </div>
-          <button
-            className="add-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              onMealDone(id);
-            }}
-          >
-            {done ? (
-              <img src="../icons/check.svg" />
-            ) : (
-              <img src="../icons/plus.svg" />
-            )}
-          </button>
+          {applicationContext === "recipes" ? (
+            <button
+              className="delete-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDeleteRecipe(id);
+              }}
+              onMouseOver={() => setDeleteIcon("../icons/trash-x.svg")}
+              onMouseOut={() => setDeleteIcon("../icons/trash-filled.svg")}
+            >
+              <img src={deleteIcon} alt="Delete" />
+            </button>
+          ) : (
+            <button
+              className="add-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onMealDone(id);
+              }}
+            >
+              {done ? (
+                <img src="../icons/check.svg" />
+              ) : (
+                <img src="../icons/plus.svg" />
+              )}
+            </button>
+          )}
         </div>
         <div className="meal-footer">
+          <p className="body-s">{nutrition.calories} kcal</p>
           <p className="body-s">{nutrition.protein} g protein</p>
           <p className="body-s">{nutrition.carbs} g carbs</p>
           <p className="body-s">{nutrition.fat} g fat</p>
