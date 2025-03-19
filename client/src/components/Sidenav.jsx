@@ -35,8 +35,15 @@ export default function Sidenav({ onToggleTheme }) {
       <div className="sidenav">
         <div className="brand-nav-list">
           <a href="/" className="brand">
-            <LogoIcon />
-            <h6>Meal Plan</h6>
+            <img
+              src={
+                theme === "dark"
+                  ? "/icons/logo-dark.svg"
+                  : "/icons/logo-light.svg"
+              }
+              alt="MacroMate Logo"
+            />
+            <h6>MacroMate</h6>
           </a>
           <div className="nav-list">
             <a href="/" className="nav-item active">
