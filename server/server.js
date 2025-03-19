@@ -432,7 +432,7 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
 });
 
 // Delete a specific recipe by document ID
-app.delete("/api/recipe/:id", verifyToken, async (req, res) => {
+app.delete("/api/recipes/:id", verifyToken, async (req, res) => {
   const recipeId = req.params.id;
 
   if (!recipeId) {
