@@ -4,7 +4,7 @@ import "./MealCard.css";
 
 export default function MealCard({
   id,
-  groupMeal,
+  mealGroup,
   title,
   image,
   nutrition,
@@ -47,7 +47,7 @@ export default function MealCard({
       >
         <div className="meal-header">
           <div className="meal-info">
-            <p className="body-s">{getMealLabel(groupMeal)}</p>
+            <p className="body-s">{getMealLabel(mealGroup)}</p>
             <p className="body-s">{title}</p>
           </div>
           <button
