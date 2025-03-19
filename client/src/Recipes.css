@@ -1,0 +1,78 @@
+.recipes-page {
+    margin-left: 280px;
+    padding: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+}
+
+.recipes-page .header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 32px;
+}
+
+.meal-picker {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    padding: 32px 48px;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-bar-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-bar {
+    padding: 8px 8px 8px 48px;
+    width: 320px;
+    height: 48px;
+    border: 1px solid var(--src-primary-outline);
+    border-radius: 12px;
+    outline: none;
+    transition: border-color 0.3s;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.search-bar::placeholder {
+    color: var(--src-primary-text);
+}
+
+.search-bar:focus::placeholder {
+    color: transparent;
+}
+
+.search-bar:focus {
+    border-color: var(--primary-500);
+}
+
+.search-label {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--src-primary-text);
+}
+
+.search-bar:focus+.search-label,
+.search-bar:not(:placeholder-shown)+.search-label {
+    color: var(--primary-500);
+}
