@@ -171,12 +171,12 @@ export default function Home() {
           <ul className="meals">
             {selectedDayMeals ? (
               [...selectedDayMeals]
-                .sort((a, b) => a.groupMeal - b.groupMeal)
-                .map(({ id, groupMeal, title, image, nutrition, done }) => (
+                .sort((a, b) => a.mealGroup - b.mealGroup)
+                .map(({ id, mealGroup, title, image, nutrition, done }) => (
                   <MealCard
                     key={id}
                     id={id}
-                    groupMeal={groupMeal}
+                    mealGroup={mealGroup}
                     title={title}
                     image={image}
                     nutrition={nutrition}
