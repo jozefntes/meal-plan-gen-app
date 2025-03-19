@@ -4,6 +4,7 @@ import page from "page";
 
 import Home from "./Home";
 import MealPlanGenerator from "./MealPlanGenerator";
+import Recipes from "./Recipes";
 import SignUp from "./components/SignUp";
 import SignIn from "./components/SignIn";
 import MealInfo from "./MealInfo";
@@ -27,6 +28,7 @@ function App() {
     page("/recipe/:id", (ctx) =>
       setRoute({ name: "recipe", id: ctx.params.id })
     );
+    page("/myrecipes", () => setRoute("myrecipes"));
     page("/forbidden", () => setRoute("forbidden"));
     page("*", () => setRoute("home"));
     page.start();
@@ -44,6 +46,12 @@ function App() {
         <ProtectedRoute>
           <Sidenav onToggleTheme={toggleTheme} />
           <MealPlanGenerator />
+        </ProtectedRoute>
+      )}
+      {route === "myrecipes" && (
+        <ProtectedRoute>
+          <Sidenav onToggleTheme={toggleTheme} />
+          <Recipes />
         </ProtectedRoute>
       )}
       {route === "signin" && <SignIn />}
