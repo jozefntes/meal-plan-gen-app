@@ -53,11 +53,7 @@ const SignIn = () => {
         <div className="header-container">
           <div className="brand-container">
             <img
-              src={
-                theme === "dark"
-                  ? "/icons/logo-dark.svg"
-                  : "/icons/logo-light.svg"
-              }
+              src={theme === "dark" ? "/logo-dark.svg" : "/logo-light.svg"}
               alt="MacroMate Logo"
             />
             <h4>MacroMate</h4>
