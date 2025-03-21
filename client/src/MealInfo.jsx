@@ -54,55 +54,51 @@ export default function MealInfo({ id }) {
   }, [id]);
 
   return (
-    <>
-      <div className="meal-info-page">
-        {loading ? (
-          <p>Loading...</p> // Render loading indicator
-        ) : (
-          <>
-            <img
-              src={`data:image/png;base64,${meal && meal.image}`}
-              alt={meal && meal.title}
-              className="recipe-img"
-            />
-            <div className="meal-title">
-              <h4>{meal && meal.title}</h4>
-              <div className="nutrition">
-                <p className="body-s">{`${
-                  meal && meal.nutrition.calories
-                }cal, ${meal && meal.nutrition.protein}p, ${
-                  meal && meal.nutrition.carbs
-                }c, ${meal && meal.nutrition.fat}f (per meal)`}</p>
-                <p>{getMealLabel(meal?.mealGroup)}</p>
-              </div>
+    <div className="meal-info-page">
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          <img
+            src={`data:image/png;base64,${meal?.image ?? ""}`}
+            alt={meal?.title ?? "Meal Image"}
+            className="recipe-img"
+          />
+          <div className="meal-title">
+            <h4>{meal?.title ?? "Meal Title"}</h4>
+            <div className="nutrition">
+              <p className="body-s">{`${meal?.nutrition?.calories ?? 0}cal, ${
+                meal?.nutrition?.protein ?? 0
+              }p, ${meal?.nutrition?.carbs ?? 0}c, ${
+                meal?.nutrition?.fat ?? 0
+              }f (per meal)`}</p>
+              <p>{getMealLabel(meal?.mealGroup)}</p>
             </div>
-            <hr></hr>
-            <div className="ingredients">
-              <div className="ingredients-header">
-                <h6>Ingredients</h6>
-              </div>
-              <ul>
-                {meal &&
-                  meal.ingredients.map((ingredient, index) => (
-                    <li key={index}>{ingredient}</li>
-                  ))}
-              </ul>
+          </div>
+          <hr />
+          <div className="ingredients">
+            <div className="ingredients-header">
+              <h6>Ingredients</h6>
             </div>
-            <hr></hr>
-            <div className="instructions">
-              <div className="instructions-header">
-                <h6>Instructions</h6>
-              </div>
-              <ol>
-                {meal &&
-                  meal.instructions.map((instruction, index) => (
-                    <li key={index}>{instruction}</li>
-                  ))}
-              </ol>
+            <ul>
+              {meal?.ingredients?.map((ingredient, index) => (
+                <li key={index}>{ingredient}</li>
+              ))}
+            </ul>
+          </div>
+          <hr />
+          <div className="instructions">
+            <div className="instructions-header">
+              <h6>Instructions</h6>
             </div>
-          </>
-        )}
-      </div>
-    </>
+            <ol>
+              {meal?.instructions?.map((instruction, index) => (
+                <li key={index}>{instruction}</li>
+              ))}
+            </ol>
+          </div>
+        </>
+      )}
+    </div>
   );
 }
