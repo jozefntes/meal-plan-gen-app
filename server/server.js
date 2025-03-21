@@ -431,6 +431,38 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
   }
 });
 
+// Delete a specific recipe by document ID
+app.delete("/api/recipes/:id", verifyToken, async (req, res) => {
+  const recipeId = req.params.id;
+
+  if (!recipeId) {
+    return res.status(400).json({ error: "Recipe ID is required" });
+  }
+
+  try {
+    const docRef = db.collection("recipes").doc(recipeId);
+    const doc = await docRef.get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ error: "Recipe not found" });
+    }
+
+    const recipe = doc.data();
+
+    // Verify that the uid from the token matches the uid in the recipe
+    if (req.user.uid !== recipe.uid) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    await docRef.delete();
+
+    res.status(200).json({ message: "Recipe deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting recipe: ", error);
+    res.status(500).json({ error: "Failed to delete recipe" });
+  }
+});
+
 const port = parseInt(process.env.PORT) || 8080;
 const server = app.listen(port, () =>
   console.log(`Server listening on port ${port}`)
