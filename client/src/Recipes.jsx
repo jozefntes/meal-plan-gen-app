@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
-import page from "page";
 
 import CreateRecipe from "./components/CreateRecipe";
 import MealGroup from "./components/MealGroup";
@@ -28,8 +27,6 @@ export default function MealPlanGenerator() {
         const idToken = await user.getIdToken();
         const uid = user.uid;
 
-        console.log(uid);
-
         fetch(`${SERVER_URL}/api/recipes/${uid}`, {
           method: "GET",
           headers: {
@@ -51,7 +48,6 @@ export default function MealPlanGenerator() {
             setErrorMessage("Error fetching recipes");
             console.error("Error fetching recipes:", error);
           });
-        console.log(recipes);
       } else {
         console.log("No user is signed in.");
       }
