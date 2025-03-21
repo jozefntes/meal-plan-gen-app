@@ -25,44 +25,43 @@ export default function MealGroup({
         )}
         <ul>
           {recipes.length > 0 ? (
-            recipes.map((recipe) => (
-              <li className="picker__item" key={recipe.id}>
-                {applicationContext === "recipes" ? (
-                  <MealCard
-                    id={recipe.id}
-                    mealGroup={recipe.mealGroup}
-                    title={recipe.title}
-                    image={recipe.image}
-                    nutrition={recipe.nutrition}
-                    done={recipe.done}
-                    onMealDone={onSelectRecipe}
-                    applicationContext={applicationContext}
-                    onDeleteRecipe={onDeleteRecipe}
+            recipes.map((recipe) =>
+              applicationContext === "recipes" ? (
+                <MealCard
+                  key={recipe.id}
+                  id={recipe.id}
+                  mealGroup={recipe.mealGroup}
+                  title={recipe.title}
+                  image={recipe.image}
+                  nutrition={recipe.nutrition}
+                  done={recipe.done}
+                  onMealDone={onSelectRecipe}
+                  applicationContext={applicationContext}
+                  onDeleteRecipe={onDeleteRecipe}
+                />
+              ) : (
+                <li className="picker__item" key={recipe.id}>
+                  <input
+                    type="checkbox"
+                    className="hidden-checkbox"
+                    id={`recipe-${recipe.id}`}
+                    onChange={(e) =>
+                      onSelectRecipe(recipe.id, e.target.checked)
+                    }
                   />
-                ) : (
-                  <>
-                    <input
-                      type="checkbox"
-                      className="hidden-checkbox"
-                      id={`recipe-${recipe.id}`}
-                      onChange={(e) =>
-                        onSelectRecipe(recipe.id, e.target.checked)
-                      }
+                  <label
+                    className="recipe-label"
+                    htmlFor={`recipe-${recipe.id}`}
+                  >
+                    <img
+                      src={`data:image/png;base64,${recipe.image}`}
+                      alt={recipe.title}
                     />
-                    <label
-                      className="recipe-label"
-                      htmlFor={`recipe-${recipe.id}`}
-                    >
-                      <img
-                        src={`data:image/png;base64,${recipe.image}`}
-                        alt={recipe.title}
-                      />
-                      <p className="body-s">{recipe.title}</p>
-                    </label>
-                  </>
-                )}
-              </li>
-            ))
+                    <p className="body-s">{recipe.title}</p>
+                  </label>
+                </li>
+              )
+            )
           ) : (
             <p className="body-m">No recipes found</p>
           )}
