@@ -16,10 +16,22 @@ import CalendarIcon from "../icons/CalendarIcon";
 export default function Sidenav({ onToggleTheme }) {
   const { theme } = useTheme();
   const [isChecked, setIsChecked] = useState(theme === "dark");
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
 
   useEffect(() => {
     setIsChecked(theme === "dark");
   }, [theme]);
+
+  useEffect(() => {
+    const handleRouteChange = (path) => {
+      setCurrentPath(path);
+    };
+
+    page("*", (ctx, next) => {
+      handleRouteChange(ctx.path);
+      next();
+    });
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -39,23 +51,36 @@ export default function Sidenav({ onToggleTheme }) {
             <h6>Meal Plan</h6>
           </a>
           <div className="nav-list">
-            <a href="/" className="nav-item active">
+            <a
+              href="/"
+              className={`nav-item ${currentPath === "/" ? "active" : ""}`}
+            >
               <HomeIcon color="var(--icon-color)" />
               <p className="body-m">Dashboard</p>
             </a>
-            <a href="/myrecipes" className="nav-item">
+            <a
+              href="/myrecipes"
+              className={`nav-item ${
+                currentPath === "/myrecipes" ? "active" : ""
+              }`}
+            >
               <ChefHatIcon color="var(--icon-color)" />
               <p className="body-m">My Recipes</p>
             </a>
-            <a href="/generate" className="nav-item">
+            <a
+              href="/generate"
+              className={`nav-item ${
+                currentPath === "/generate" ? "active" : ""
+              }`}
+            >
               <CalendarIcon color="var(--icon-color)" />
               <p className="body-m">Generate Plan</p>
             </a>
-            <a href="/profile" className="nav-item">
+            <a href="/" className="nav-item">
               <UserIcon color="var(--icon-color)" />
               <p className="body-m">Profile</p>
             </a>
-            <a href="/settings" className="nav-item">
+            <a href="/" className="nav-item">
               <SettingIcon color="var(--icon-color)" />
               <p className="body-m">Settings</p>
             </a>
