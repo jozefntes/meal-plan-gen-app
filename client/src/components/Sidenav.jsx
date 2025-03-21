@@ -31,8 +31,6 @@ export default function Sidenav({ onToggleTheme }) {
       handleRouteChange(ctx.path);
       next();
     });
-
-    // No need for cleanup as page.js does not have an off method
   }, []);
 
   const handleLogout = async () => {
