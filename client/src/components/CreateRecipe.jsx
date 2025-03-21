@@ -77,8 +77,14 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
     }
   };
 
+  const handleOverlayClick = (event) => {
+    if (event.target === event.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content">
         <h6>Create New Recipe</h6>
         <form>
