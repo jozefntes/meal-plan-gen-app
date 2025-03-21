@@ -9,6 +9,7 @@ import MealGroup from "./components/MealGroup";
 import { SERVER_URL } from "./constants";
 
 import "./MealPlanGenerator.css";
+import ShuffleIcon from "./icons/Shuffle";
 
 export default function MealPlanGenerator() {
   const [errorMessage, setErrorMessage] = useState(null);
@@ -22,7 +23,8 @@ export default function MealPlanGenerator() {
     dinner: [],
     snack: [],
   });
-  const [loading, setLoading] = useState(false);
+  const [loadingRecipes, setLoadingRecipes] = useState(true);
+  const [generatingMealPlan, setGeneratingMealPlan] = useState(false);
 
   useEffect(() => {
     // Fetch initial recipes data from the server
@@ -31,7 +33,7 @@ export default function MealPlanGenerator() {
       const user = auth.currentUser;
 
       if (user) {
-        setLoading(true);
+        setLoadingRecipes(true);
         const idToken = await user.getIdToken();
         const uid = user.uid;
 
@@ -50,7 +52,7 @@ export default function MealPlanGenerator() {
           })
           .then((data) => setRecipes(data))
           .catch((error) => console.error("Error fetching recipes:", error))
-          .finally(() => setLoading(false));
+          .finally(() => setLoadingRecipes(false));
       } else {
         console.log("No user is signed in.");
       }
@@ -122,7 +124,7 @@ export default function MealPlanGenerator() {
         }
       }
 
-      setLoading(true);
+      setGeneratingMealPlan(true);
 
       fetch(`${SERVER_URL}/api/generate_meal_plan`, {
         method: "POST",
@@ -148,7 +150,7 @@ export default function MealPlanGenerator() {
         })
         .catch((error) => console.error("Error generating meal plan:", error))
         .finally(() => {
-          setLoading(false);
+          setGeneratingMealPlan(false);
         });
     } else {
       console.log("No user is signed in.");
@@ -167,7 +169,7 @@ export default function MealPlanGenerator() {
           onWeekSelect={handleWeekSelect}
         />
 
-        {loading ? (
+        {loadingRecipes ? (
           <p className="meal-picker body-m">Loading...</p>
         ) : (
           <div className="meal-picker">
@@ -225,11 +227,16 @@ export default function MealPlanGenerator() {
         <button
           className="btn"
           onClick={handleGenerateMealPlan}
-          disabled={loading}
+          disabled={generatingMealPlan}
         >
-          <p className="btn-text">
-            {loading ? "Generating..." : "Generate 🔀"}
-          </p>
+          {generatingMealPlan ? (
+            <p className="btn-text">Generating...</p>
+          ) : (
+            <div className="btn-content">
+              <p className="btn-text">Generate</p>
+              <ShuffleIcon size={24} />
+            </div>
+          )}
         </button>
       </div>
       {isModalOpen && (
