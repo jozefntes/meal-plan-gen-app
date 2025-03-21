@@ -56,6 +56,24 @@
   align-self: flex-start;
   flex-direction: column;
 }
+
+.brand-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.brand-container img {
+  width: 128px;
+  height: auto;
+}
+
+.greeting {
+  margin-bottom: 24px;
+}
+
 .form-section h2 {
   font-size: 20px;
   margin-bottom: 15px;

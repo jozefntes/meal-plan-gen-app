@@ -2,12 +2,13 @@ import { useState } from "react";
 import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
 import page from "page";
+import useTheme from "../hooks/useTheme";
 import "./SignUp.css";
 import EyeIcon from "../icons/EyeIcon";
 import NoEyeIcon from "../icons/NoEyeIcon";
-import LogoIcon from "../icons/LogoIcon";
 
 const SignUp = () => {
+  const { theme } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -50,9 +51,14 @@ const SignUp = () => {
       </div>
       <div className="form-section">
         <div className="header-container">
-          <LogoIcon />
-          <header>Welcome to Meal Plan</header>
-          <h2>Sign Up to Meal Plan Generator</h2>
+          <div className="brand-container">
+            <img
+              src={theme === "dark" ? "/logo-dark.svg" : "/logo-light.svg"}
+              alt="MacroMate Logo"
+            />
+            <h4>MacroMate</h4>
+          </div>
+          <h6 className="greeting">Welcome! Sign Up</h6>
         </div>
         <form onSubmit={handleSubmit}>
           <div>

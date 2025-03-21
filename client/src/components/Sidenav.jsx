@@ -8,7 +8,6 @@ import HomeIcon from "../icons/HomeIcon";
 import UserIcon from "../icons/UserIcon";
 import SettingIcon from "../icons/SettingIcon";
 import MoonIcon from "../icons/MoonIcon";
-import LogoIcon from "../icons/LogoIcon";
 import SidebarIcon from "../icons/SidebarIcon";
 import ChefHatIcon from "../icons/ChefHatIcon";
 import CalendarIcon from "../icons/CalendarIcon";
@@ -47,8 +46,11 @@ export default function Sidenav({ onToggleTheme }) {
       <div className="sidenav">
         <div className="brand-nav-list">
           <a href="/" className="brand">
-            <LogoIcon />
-            <h6>Meal Plan</h6>
+            <img
+              src={theme === "dark" ? "/logo-dark.svg" : "/logo-light.svg"}
+              alt="MacroMate Logo"
+            />
+            <h6>MacroMate</h6>
           </a>
           <div className="nav-list">
             <a

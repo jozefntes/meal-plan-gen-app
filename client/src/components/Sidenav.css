@@ -30,7 +30,7 @@
 }
 
 .brand img {
-    width: 54px;
+    width: 72px;
     height: auto;
 }
 
@@ -109,6 +109,7 @@
     background-color: transparent;
     border: none;
     cursor: pointer;
+    display: none;  /* TODO: Show the menu toggle button */
 }
 
 .menu-toggle:hover {
