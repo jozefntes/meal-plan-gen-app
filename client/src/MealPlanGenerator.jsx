@@ -34,8 +34,6 @@ export default function MealPlanGenerator() {
         const idToken = await user.getIdToken();
         const uid = user.uid;
 
-        console.log(uid);
-
         fetch(`${SERVER_URL}/api/recipes/${uid}`, {
           method: "GET",
           headers: {
@@ -51,7 +49,6 @@ export default function MealPlanGenerator() {
           })
           .then((data) => setRecipes(data))
           .catch((error) => console.error("Error fetching recipes:", error));
-        console.log(recipes);
       } else {
         console.log("No user is signed in.");
       }
