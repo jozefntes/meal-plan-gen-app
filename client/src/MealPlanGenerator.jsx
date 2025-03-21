@@ -31,6 +31,7 @@ export default function MealPlanGenerator() {
       const user = auth.currentUser;
 
       if (user) {
+        setLoading(true);
         const idToken = await user.getIdToken();
         const uid = user.uid;
 
@@ -48,7 +49,8 @@ export default function MealPlanGenerator() {
             return response.json();
           })
           .then((data) => setRecipes(data))
-          .catch((error) => console.error("Error fetching recipes:", error));
+          .catch((error) => console.error("Error fetching recipes:", error))
+          .finally(() => setLoading(false));
       } else {
         console.log("No user is signed in.");
       }
@@ -165,52 +167,56 @@ export default function MealPlanGenerator() {
           onWeekSelect={handleWeekSelect}
         />
 
-        <div className="meal-picker">
-          <MealGroup
-            title="Breakfast"
-            recipes={
-              recipes.length > 0 &&
-              recipes.filter((recipe) => recipe.mealGroup === 1)
-            }
-            onCreateNew={() => handleOpenModal(1)}
-            onSelectRecipe={(recipeId, isSelected) =>
-              handleSelectRecipe("breakfast", recipeId, isSelected)
-            }
-          />
-          <MealGroup
-            title="Lunch"
-            recipes={
-              recipes.length > 0 &&
-              recipes.filter((recipe) => recipe.mealGroup === 2)
-            }
-            onCreateNew={() => handleOpenModal(2)}
-            onSelectRecipe={(recipeId, isSelected) =>
-              handleSelectRecipe("lunch", recipeId, isSelected)
-            }
-          />
-          <MealGroup
-            title="Dinner"
-            recipes={
-              recipes.length > 0 &&
-              recipes.filter((recipe) => recipe.mealGroup === 3)
-            }
-            onCreateNew={() => handleOpenModal(3)}
-            onSelectRecipe={(recipeId, isSelected) =>
-              handleSelectRecipe("dinner", recipeId, isSelected)
-            }
-          />
-          <MealGroup
-            title="Snack"
-            recipes={
-              recipes.length > 0 &&
-              recipes.filter((recipe) => recipe.mealGroup === 4)
-            }
-            onCreateNew={() => handleOpenModal(4)}
-            onSelectRecipe={(recipeId, isSelected) =>
-              handleSelectRecipe("snack", recipeId, isSelected)
-            }
-          />
-        </div>
+        {loading ? (
+          <p className="meal-picker body-m">Loading...</p>
+        ) : (
+          <div className="meal-picker">
+            <MealGroup
+              title="Breakfast"
+              recipes={
+                recipes.length > 0 &&
+                recipes.filter((recipe) => recipe.mealGroup === 1)
+              }
+              onCreateNew={() => handleOpenModal(1)}
+              onSelectRecipe={(recipeId, isSelected) =>
+                handleSelectRecipe("breakfast", recipeId, isSelected)
+              }
+            />
+            <MealGroup
+              title="Lunch"
+              recipes={
+                recipes.length > 0 &&
+                recipes.filter((recipe) => recipe.mealGroup === 2)
+              }
+              onCreateNew={() => handleOpenModal(2)}
+              onSelectRecipe={(recipeId, isSelected) =>
+                handleSelectRecipe("lunch", recipeId, isSelected)
+              }
+            />
+            <MealGroup
+              title="Dinner"
+              recipes={
+                recipes.length > 0 &&
+                recipes.filter((recipe) => recipe.mealGroup === 3)
+              }
+              onCreateNew={() => handleOpenModal(3)}
+              onSelectRecipe={(recipeId, isSelected) =>
+                handleSelectRecipe("dinner", recipeId, isSelected)
+              }
+            />
+            <MealGroup
+              title="Snack"
+              recipes={
+                recipes.length > 0 &&
+                recipes.filter((recipe) => recipe.mealGroup === 4)
+              }
+              onCreateNew={() => handleOpenModal(4)}
+              onSelectRecipe={(recipeId, isSelected) =>
+                handleSelectRecipe("snack", recipeId, isSelected)
+              }
+            />
+          </div>
+        )}
         {errorMessage && (
           <div className="error-message">
             <p>{errorMessage}</p>
