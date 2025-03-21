@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
+import page from "page";
 
 import CreateRecipe from "./components/CreateRecipe";
 import MealGroup from "./components/MealGroup";
@@ -74,9 +75,42 @@ export default function MealPlanGenerator() {
 
   const handleDeleteRecipe = (recipeId) => {
     console.log("Delete recipe with ID:", recipeId);
+
+    const previousRecipes = recipes;
     setRecipes((prevRecipes) =>
       prevRecipes.filter((recipe) => recipe.id !== recipeId)
     );
+
+    (async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (user) {
+        const idToken = await user.getIdToken();
+
+        fetch(`${SERVER_URL}/api/recipes/${recipeId}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        })
+          .then((response) => {
+            if (response.ok) {
+              console.log("Recipe deleted successfully");
+            } else {
+              console.error("Error deleting recipe");
+              setRecipes(previousRecipes);
+            }
+          })
+          .catch((error) => {
+            console.error("Error deleting recipe:", error);
+            setRecipes(previousRecipes);
+          });
+      } else {
+        console.log("No user is signed in.");
+        page("/");
+      }
+    })();
   };
 
   const filteredRecipes = recipes.filter((recipe) =>
