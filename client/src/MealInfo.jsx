@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
 import page from "page";
+import { getMealLabel } from "./utils/mealUtils";
 
 import { SERVER_URL } from "./constants";
 
@@ -72,7 +73,7 @@ export default function MealInfo({ id }) {
                 }cal, ${meal && meal.nutrition.protein}p, ${
                   meal && meal.nutrition.carbs
                 }c, ${meal && meal.nutrition.fat}f (per meal)`}</p>
-                <p>{meal && meal.mealGroup}</p>
+                <p>{getMealLabel(meal?.mealGroup)}</p>
               </div>
             </div>
             <hr></hr>

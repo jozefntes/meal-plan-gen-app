@@ -1,5 +1,6 @@
 import { useState } from "react";
 import page from "page";
+import { getMealLabel } from "../utils/mealUtils";
 
 import "./MealCard.css";
 
@@ -15,21 +16,6 @@ export default function MealCard({
   onDeleteRecipe,
 }) {
   const [deleteIcon, setDeleteIcon] = useState("../icons/trash-filled.svg");
-
-  const getMealLabel = (mealCategory) => {
-    switch (mealCategory) {
-      case 1:
-        return "Breakfast";
-      case 2:
-        return "Lunch";
-      case 3:
-        return "Dinner";
-      case 4:
-        return "Snack";
-      default:
-        return "Meal";
-    }
-  };
 
   const backgroundStyle = {
     background: `linear-gradient(rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 50%), linear-gradient(45deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 50%),
