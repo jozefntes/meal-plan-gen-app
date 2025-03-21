@@ -108,7 +108,7 @@ export default function MealPlanGenerator() {
         </div>
 
         {loading ? (
-          <p>Loading...</p>
+          <p className="meal-picker body-m">Loading...</p>
         ) : (
           <div className="meal-picker">
             <MealGroup
