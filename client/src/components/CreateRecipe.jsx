@@ -17,10 +17,13 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
       const idToken = await user.getIdToken();
       const uid = user.uid;
 
+      const selectedMealGroup = parseInt(
+        document.getElementById("meal-group").value
+      );
       const ingredients = document.getElementById("ingredients").value;
-      const minProtein = document.getElementById("min-protein").value;
-      const maxCarbs = document.getElementById("max-carbs").value;
-      const maxFat = document.getElementById("max-fat").value;
+      const minProtein = parseInt(document.getElementById("min-protein").value);
+      const maxCarbs = parseInt(document.getElementById("max-carbs").value);
+      const maxFat = parseInt(document.getElementById("max-fat").value);
 
       if (
         minProtein < 0 ||
@@ -34,14 +37,6 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
         return;
       }
 
-      console.log("Creating new recipe with the following data:");
-      console.log("Meal Group:", mealGroup);
-      console.log("User ID:", 79);
-      console.log("Ingredients:", ingredients);
-      console.log("Min Protein:", minProtein);
-      console.log("Max Carbs:", maxCarbs);
-      console.log("Max Fat:", maxFat);
-
       setLoading(true);
 
       try {
@@ -54,10 +49,10 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
           body: JSON.stringify({
             uid,
             ingredients,
-            minProtein: parseInt(minProtein),
-            maxCarbs: parseInt(maxCarbs),
-            maxFat: parseInt(maxFat),
-            mealGroup,
+            minProtein,
+            maxCarbs,
+            maxFat,
+            mealGroup: selectedMealGroup,
           }),
         });
 
@@ -82,11 +77,33 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
     }
   };
 
+  const handleOverlayClick = (event) => {
+    if (event.target === event.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content">
         <h6>Create New Recipe</h6>
         <form>
+          <div className="form-group">
+            <label htmlFor="meal-group" className="body-s">
+              Meal Group
+            </label>
+            <select
+              id="meal-group"
+              name="meal-group"
+              defaultValue={mealGroup}
+              required
+            >
+              <option value="1">Breakfast</option>
+              <option value="2">Lunch</option>
+              <option value="3">Dinner</option>
+              <option value="4">Snack</option>
+            </select>
+          </div>
           <div className="form-group">
             <label htmlFor="ingredients" className="body-s">
               Ingredients
