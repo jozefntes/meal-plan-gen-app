@@ -4,6 +4,7 @@ import page from "page";
 
 import CreateRecipe from "./components/CreateRecipe";
 import MealGroup from "./components/MealGroup";
+import ConfirmationModal from "./components/ConfirmationModal";
 
 import { SERVER_URL } from "./constants";
 
@@ -17,6 +18,7 @@ export default function MealPlanGenerator() {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [recipeToDelete, setRecipeToDelete] = useState(null);
 
   useEffect(() => {
     // Fetch initial recipes data from the server
@@ -73,44 +75,53 @@ export default function MealPlanGenerator() {
     setSearchQuery(e.target.value);
   };
 
-  const handleDeleteRecipe = (recipeId) => {
-    console.log("Delete recipe with ID:", recipeId);
+  const handleDeleteRecipeClick = (recipeId) => {
+    setRecipeToDelete(recipeId);
+  };
 
-    const previousRecipes = recipes;
-    setRecipes((prevRecipes) =>
-      prevRecipes.filter((recipe) => recipe.id !== recipeId)
-    );
+  const handleConfirmDelete = () => {
+    if (recipeToDelete) {
+      const previousRecipes = recipes;
+      setRecipes((prevRecipes) =>
+        prevRecipes.filter((recipe) => recipe.id !== recipeToDelete)
+      );
 
-    (async () => {
-      const auth = getAuth();
-      const user = auth.currentUser;
+      (async () => {
+        const auth = getAuth();
+        const user = auth.currentUser;
 
-      if (user) {
-        const idToken = await user.getIdToken();
+        if (user) {
+          const idToken = await user.getIdToken();
 
-        fetch(`${SERVER_URL}/api/recipes/${recipeId}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-          },
-        })
-          .then((response) => {
-            if (response.ok) {
-              console.log("Recipe deleted successfully");
-            } else {
-              console.error("Error deleting recipe");
-              setRecipes(previousRecipes);
-            }
+          fetch(`${SERVER_URL}/api/recipes/${recipeToDelete}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${idToken}`,
+            },
           })
-          .catch((error) => {
-            console.error("Error deleting recipe:", error);
-            setRecipes(previousRecipes);
-          });
-      } else {
-        console.log("No user is signed in.");
-        page("/");
-      }
-    })();
+            .then((response) => {
+              if (response.ok) {
+                console.log("Recipe deleted successfully");
+              } else {
+                console.error("Error deleting recipe");
+                setRecipes(previousRecipes);
+              }
+            })
+            .catch((error) => {
+              console.error("Error deleting recipe:", error);
+              setRecipes(previousRecipes);
+            });
+        } else {
+          console.log("No user is signed in.");
+          page("/");
+        }
+      })();
+    }
+    setRecipeToDelete(null);
+  };
+
+  const handleCancelDelete = () => {
+    setRecipeToDelete(null);
   };
 
   const filteredRecipes = recipes.filter((recipe) =>
@@ -151,7 +162,7 @@ export default function MealPlanGenerator() {
                 filteredRecipes.length > 0 &&
                 filteredRecipes.filter((recipe) => recipe.mealGroup === 1)
               }
-              onDeleteRecipe={handleDeleteRecipe}
+              onDeleteRecipe={handleDeleteRecipeClick}
               applicationContext="recipes"
             />
             <MealGroup
@@ -160,7 +171,7 @@ export default function MealPlanGenerator() {
                 filteredRecipes.length > 0 &&
                 filteredRecipes.filter((recipe) => recipe.mealGroup === 2)
               }
-              onDeleteRecipe={handleDeleteRecipe}
+              onDeleteRecipe={handleDeleteRecipeClick}
               applicationContext="recipes"
             />
             <MealGroup
@@ -169,7 +180,7 @@ export default function MealPlanGenerator() {
                 filteredRecipes.length > 0 &&
                 filteredRecipes.filter((recipe) => recipe.mealGroup === 3)
               }
-              onDeleteRecipe={handleDeleteRecipe}
+              onDeleteRecipe={handleDeleteRecipeClick}
               applicationContext="recipes"
             />
             <MealGroup
@@ -178,7 +189,7 @@ export default function MealPlanGenerator() {
                 filteredRecipes.length > 0 &&
                 filteredRecipes.filter((recipe) => recipe.mealGroup === 4)
               }
-              onDeleteRecipe={handleDeleteRecipe}
+              onDeleteRecipe={handleDeleteRecipeClick}
               applicationContext="recipes"
             />
           </div>
@@ -193,6 +204,14 @@ export default function MealPlanGenerator() {
         <CreateRecipe
           onClose={handleCloseModal}
           onAddRecipe={handleAddRecipe}
+        />
+      )}
+      {recipeToDelete && (
+        <ConfirmationModal
+          message="Are you sure you want to delete this recipe?"
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+          onClose={handleCancelDelete}
         />
       )}
     </>
