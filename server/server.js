@@ -9,6 +9,7 @@ import admin from "firebase-admin";
 import { applicationDefault } from "firebase-admin/app";
 import { readFile } from "fs/promises";
 import { HfInference } from "@huggingface/inference";
+import { v4 as uuidv4 } from "uuid";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,6 +20,13 @@ const model = genAI.getGenerativeModel({
   model: "gemini-2.0-flash",
   generationConfig: {
     response_mime_type: "application/json",
+  },
+});
+
+const imageModel = genAI.getGenerativeModel({
+  model: "gemini-2.0-flash-exp-image-generation",
+  generationConfig: {
+    responseModalities: ["Text", "Image"],
   },
 });
 
@@ -33,6 +41,7 @@ try {
     // Local development: Use emulator
     admin.initializeApp({
       projectId: "mealplangenerator-2c4bb",
+      storageBucket: "mealplangenerator-2c4bb.firebasestorage.app",
     });
 
     console.log("Firebase Admin SDK initialized (local development).");
@@ -41,6 +50,7 @@ try {
     admin.initializeApp({
       credential: admin.credential.applicationDefault(),
       projectId: "mealplangenerator-2c4bb",
+      storageBucket: "mealplangenerator-2c4bb.firebasestorage.app",
     });
     console.log("Firebase Admin SDK initialized using ADC (Cloud Run).");
   }
@@ -49,6 +59,7 @@ try {
 }
 
 const db = admin.firestore();
+const bucket = admin.storage().bucket();
 
 const app = express();
 app.use(express.static(path.join(__dirname, "static")));
@@ -338,7 +349,7 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
   }
 });
 
-app.post("/api/generate_recipe", verifyToken, async (req, res) => {
+app.post("/api/generate_recipe", async (req, res) => {
   const { uid, ingredients, minProtein, maxCarbs, maxFat, mealGroup } =
     req.body;
 
@@ -354,9 +365,9 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
   }
 
   // Verify that the uid from the token matches the uid parameter
-  if (req.user.uid !== uid) {
-    return res.status(403).json({ error: "Forbidden" });
-  }
+  // if (req.user.uid !== uid) {
+  //   return res.status(403).json({ error: "Forbidden" });
+  // }
 
   try {
     const prompt = `Generate a recipe using the following ingredients: ${ingredients}. The recipe should have at least ${minProtein} g of protein, and as much as ${maxCarbs} g of carbs, and ${maxFat} g of fat. Using this JSON schema:
@@ -394,21 +405,39 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
 
     // Generate an image for the recipe
     try {
-      const imageBlob = await hf.textToImage({
-        model: "black-forest-labs/FLUX.1-dev",
-        inputs: recipe.title,
-      });
+      const contents = `Generate an image of ${recipe.title}`;
 
-      const arrayBuffer = await imageBlob.arrayBuffer();
-      const imageBuffer = Buffer.from(arrayBuffer);
+      const response = await imageModel.generateContent(contents);
+      for (const part of response.response.candidates[0].content.parts) {
+        // Based on the part type, either show the text or save the image
+        if (part.inlineData) {
+          const imageData = part.inlineData.data;
+          const buffer = Buffer.from(imageData, "base64");
 
-      // Convert the image buffer to a base64 string
-      const base64Image = imageBuffer.toString("base64");
+          // Save the image to Firebase Storage
+          const fileName = `images/${uuidv4()}.png`;
+          const file = bucket.file(fileName);
+          await file.save(buffer, {
+            metadata: { contentType: "image/png" },
+          });
 
-      // Add the base64 image to the recipe object
-      recipe.image = base64Image;
+          // Get the download URL
+          const [url] = await file.getSignedUrl({
+            action: "read",
+            expires: "03-01-2500",
+          });
+
+          recipe.image = url;
+        } else {
+          throw new Error("No image data found");
+        }
+      }
     } catch (error) {
-      console.error("Error generating image:", error);
+      console.error("Error generating content:", error);
+      if (error.response) {
+        console.error("Response status:", error.response.status);
+        console.error("Response data:", error.response.data);
+      }
       recipe.image = null;
     }
 
