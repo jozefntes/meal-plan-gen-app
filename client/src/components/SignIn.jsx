@@ -12,6 +12,7 @@ const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -32,6 +33,15 @@ const SignIn = () => {
       page("/");
     } catch (error) {
       console.error("Error signing in:", error);
+      if (error.code === "auth/user-not-found") {
+        setErrorMessage("No user found with this email.");
+      } else if (error.code === "auth/wrong-password") {
+        setErrorMessage("Incorrect password. Please try again.");
+      } else if (error.code === "auth/invalid-email") {
+        setErrorMessage("Invalid email address.");
+      } else {
+        setErrorMessage("An error occurred. Please try again.");
+      }
     }
   };
 
@@ -41,6 +51,7 @@ const SignIn = () => {
       page("/");
     } catch (error) {
       console.error("Error signing in with Google:", error);
+      setErrorMessage("An error occurred with Google Sign-In. Please try again.");
     }
   };
 
