@@ -402,6 +402,7 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
 
     recipe.mealGroup = mealGroup;
     recipe.uid = uid;
+    recipe.image = null;
 
     // Generate an image for the recipe
     try {
@@ -439,7 +440,6 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
         console.error("Response status:", error.response.status);
         console.error("Response data:", error.response.data);
       }
-      recipe.image = null;
     }
 
     // Save recipe to database
