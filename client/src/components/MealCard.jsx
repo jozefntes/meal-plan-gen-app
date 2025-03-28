@@ -19,7 +19,7 @@ export default function MealCard({
 
   const backgroundStyle = {
     background: `linear-gradient(rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 50%), linear-gradient(45deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 50%),
-        url(data:image/png;base64,${image})`,
+        url(${image})`,
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",

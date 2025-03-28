@@ -54,8 +54,9 @@ export default function MealGroup({
                     htmlFor={`recipe-${recipe.id}`}
                   >
                     <img
-                      src={`data:image/png;base64,${recipe.image}`}
+                      src={recipe?.image ?? ""}
                       alt={recipe.title}
+                      loading="lazy"
                     />
                     <p className="body-s">{recipe.title}</p>
                   </label>

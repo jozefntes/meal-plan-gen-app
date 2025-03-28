@@ -60,9 +60,10 @@ export default function MealInfo({ id }) {
       ) : (
         <>
           <img
-            src={`data:image/png;base64,${meal?.image ?? ""}`}
+            src={meal?.image ?? ""}
             alt={meal?.title ?? "Meal Image"}
             className="recipe-img"
+            loading="lazy"
           />
           <div className="meal-title">
             <h4>{meal?.title ?? "Meal Title"}</h4>
