@@ -349,7 +349,7 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
   }
 });
 
-app.post("/api/generate_recipe", async (req, res) => {
+app.post("/api/generate_recipe", verifyToken, async (req, res) => {
   const { uid, ingredients, minProtein, maxCarbs, maxFat, mealGroup } =
     req.body;
 
@@ -365,9 +365,9 @@ app.post("/api/generate_recipe", async (req, res) => {
   }
 
   // Verify that the uid from the token matches the uid parameter
-  // if (req.user.uid !== uid) {
-  //   return res.status(403).json({ error: "Forbidden" });
-  // }
+  if (req.user.uid !== uid) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
 
   try {
     const prompt = `Generate a recipe using the following ingredients: ${ingredients}. The recipe should have at least ${minProtein} g of protein, and as much as ${maxCarbs} g of carbs, and ${maxFat} g of fat. Using this JSON schema:
@@ -409,19 +409,21 @@ app.post("/api/generate_recipe", async (req, res) => {
 
       const response = await imageModel.generateContent(contents);
       for (const part of response.response.candidates[0].content.parts) {
-        // Based on the part type, either show the text or save the image
         if (part.inlineData) {
           const imageData = part.inlineData.data;
           const buffer = Buffer.from(imageData, "base64");
 
-          // Save the image to Firebase Storage
           const fileName = `images/${uuidv4()}.png`;
           const file = bucket.file(fileName);
           await file.save(buffer, {
-            metadata: { contentType: "image/png" },
+            metadata: {
+              contentType: "image/png",
+              metadata: {
+                description: recipe.title,
+              },
+            },
           });
 
-          // Get the download URL
           const [url] = await file.getSignedUrl({
             action: "read",
             expires: "03-01-2500",
