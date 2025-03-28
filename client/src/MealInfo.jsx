@@ -60,7 +60,7 @@ export default function MealInfo({ id }) {
       ) : (
         <>
           <img
-            src={meal?.image ?? ""}
+            src={meal?.image ?? "/images/placeholder.webp"}
             alt={meal?.title ?? "Meal Image"}
             className="recipe-img"
             loading="lazy"

@@ -54,7 +54,7 @@ export default function MealGroup({
                     htmlFor={`recipe-${recipe.id}`}
                   >
                     <img
-                      src={recipe?.image ?? ""}
+                      src={recipe?.image ?? "/images/placeholder.webp"}
                       alt={recipe.title}
                       loading="lazy"
                     />
