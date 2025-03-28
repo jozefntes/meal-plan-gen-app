@@ -81,7 +81,7 @@ export default function MealPlanGenerator() {
   };
 
   const handleConfirmDelete = () => {
-    if (selectedRecipeIdToDelete) {
+    if (selectedRecipeIdToDelete !== null) {
       const recipeToDelete = recipes.find(
         (recipe) => recipe.id === selectedRecipeIdToDelete
       );
