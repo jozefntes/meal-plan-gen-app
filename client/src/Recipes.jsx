@@ -84,6 +84,13 @@ export default function MealPlanGenerator() {
       const recipeIndex = recipes.findIndex(
         (recipe) => recipe.id === recipeIdForDeletion
       );
+
+      if (recipeIndex === -1) {
+        console.error("Recipe not found in the current state.");
+        setRecipeIdForDeletion(null);
+        return;
+      }
+
       const recipeToDelete = recipes[recipeIndex];
 
       // Optimistically update the state
