@@ -215,7 +215,7 @@ export default function MealPlanGenerator() {
           onAddRecipe={handleAddRecipe}
         />
       )}
-      {recipeIdForDeletion && (
+      {recipeIdForDeletion !== null && (
         <ConfirmationModal
           message="Are you sure you want to delete this recipe?"
           onConfirm={handleConfirmDelete}
