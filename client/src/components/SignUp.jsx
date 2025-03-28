@@ -61,25 +61,29 @@ const SignUp = () => {
           <h6 className="greeting">Welcome! Sign Up</h6>
         </div>
         <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="email">Email</label>
-            <br />
+          <div className="email-container">
+            <label htmlFor="email" className="body-s">
+              Email
+            </label>
             <input
               type="email"
               id="email"
               value={email}
               placeholder="Email or Phone Number"
+              className="body-s"
               onChange={handleEmailChange}
               required
             />
           </div>
           <div className="password-container">
-            <label htmlFor="password">Password</label>
-            <br />
+            <label htmlFor="password" className="body-s">
+              Password
+            </label>
             <input
               type={showPassword ? "text" : "password"}
               id="password"
               placeholder="Enter Password"
+              className="body-s"
               value={password}
               onChange={handlePasswordChange}
               required
@@ -100,22 +104,21 @@ const SignUp = () => {
               />
             )}
           </div>
-          <button type="submit">Create Account</button>
-          <div className="google-button-container">
-            <button
-              onClick={handleGoogleSignIn}
-              className="google-signin-button"
-            >
-              <img
-                src="/icons/google.svg"
-                alt="Google Icon"
-                className="google-icon"
-              />
-              Sign in with Google
-            </button>
-          </div>
+          <button type="submit" className="body-s">
+            Create Account
+          </button>
         </form>
-        <p className="link">
+        <div className="google-button-container">
+          <button onClick={handleGoogleSignIn} className="google-signin-button">
+            <img
+              src="/icons/google.svg"
+              alt="Google Icon"
+              className="google-icon"
+            />
+            <p className="body-s">Sign in with Google</p>
+          </button>
+        </div>
+        <p className="link body-s">
           Already have an account?{" "}
           <span onClick={() => page("/signin")}>Sign in</span>
         </p>
