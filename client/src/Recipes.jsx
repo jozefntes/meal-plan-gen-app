@@ -221,7 +221,6 @@ export default function MealPlanGenerator() {
           message="Are you sure you want to delete this recipe?"
           onConfirm={handleConfirmDelete}
           onCancel={handleCancelDelete}
-          onClose={handleCancelDelete}
         />
       )}
     </>

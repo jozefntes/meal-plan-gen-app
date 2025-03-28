@@ -1,14 +1,9 @@
 import "./ConfirmationModal.css";
 
-export default function ConfirmationModal({
-  onConfirm,
-  onCancel,
-  message,
-  onClose,
-}) {
+export default function ConfirmationModal({ onConfirm, onCancel, message }) {
   const handleOverlayClick = (event) => {
     if (event.target === event.currentTarget) {
-      onClose();
+      onCancel();
     }
   };
 
