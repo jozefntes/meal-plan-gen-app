@@ -76,7 +76,7 @@ export default function MealPlanGenerator() {
   const handleDeleteRecipe = (recipeId) => {
     console.log("Delete recipe with ID:", recipeId);
 
-    const previousRecipes = recipes;
+    // Optimistically update the state
     setRecipes((prevRecipes) =>
       prevRecipes.filter((recipe) => recipe.id !== recipeId)
     );
@@ -88,24 +88,35 @@ export default function MealPlanGenerator() {
       if (user) {
         const idToken = await user.getIdToken();
 
-        fetch(`${SERVER_URL}/api/recipes/${recipeId}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-          },
-        })
-          .then((response) => {
-            if (response.ok) {
-              console.log("Recipe deleted successfully");
-            } else {
-              console.error("Error deleting recipe");
-              setRecipes(previousRecipes);
+        try {
+          const response = await fetch(
+            `${SERVER_URL}/api/recipes/${recipeId}`,
+            {
+              method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${idToken}`,
+              },
             }
-          })
-          .catch((error) => {
-            console.error("Error deleting recipe:", error);
-            setRecipes(previousRecipes);
-          });
+          );
+
+          if (!response.ok) {
+            console.error("Error deleting recipe");
+            // Revert the state if the delete operation fails
+            setRecipes((prevRecipes) => [
+              ...prevRecipes,
+              recipes.find((recipe) => recipe.id === recipeId),
+            ]);
+          } else {
+            console.log("Recipe deleted successfully");
+          }
+        } catch (error) {
+          console.error("Error deleting recipe:", error);
+          // Revert the state if an error occurs
+          setRecipes((prevRecipes) => [
+            ...prevRecipes,
+            recipes.find((recipe) => recipe.id === recipeId),
+          ]);
+        }
       } else {
         console.log("No user is signed in.");
         page("/");
