@@ -430,8 +430,7 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
           });
 
           recipe.image = url;
-        } else {
-          throw new Error("No image data found");
+          break;
         }
       }
     } catch (error) {
