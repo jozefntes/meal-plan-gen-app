@@ -18,8 +18,7 @@ export default function MealPlanGenerator() {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedRecipeIdToDelete, setSelectedRecipeIdToDelete] =
-    useState(null);
+  const [recipeIdForDeletion, setRecipeIdForDeletion] = useState(null);
 
   useEffect(() => {
     // Fetch initial recipes data from the server
@@ -77,18 +76,18 @@ export default function MealPlanGenerator() {
   };
 
   const handleDeleteRecipeClick = (recipeId) => {
-    setSelectedRecipeIdToDelete(recipeId);
+    setRecipeIdForDeletion(recipeId);
   };
 
   const handleConfirmDelete = () => {
-    if (selectedRecipeIdToDelete !== null) {
+    if (recipeIdForDeletion !== null) {
       const recipeToDelete = recipes.find(
-        (recipe) => recipe.id === selectedRecipeIdToDelete
+        (recipe) => recipe.id === recipeIdForDeletion
       );
 
       // Optimistically update the state
       setRecipes((prevRecipes) =>
-        prevRecipes.filter((recipe) => recipe.id !== selectedRecipeIdToDelete)
+        prevRecipes.filter((recipe) => recipe.id !== recipeIdForDeletion)
       );
 
       (async () => {
@@ -100,7 +99,7 @@ export default function MealPlanGenerator() {
 
           try {
             const response = await fetch(
-              `${SERVER_URL}/api/recipes/${selectedRecipeIdToDelete}`,
+              `${SERVER_URL}/api/recipes/${recipeIdForDeletion}`,
               {
                 method: "DELETE",
                 headers: {
@@ -127,11 +126,11 @@ export default function MealPlanGenerator() {
         }
       })();
     }
-    setSelectedRecipeIdToDelete(null);
+    setRecipeIdForDeletion(null);
   };
 
   const handleCancelDelete = () => {
-    setSelectedRecipeIdToDelete(null);
+    setRecipeIdForDeletion(null);
   };
 
   const filteredRecipes = recipes.filter((recipe) =>
@@ -216,7 +215,7 @@ export default function MealPlanGenerator() {
           onAddRecipe={handleAddRecipe}
         />
       )}
-      {selectedRecipeIdToDelete && (
+      {recipeIdForDeletion && (
         <ConfirmationModal
           message="Are you sure you want to delete this recipe?"
           onConfirm={handleConfirmDelete}
