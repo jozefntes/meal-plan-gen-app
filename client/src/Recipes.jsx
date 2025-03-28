@@ -81,9 +81,10 @@ export default function MealPlanGenerator() {
 
   const handleConfirmDelete = () => {
     if (recipeIdForDeletion !== null) {
-      const recipeToDelete = recipes.find(
+      const recipeIndex = recipes.findIndex(
         (recipe) => recipe.id === recipeIdForDeletion
       );
+      const recipeToDelete = recipes[recipeIndex];
 
       // Optimistically update the state
       setRecipes((prevRecipes) =>
@@ -111,14 +112,22 @@ export default function MealPlanGenerator() {
             if (!response.ok) {
               console.error("Error deleting recipe");
               // Revert the state if the delete operation fails
-              setRecipes((prevRecipes) => [...prevRecipes, recipeToDelete]);
+              setRecipes((prevRecipes) => {
+                const updatedRecipes = [...prevRecipes];
+                updatedRecipes.splice(recipeIndex, 0, recipeToDelete);
+                return updatedRecipes;
+              });
             } else {
               console.log("Recipe deleted successfully");
             }
           } catch (error) {
             console.error("Error deleting recipe:", error);
             // Revert the state if an error occurs
-            setRecipes((prevRecipes) => [...prevRecipes, recipeToDelete]);
+            setRecipes((prevRecipes) => {
+              const updatedRecipes = [...prevRecipes];
+              updatedRecipes.splice(recipeIndex, 0, recipeToDelete);
+              return updatedRecipes;
+            });
           }
         } else {
           console.log("No user is signed in.");
