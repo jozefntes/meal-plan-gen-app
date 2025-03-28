@@ -75,7 +75,7 @@ export default function MealPlanGenerator() {
     setSearchQuery(e.target.value);
   };
 
-  const handleDeleteRecipeClick = (recipeId) => {
+  const promptDeleteConfirmation = (recipeId) => {
     setRecipeIdForDeletion(recipeId);
   };
 
@@ -171,7 +171,7 @@ export default function MealPlanGenerator() {
                 filteredRecipes.length > 0 &&
                 filteredRecipes.filter((recipe) => recipe.mealGroup === 1)
               }
-              onDeleteRecipe={handleDeleteRecipeClick}
+              onDeleteRecipe={promptDeleteConfirmation}
               applicationContext="recipes"
             />
             <MealGroup
@@ -180,7 +180,7 @@ export default function MealPlanGenerator() {
                 filteredRecipes.length > 0 &&
                 filteredRecipes.filter((recipe) => recipe.mealGroup === 2)
               }
-              onDeleteRecipe={handleDeleteRecipeClick}
+              onDeleteRecipe={promptDeleteConfirmation}
               applicationContext="recipes"
             />
             <MealGroup
@@ -189,7 +189,7 @@ export default function MealPlanGenerator() {
                 filteredRecipes.length > 0 &&
                 filteredRecipes.filter((recipe) => recipe.mealGroup === 3)
               }
-              onDeleteRecipe={handleDeleteRecipeClick}
+              onDeleteRecipe={promptDeleteConfirmation}
               applicationContext="recipes"
             />
             <MealGroup
@@ -198,7 +198,7 @@ export default function MealPlanGenerator() {
                 filteredRecipes.length > 0 &&
                 filteredRecipes.filter((recipe) => recipe.mealGroup === 4)
               }
-              onDeleteRecipe={handleDeleteRecipeClick}
+              onDeleteRecipe={promptDeleteConfirmation}
               applicationContext="recipes"
             />
           </div>
