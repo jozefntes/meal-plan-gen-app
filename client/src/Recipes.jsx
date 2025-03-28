@@ -18,7 +18,8 @@ export default function MealPlanGenerator() {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [recipeToDelete, setRecipeToDelete] = useState(null);
+  const [selectedRecipeIdToDelete, setSelectedRecipeIdToDelete] =
+    useState(null);
 
   useEffect(() => {
     // Fetch initial recipes data from the server
@@ -76,14 +77,18 @@ export default function MealPlanGenerator() {
   };
 
   const handleDeleteRecipeClick = (recipeId) => {
-    setRecipeToDelete(recipeId);
+    setSelectedRecipeIdToDelete(recipeId);
   };
 
   const handleConfirmDelete = () => {
-    if (recipeToDelete) {
-      const previousRecipes = recipes;
+    if (selectedRecipeIdToDelete) {
+      const recipeToDelete = recipes.find(
+        (recipe) => recipe.id === selectedRecipeIdToDelete
+      );
+
+      // Optimistically update the state
       setRecipes((prevRecipes) =>
-        prevRecipes.filter((recipe) => recipe.id !== recipeToDelete)
+        prevRecipes.filter((recipe) => recipe.id !== selectedRecipeIdToDelete)
       );
 
       (async () => {
@@ -93,35 +98,40 @@ export default function MealPlanGenerator() {
         if (user) {
           const idToken = await user.getIdToken();
 
-          fetch(`${SERVER_URL}/api/recipes/${recipeToDelete}`, {
-            method: "DELETE",
-            headers: {
-              Authorization: `Bearer ${idToken}`,
-            },
-          })
-            .then((response) => {
-              if (response.ok) {
-                console.log("Recipe deleted successfully");
-              } else {
-                console.error("Error deleting recipe");
-                setRecipes(previousRecipes);
+          try {
+            const response = await fetch(
+              `${SERVER_URL}/api/recipes/${selectedRecipeIdToDelete}`,
+              {
+                method: "DELETE",
+                headers: {
+                  Authorization: `Bearer ${idToken}`,
+                },
               }
-            })
-            .catch((error) => {
-              console.error("Error deleting recipe:", error);
-              setRecipes(previousRecipes);
-            });
+            );
+
+            if (!response.ok) {
+              console.error("Error deleting recipe");
+              // Revert the state if the delete operation fails
+              setRecipes((prevRecipes) => [...prevRecipes, recipeToDelete]);
+            } else {
+              console.log("Recipe deleted successfully");
+            }
+          } catch (error) {
+            console.error("Error deleting recipe:", error);
+            // Revert the state if an error occurs
+            setRecipes((prevRecipes) => [...prevRecipes, recipeToDelete]);
+          }
         } else {
           console.log("No user is signed in.");
           page("/");
         }
       })();
     }
-    setRecipeToDelete(null);
+    setSelectedRecipeIdToDelete(null);
   };
 
   const handleCancelDelete = () => {
-    setRecipeToDelete(null);
+    setSelectedRecipeIdToDelete(null);
   };
 
   const filteredRecipes = recipes.filter((recipe) =>
@@ -206,7 +216,7 @@ export default function MealPlanGenerator() {
           onAddRecipe={handleAddRecipe}
         />
       )}
-      {recipeToDelete && (
+      {selectedRecipeIdToDelete && (
         <ConfirmationModal
           message="Are you sure you want to delete this recipe?"
           onConfirm={handleConfirmDelete}
