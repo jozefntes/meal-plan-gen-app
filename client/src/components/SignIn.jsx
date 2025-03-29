@@ -61,25 +61,29 @@ const SignIn = () => {
           <h6 className="greeting">Nice to see you again</h6>
         </div>
         <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="email">Email</label>
-            <br />
+          <div className="email-container">
+            <label htmlFor="email" className="body-s">
+              Email
+            </label>
             <input
               type="email"
               id="email"
               value={email}
               placeholder="Email or Phone Number"
+              className="body-s"
               onChange={handleEmailChange}
               required
             />
           </div>
           <div className="password-container">
-            <label htmlFor="password">Password</label>
-            <br />
+            <label htmlFor="password" className="body-s">
+              Password
+            </label>
             <input
               type={showPassword ? "text" : "password"}
               id="password"
               placeholder="Enter Password"
+              className="body-s"
               value={password}
               onChange={handlePasswordChange}
               required
@@ -100,7 +104,9 @@ const SignIn = () => {
               />
             )}
           </div>
-          <button type="submit">Sign In</button>
+          <button type="submit" className="body-s">
+            Sign In
+          </button>
         </form>
         <div className="google-button-container">
           <button onClick={handleGoogleSignIn} className="google-signin-button">
@@ -109,10 +115,10 @@ const SignIn = () => {
               alt="Google Icon"
               className="google-icon"
             />
-            <p>Sign in with Google</p>
+            <p className="body-s">Sign in with Google</p>
           </button>
         </div>
-        <p className="link">
+        <p className="link body-s">
           Don&apos;t have an account?{" "}
           <span onClick={() => page("/register")}>Sign Up</span>
         </p>

@@ -85,6 +85,14 @@ h6 {
   padding: 0;
 }
 
+a,
+span {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
 .body-l {
   font-family: 'Poppins', sans-serif;
   font-weight: normal;
