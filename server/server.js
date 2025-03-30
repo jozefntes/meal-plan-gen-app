@@ -9,6 +9,7 @@ import admin from "firebase-admin";
 import { applicationDefault } from "firebase-admin/app";
 import { readFile } from "fs/promises";
 import { HfInference } from "@huggingface/inference";
+import { v4 as uuidv4 } from "uuid";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,6 +20,13 @@ const model = genAI.getGenerativeModel({
   model: "gemini-2.0-flash",
   generationConfig: {
     response_mime_type: "application/json",
+  },
+});
+
+const imageModel = genAI.getGenerativeModel({
+  model: "gemini-2.0-flash-exp-image-generation",
+  generationConfig: {
+    responseModalities: ["Text", "Image"],
   },
 });
 
@@ -33,6 +41,7 @@ try {
     // Local development: Use emulator
     admin.initializeApp({
       projectId: "mealplangenerator-2c4bb",
+      storageBucket: "mealplangenerator-2c4bb.firebasestorage.app",
     });
 
     console.log("Firebase Admin SDK initialized (local development).");
@@ -41,6 +50,7 @@ try {
     admin.initializeApp({
       credential: admin.credential.applicationDefault(),
       projectId: "mealplangenerator-2c4bb",
+      storageBucket: "mealplangenerator-2c4bb.firebasestorage.app",
     });
     console.log("Firebase Admin SDK initialized using ADC (Cloud Run).");
   }
@@ -49,6 +59,7 @@ try {
 }
 
 const db = admin.firestore();
+const bucket = admin.storage().bucket();
 
 const app = express();
 app.use(express.static(path.join(__dirname, "static")));
@@ -391,25 +402,44 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
 
     recipe.mealGroup = mealGroup;
     recipe.uid = uid;
+    recipe.image = null;
 
     // Generate an image for the recipe
     try {
-      const imageBlob = await hf.textToImage({
-        model: "black-forest-labs/FLUX.1-dev",
-        inputs: recipe.title,
-      });
+      const contents = `Generate an image of ${recipe.title}`;
 
-      const arrayBuffer = await imageBlob.arrayBuffer();
-      const imageBuffer = Buffer.from(arrayBuffer);
+      const response = await imageModel.generateContent(contents);
+      for (const part of response.response.candidates[0].content.parts) {
+        if (part.inlineData) {
+          const imageData = part.inlineData.data;
+          const buffer = Buffer.from(imageData, "base64");
 
-      // Convert the image buffer to a base64 string
-      const base64Image = imageBuffer.toString("base64");
+          const fileName = `images/${uuidv4()}.png`;
+          const file = bucket.file(fileName);
+          await file.save(buffer, {
+            metadata: {
+              contentType: "image/png",
+              metadata: {
+                description: recipe.title,
+              },
+            },
+          });
 
-      // Add the base64 image to the recipe object
-      recipe.image = base64Image;
+          const [url] = await file.getSignedUrl({
+            action: "read",
+            expires: "03-01-2500",
+          });
+
+          recipe.image = url;
+          break;
+        }
+      }
     } catch (error) {
-      console.error("Error generating image:", error);
-      recipe.image = null;
+      console.error("Error generating content:", error);
+      if (error.response) {
+        console.error("Response status:", error.response.status);
+        console.error("Response data:", error.response.data);
+      }
     }
 
     // Save recipe to database
