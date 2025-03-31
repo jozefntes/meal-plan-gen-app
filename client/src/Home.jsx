@@ -161,8 +161,8 @@ export default function Home() {
       const mealsWithRecipes = selectedDayRecords.meals.map((meal) => {
         const recipe = recipes.find((r) => r.id === meal.id);
         return recipe
-          ? { ...meal, ...recipe } // Merge meal and recipe data if recipe exists
-          : { ...meal, title: "Recipe Deleted", image: null, nutrition: null }; // Placeholder for deleted recipes
+          ? { ...meal, ...recipe }
+          : { ...meal, title: "Recipe Deleted", image: null, nutrition: null };
       });
 
       setSelectedDayMeals(mealsWithRecipes);
@@ -204,10 +204,10 @@ export default function Home() {
                     id={id}
                     mealGroup={mealGroup}
                     title={title}
-                    image={image ?? "/images/placeholder.webp"} // Use placeholder image if recipe is missing
+                    image={image ?? "/images/placeholder.webp"}
                     nutrition={
                       nutrition ?? { calories: 0, protein: 0, carbs: 0, fat: 0 }
-                    } // Default nutrition
+                    }
                     done={done}
                     onMealDone={handleMealDone}
                   />

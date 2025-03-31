@@ -10,8 +10,8 @@ export default function EnergySummary({ progress, userData }) {
   const [remainingPieStyle, setRemainingPieStyle] = useState({});
 
   useEffect(() => {
-    const targetEnergy = userData?.targets?.energy ?? 0; // Default to 0 if userData or targets is missing
-    const newConsumed = progress?.energy?.current ?? 0; // Default to 0 if progress is missing
+    const targetEnergy = userData?.targets?.energy ?? 0;
+    const newConsumed = progress?.energy?.current ?? 0;
 
     setConsumed(newConsumed);
     setRemaining(targetEnergy - newConsumed);
@@ -20,8 +20,10 @@ export default function EnergySummary({ progress, userData }) {
       const fatCals = (progress?.fat?.current ?? 0) * 9;
       const carbCals = (progress?.carbs?.current ?? 0) * 4;
 
-      const fatPercent = newConsumed > 0 ? Math.floor((fatCals / newConsumed) * 100) : 0;
-      const carbsPercent = newConsumed > 0 ? Math.floor((carbCals / newConsumed) * 100) : 0;
+      const fatPercent =
+        newConsumed > 0 ? Math.floor((fatCals / newConsumed) * 100) : 0;
+      const carbsPercent =
+        newConsumed > 0 ? Math.floor((carbCals / newConsumed) * 100) : 0;
       const remainingPercent =
         100 - Math.floor((newConsumed / targetEnergy) * 100) || 0;
 
