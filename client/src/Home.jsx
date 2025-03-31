@@ -25,7 +25,7 @@ export default function Home() {
   const [currentWeek, setCurrentWeek] = useState(0);
   const [mealPlans, setMealPlans] = useState([]);
   const [recipes, setRecipes] = useState([]);
-  const [userData, setUserData] = useState();
+  const [userData, setUserData] = useState({});
   const [selectedDayMeals, setSelectedDayMeals] = useState(null);
   const [selectedDayProgress, setSelectedDayProgress] = useState(null);
   const [loading, setLoading] = useState(true);
