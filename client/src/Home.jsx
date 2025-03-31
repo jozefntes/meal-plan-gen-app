@@ -166,7 +166,7 @@ export default function Home() {
           nutrition: null,
         };
 
-        return recipe ? { ...meal, ...recipe } : defaultRecipe;
+        return recipe ? { ...meal, ...recipe } : { ...meal, ...defaultRecipe };
       });
 
       setSelectedDayMeals(mealsWithRecipes);
