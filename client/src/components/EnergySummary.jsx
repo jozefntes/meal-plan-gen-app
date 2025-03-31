@@ -41,6 +41,8 @@ export default function EnergySummary({ progress, userData }) {
     } else {
       setConsumedPieStyle({});
       setRemainingPieStyle({});
+      setConsumed(0);
+      setRemaining(0);
     }
   }, [progress, userData]);
 
