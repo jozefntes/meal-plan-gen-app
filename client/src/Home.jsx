@@ -10,6 +10,13 @@ import { SERVER_URL, MAX_WEEK, MIN_WEEK } from "./constants";
 import "./Home.css";
 import PlusIcon from "./icons/PlusIcon";
 
+const defaultRecipe = {
+  title: "Unavailable",
+  image: "/images/placeholder.webp",
+  done: false,
+  nutrition: { calories: 0, protein: 0, carbs: 0, fat: 0 },
+};
+
 export default function Home() {
   const getFormattedDate = (date) => {
     return date.toLocaleDateString("en-US", {
@@ -160,11 +167,6 @@ export default function Home() {
     if (selectedDayRecords) {
       const mealsWithRecipes = selectedDayRecords.meals.map((meal) => {
         const recipe = recipes.find((r) => r.id === meal.id);
-        const defaultRecipe = {
-          title: "Recipe Deleted",
-          image: null,
-          nutrition: null,
-        };
 
         return recipe ? { ...meal, ...recipe } : { ...meal, ...defaultRecipe };
       });
@@ -196,7 +198,7 @@ export default function Home() {
         />
 
         {loading ? (
-          <h1>Loading...</h1>
+          <h4>Loading...</h4>
         ) : (
           <ul className="meals">
             {selectedDayMeals ? (
@@ -209,9 +211,7 @@ export default function Home() {
                     mealGroup={mealGroup}
                     title={title}
                     image={image}
-                    nutrition={
-                      nutrition ?? { calories: 0, protein: 0, carbs: 0, fat: 0 }
-                    }
+                    nutrition={nutrition}
                     done={done}
                     onMealDone={handleMealDone}
                   />
