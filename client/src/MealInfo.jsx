@@ -56,7 +56,7 @@ export default function MealInfo({ id }) {
   return (
     <div className="meal-info-page">
       {loading ? (
-        <p>Loading...</p>
+        <h4>Loading...</h4>
       ) : (
         <>
           <img
