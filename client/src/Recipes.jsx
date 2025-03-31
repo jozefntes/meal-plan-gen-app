@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
+import page from "page";
 
 import CreateRecipe from "./components/CreateRecipe";
 import MealGroup from "./components/MealGroup";
@@ -74,9 +75,49 @@ export default function MealPlanGenerator() {
 
   const handleDeleteRecipe = (recipeId) => {
     console.log("Delete recipe with ID:", recipeId);
+
+    const recipeToDelete = recipes.find((recipe) => recipe.id === recipeId);
+
+    // Optimistically update the state
     setRecipes((prevRecipes) =>
       prevRecipes.filter((recipe) => recipe.id !== recipeId)
     );
+
+    (async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (user) {
+        const idToken = await user.getIdToken();
+
+        try {
+          const response = await fetch(
+            `${SERVER_URL}/api/recipes/${recipeId}`,
+            {
+              method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${idToken}`,
+              },
+            }
+          );
+
+          if (!response.ok) {
+            console.error("Error deleting recipe");
+            // Revert the state if the delete operation fails
+            setRecipes((prevRecipes) => [...prevRecipes, recipeToDelete]);
+          } else {
+            console.log("Recipe deleted successfully");
+          }
+        } catch (error) {
+          console.error("Error deleting recipe:", error);
+          // Revert the state if an error occurs
+          setRecipes((prevRecipes) => [...prevRecipes, recipeToDelete]);
+        }
+      } else {
+        console.log("No user is signed in.");
+        page("/");
+      }
+    })();
   };
 
   const filteredRecipes = recipes.filter((recipe) =>
