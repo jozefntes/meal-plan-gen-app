@@ -25,7 +25,9 @@ export default function EnergySummary({ progress, userData }) {
       const carbsPercent =
         newConsumed > 0 ? Math.floor((carbCals / newConsumed) * 100) : 0;
       const remainingPercent =
-        100 - Math.floor((newConsumed / targetEnergy) * 100) || 0;
+        targetEnergy > 0
+          ? 100 - Math.floor((newConsumed / targetEnergy) * 100)
+          : 0;
 
       setConsumedPieStyle({
         background: `conic-gradient(var(--fat) 0% ${fatPercent}%, var(--carbs) ${fatPercent}% ${

@@ -8,7 +8,7 @@ export default function TargetSummary({ progress, userData }) {
     <div className="targets-smry">
       <h6>Targets</h6>
       {targetNames.map((name, index) => (
-        <div className="target" key={index}>
+        <div className="target" key={name}>
           <p className="body-s">{name}</p>
           <div className="progress-container">
             <div className="progress-info">
