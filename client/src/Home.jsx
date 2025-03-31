@@ -5,7 +5,6 @@ import DaySelector from "./components/DaySelector";
 import MealCard from "./components/MealCard";
 import TargetSummary from "./components/TargetSummary";
 import EnergySummary from "./components/EnergySummary";
-import { userData } from "./fakedata.json";
 import { SERVER_URL, MAX_WEEK, MIN_WEEK } from "./constants";
 
 import "./Home.css";
@@ -26,6 +25,7 @@ export default function Home() {
   const [currentWeek, setCurrentWeek] = useState(0);
   const [mealPlans, setMealPlans] = useState([]);
   const [recipes, setRecipes] = useState([]);
+  const [userData, setUserData] = useState();
   const [selectedDayMeals, setSelectedDayMeals] = useState(null);
   const [selectedDayProgress, setSelectedDayProgress] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -99,10 +99,11 @@ export default function Home() {
             mealPlans = await mealPlansResponse.json();
           }
 
+          console.log(mealPlans);
           // Extract unique recipe IDs from meal plans
           const mealRecipeIds = new Set();
-          mealPlans.forEach((day) =>
-            day.meals.forEach((meal) => mealRecipeIds.add(meal.id))
+          mealPlans?.forEach((day) =>
+            day.meals?.forEach((meal) => mealRecipeIds.add(meal.id))
           );
 
           // Process recipes response
@@ -129,6 +130,30 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    (async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (user) {
+        const idToken = await user.getIdToken();
+        const uid = user.uid;
+
+        fetch(`${SERVER_URL}/api/users/${uid}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            setUserData(data);
+          })
+          .catch((error) => console.error("Error fetching user data:", error));
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
     const selectedDayRecords = mealPlans.find(
       (day) => day.date === selectedDay
     );
@@ -136,7 +161,9 @@ export default function Home() {
     if (selectedDayRecords) {
       const mealsWithRecipes = selectedDayRecords.meals.map((meal) => {
         const recipe = recipes.find((r) => r.id === meal.id);
-        return recipe ? { ...meal, ...recipe } : meal;
+        return recipe
+          ? { ...meal, ...recipe } // Merge meal and recipe data if recipe exists
+          : { ...meal, title: "Recipe Deleted", image: null, nutrition: null }; // Placeholder for deleted recipes
       });
 
       setSelectedDayMeals(mealsWithRecipes);
@@ -178,8 +205,10 @@ export default function Home() {
                     id={id}
                     mealGroup={mealGroup}
                     title={title}
-                    image={image}
-                    nutrition={nutrition}
+                    image={image ?? "/images/placeholder.webp"} // Use placeholder image if recipe is missing
+                    nutrition={
+                      nutrition ?? { calories: 0, protein: 0, carbs: 0, fat: 0 }
+                    } // Default nutrition
                     done={done}
                     onMealDone={handleMealDone}
                   />
