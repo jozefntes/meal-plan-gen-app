@@ -99,7 +99,6 @@ export default function Home() {
             mealPlans = await mealPlansResponse.json();
           }
 
-          console.log(mealPlans);
           // Extract unique recipe IDs from meal plans
           const mealRecipeIds = new Set();
           mealPlans?.forEach((day) =>
