@@ -20,9 +20,8 @@ export default function EnergySummary({ progress, userData }) {
       const fatCals = (progress?.fat?.current ?? 0) * 9;
       const carbCals = (progress?.carbs?.current ?? 0) * 4;
 
-      const fatPercent = Math.floor((fatCals / newConsumed) * 100) || 0;
-      const carbsPercent = Math.floor((carbCals / newConsumed) * 100) || 0;
-
+      const fatPercent = newConsumed > 0 ? Math.floor((fatCals / newConsumed) * 100) : 0;
+      const carbsPercent = newConsumed > 0 ? Math.floor((carbCals / newConsumed) * 100) : 0;
       const remainingPercent =
         100 - Math.floor((newConsumed / targetEnergy) * 100) || 0;
 
