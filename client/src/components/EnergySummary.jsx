@@ -4,26 +4,30 @@ import "./EnergySummary.css";
 
 export default function EnergySummary({ progress, userData }) {
   const [consumed, setConsumed] = useState(0);
-  const [remaining, setRemaining] = useState(userData.targets[0].total);
+  const [remaining, setRemaining] = useState(0);
 
   const [consumedPieStyle, setConsumedPieStyle] = useState({});
-
   const [remainingPieStyle, setRemainingPieStyle] = useState({});
 
   useEffect(() => {
-    if (progress) {
-      const newConsumed = progress[0].current;
-      setConsumed(newConsumed);
-      setRemaining(userData.targets[0].total - newConsumed);
+    const targetEnergy = userData?.targets?.energy ?? 0;
+    const newConsumed = progress?.energy?.current ?? 0;
 
-      const fatCals = progress[3].current * 9;
-      const carbCals = progress[2].current * 4;
+    setConsumed(newConsumed);
+    setRemaining(targetEnergy - newConsumed);
 
-      const fatPercent = Math.floor((fatCals / newConsumed) * 100);
-      const carbsPercent = Math.floor((carbCals / newConsumed) * 100);
+    if (progress && targetEnergy > 0) {
+      const fatCals = (progress?.fat?.current ?? 0) * 9;
+      const carbCals = (progress?.carbs?.current ?? 0) * 4;
 
+      const fatPercent =
+        newConsumed > 0 ? Math.floor((fatCals / newConsumed) * 100) : 0;
+      const carbsPercent =
+        newConsumed > 0 ? Math.floor((carbCals / newConsumed) * 100) : 0;
       const remainingPercent =
-        100 - Math.floor((newConsumed / userData.targets[0].total) * 100);
+        targetEnergy > 0
+          ? 100 - Math.floor((newConsumed / targetEnergy) * 100)
+          : 0;
 
       setConsumedPieStyle({
         background: `conic-gradient(var(--fat) 0% ${fatPercent}%, var(--carbs) ${fatPercent}% ${
@@ -35,8 +39,10 @@ export default function EnergySummary({ progress, userData }) {
         background: `conic-gradient(var(--gray-100) 0% ${remainingPercent}%, var(--gray-400) ${remainingPercent}% 100%)`,
       });
     } else {
+      setConsumedPieStyle({});
+      setRemainingPieStyle({});
       setConsumed(0);
-      setRemaining(userData.targets[0].total);
+      setRemaining(0);
     }
   }, [progress, userData]);
 
@@ -47,7 +53,7 @@ export default function EnergySummary({ progress, userData }) {
         <div className="pie-chart-container">
           <div
             className="pie-chart consumed"
-            style={progress ? consumedPieStyle : {}}
+            style={Object.keys(consumedPieStyle).length ? consumedPieStyle : {}}
           ></div>
           <div className="pie-chart-text">
             <p className="btn-text">
@@ -59,7 +65,9 @@ export default function EnergySummary({ progress, userData }) {
         <div className="pie-chart-container">
           <div
             className="pie-chart remaining"
-            style={progress ? remainingPieStyle : {}}
+            style={
+              Object.keys(remainingPieStyle).length ? remainingPieStyle : {}
+            }
           ></div>
           <div className="pie-chart-text">
             <p className="btn-text">
