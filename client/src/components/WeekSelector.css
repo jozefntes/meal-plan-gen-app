@@ -6,19 +6,20 @@
     padding: 16px 64px;
     list-style: none;
     border-radius: 16px;
-    background-color: var(--gray-50);
-    box-shadow: 10px 10px 30px rgba(174, 174, 192, 0.4), -10px -10px 30px rgb(255, 255, 255);
+    background-color: var(--component-bg);
+    box-shadow: var(--box-shadow);
 }
 
 .week-selector__btn button {
     border: none;
     cursor: pointer;
+    background-color: transparent;
 }
 
 .week-selector__btn button p,
 .week-selector__btn button img {
     text-align: center;
-    color: var(--gray-200);
+    color: var(--light-text);
     transition: transform 0.3s ease;
 }
 

@@ -2,9 +2,13 @@ import { useState } from "react";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
 import page from "page";
+import useTheme from "../hooks/useTheme";
 import "./SignUp.css";
+import EyeIcon from "../icons/EyeIcon";
+import NoEyeIcon from "../icons/NoEyeIcon";
 
 const SignIn = () => {
+  const { theme } = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -47,55 +51,75 @@ const SignIn = () => {
       </div>
       <div className="form-section">
         <div className="header-container">
-        <img src="/icons/logo.svg" alt="Meal Prep Logo" />
-        <header>Welcome Back to Meal Plan</header>
-        <h2>Sign In to Meal Plan Generator</h2>
+          <div className="brand-container">
+            <img
+              src={theme === "dark" ? "/logo-dark.svg" : "/logo-light.svg"}
+              alt="MacroMate Logo"
+            />
+            <h4>MacroMate</h4>
+          </div>
+          <h6 className="greeting">Nice to see you again</h6>
         </div>
         <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="email">Email</label>
-            <br />
+          <div className="email-container">
+            <label htmlFor="email" className="body-s">
+              Email
+            </label>
             <input
               type="email"
               id="email"
               value={email}
               placeholder="Email or Phone Number"
+              className="body-s"
               onChange={handleEmailChange}
               required
             />
           </div>
           <div className="password-container">
-            <label htmlFor="password">Password</label>
-            <br />
+            <label htmlFor="password" className="body-s">
+              Password
+            </label>
             <input
               type={showPassword ? "text" : "password"}
               id="password"
               placeholder="Enter Password"
+              className="body-s"
               value={password}
               onChange={handlePasswordChange}
               required
             />
-            <img
-              src={
-                showPassword
-                  ? "icons/noShowPassword.svg"
-                  : "icons/showPassword.svg"
-              }
-              alt="Toggle Password Visibility"
-              className="toggle-password-button"
-              onClick={passwordVisibility}
-            />
+            {showPassword ? (
+              <NoEyeIcon
+                color="var(--icon-color)"
+                size={24}
+                className="toggle-password-button"
+                onClick={passwordVisibility}
+              />
+            ) : (
+              <EyeIcon
+                color="var(--icon-color)"
+                size={24}
+                className="toggle-password-button"
+                onClick={passwordVisibility}
+              />
+            )}
           </div>
-          <button type="submit">Sign In</button>
+          <button type="submit" className="body-s">
+            Sign In
+          </button>
         </form>
         <div className="google-button-container">
           <button onClick={handleGoogleSignIn} className="google-signin-button">
-          <img src="/icons/google.svg" alt="Google Icon" className="google-icon" />
-            Sign in with Google
+            <img
+              src="/icons/google.svg"
+              alt="Google Icon"
+              className="google-icon"
+            />
+            <p className="body-s">Sign in with Google</p>
           </button>
         </div>
-        <p className="link">
-          Don't have an account?{" "}
+        <p className="link body-s">
+          Don&apos;t have an account?{" "}
           <span onClick={() => page("/register")}>Sign Up</span>
         </p>
       </div>

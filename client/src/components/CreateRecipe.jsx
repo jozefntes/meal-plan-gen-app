@@ -33,6 +33,7 @@ const ingredientLists = {
 
 
 const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
+  const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [showIngredientList, setShowIngredientList] = useState(false);
@@ -65,9 +66,12 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
       const idToken = await user.getIdToken();
       const uid = user.uid;
 
-      const minProtein = document.getElementById("min-protein").value;
-      const maxCarbs = document.getElementById("max-carbs").value;
-      const maxFat = document.getElementById("max-fat").value;
+      const selectedMealGroup = parseInt(
+        document.getElementById("meal-group").value
+      );
+      const minProtein = parseInt(document.getElementById("min-protein").value);
+      const maxCarbs = parseInt(document.getElementById("max-carbs").value);
+      const maxFat = parseInt(document.getElementById("max-fat").value);
 
       if (
         minProtein < 0 ||
@@ -81,51 +85,73 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
         return;
       }
 
-      console.log("Creating new recipe with the following data:");
-      console.log("Meal Group:", mealGroup);
-      console.log("User ID:", uid);
-      console.log("Ingredients:", selectedIngredients);
-      console.log("Min Protein:", minProtein);
-      console.log("Max Carbs:", maxCarbs);
-      console.log("Max Fat:", maxFat);
+      setLoading(true);
 
-      const response = await fetch(`${SERVER_URL}/api/generate_recipe`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${idToken}`,
-        },
-        body: JSON.stringify({
-          uid,
-          ingredients: selectedIngredients,
-          minProtein: parseInt(minProtein),
-          maxCarbs: parseInt(maxCarbs),
-          maxFat: parseInt(maxFat),
-          mealGroup,
-        }),
-      });
+      try {
+        const response = await fetch(`${SERVER_URL}/api/generate_recipe`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${idToken}`,
+          },
+          body: JSON.stringify({
+            uid,
+            ingredients: selectedIngredients,
+            minProtein,
+            maxCarbs,
+            maxFat,
+            mealGroup: selectedMealGroup,
+          }),
+        });
 
-      if (!response.ok) {
-        throw new Error("Failed to generate recipe");
+        if (!response.ok) {
+          throw new Error("Failed to generate recipe");
+        }
+
+        const data = await response.json();
+        console.log(data);
+        console.log("Generated recipe:", data.recipe);
+
+        onAddRecipe(data.recipe);
+        onClose();
+      } catch (error) {
+        console.error("Error generating recipe:", error);
+        alert("Failed to generate recipe. Please try again.");
+      } finally {
+        setLoading(false);
       }
-
-      const data = await response.json();
-      console.log(data);
-      console.log("Generated recipe:", data.recipe);
-
-      onAddRecipe(data.recipe);
-
-      onClose();
     } else {
       console.log("User not signed in");
     }
   };
 
+  const handleOverlayClick = (event) => {
+    if (event.target === event.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content">
         <h6>Create New Recipe</h6>
         <form>
+          <div className="form-group">
+            <label htmlFor="meal-group" className="body-s">
+              Meal Group
+            </label>
+            <select
+              id="meal-group"
+              name="meal-group"
+              defaultValue={mealGroup}
+              required
+            >
+              <option value="1">Breakfast</option>
+              <option value="2">Lunch</option>
+              <option value="3">Dinner</option>
+              <option value="4">Snack</option>
+            </select>
+          </div>
           <div className="form-group" ref={ingredientBoxRef} 
           onMouseEnter={() => setShowIngredientList(true)}
           onMouseLeave={() => setShowIngredientList(false)}
@@ -211,8 +237,13 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
             <button type="button" onClick={onClose} className="btn-text">
               Cancel
             </button>
-            <button type="submit" onClick={createRecipe} className="btn-text">
-              Create
+            <button
+              type="submit"
+              onClick={createRecipe}
+              className="btn-text"
+              disabled={loading}
+            >
+              {loading ? "Creating..." : "Create"}
             </button>
           </div>
         </form>

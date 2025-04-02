@@ -24,7 +24,7 @@
     padding: 10px;
 }
 
-.add-btn {
+.add-btn, .delete-btn {
     background: none;
     border: none;
     cursor: pointer;
@@ -40,7 +40,11 @@
     padding: 0 10px;
 }
 
-.meal-info p:first-of-type {
+.meal-info p {
+    text-wrap: wrap;
+}
+
+.meal-group-info {
     color: var(--gray-200);
 }
 
