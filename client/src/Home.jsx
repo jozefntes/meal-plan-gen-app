@@ -81,7 +81,6 @@ export default function Home() {
   };
 
   const updateRecipeId = (prevId, newId) => {
-    // Update mealPlans
     setMealPlans((prev) =>
       prev.map((day) =>
         day.date === selectedDay
@@ -94,21 +93,6 @@ export default function Home() {
           : day
       )
     );
-
-    // Optimistically update selectedDayMeals
-    setSelectedDayMeals((prev) =>
-      prev.map((meal) =>
-        meal.id === prevId
-          ? {
-              ...meal,
-              id: newId,
-              ...recipes.find((recipe) => recipe.id === newId), // Merge new recipe details
-            }
-          : meal
-      )
-    );
-
-    console.log("Updated recipe ID:", prevId, "to", newId);
   };
 
   useEffect(() => {
