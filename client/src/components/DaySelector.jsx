@@ -22,7 +22,7 @@ export default function DaySelector({
           <button onClick={() => onDaySelect(day.date)}>
             <p className="body-l">
               {day.name}
-              <span className="body-s">{day.date}</span>
+              <span className="body-s">{day.displayDate}</span>
             </p>
           </button>
         </li>

@@ -18,15 +18,11 @@ const defaultRecipe = {
 };
 
 export default function Home() {
-  const getFormattedDate = (date) => {
-    return date.toLocaleDateString("en-US", {
-      month: "2-digit",
-      day: "2-digit",
-      year: "numeric",
-    });
-  };
-
-  const today = getFormattedDate(new Date());
+  const today = new Date(
+    new Date().getTime() - new Date().getTimezoneOffset() * 60000
+  )
+    .toISOString()
+    .split("T")[0];
 
   const [selectedDay, setSelectedDay] = useState(today);
   const [currentWeek, setCurrentWeek] = useState(0);
@@ -39,17 +35,27 @@ export default function Home() {
 
   const generateDays = (weekOffset) => {
     const now = new Date();
-    const dayOfWeek = now.getDay();
-    const baseDate = new Date(now);
-    baseDate.setDate(now.getDate() - dayOfWeek + 1);
+    const dayOfWeek = now.getDay(); // Get the day of the week in local timezone
+    const baseDate = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - dayOfWeek + 1 // Start from Monday (local timezone)
+    );
 
     const days = [];
     for (let i = 0; i < 7; i++) {
       const date = new Date(baseDate);
-      date.setDate(baseDate.getDate() + i + weekOffset * 7);
-      const dayName = date.toLocaleDateString("en-US", { weekday: "long" });
-      const dayDate = getFormattedDate(date);
-      days.push({ name: dayName, date: dayDate });
+      date.setDate(baseDate.getDate() + i + weekOffset * 7); // Use local date
+      const dayName = date.toLocaleDateString("en-US", {
+        weekday: "long",
+      });
+      const dayDate = date.toISOString().split("T")[0]; // Internal format: YYYY-MM-DD
+      const displayDate = date.toLocaleDateString("en-US", {
+        month: "2-digit",
+        day: "2-digit",
+        year: "numeric",
+      }); // Display format: MM/DD/YYYY
+      days.push({ name: dayName, date: dayDate, displayDate });
     }
     return days;
   };
@@ -62,7 +68,7 @@ export default function Home() {
     } else if (date === "next") {
       setCurrentWeek((prev) => Math.min(prev + 1, MAX_WEEK));
     } else {
-      setSelectedDay(date);
+      setSelectedDay(new Date(date).toISOString().split("T")[0]); // Format as YYYY-MM-DD
     }
   };
 
@@ -72,6 +78,37 @@ export default function Home() {
         meal.id === id ? { ...meal, done: !meal.done } : meal
       )
     );
+  };
+
+  const updateRecipeId = (prevId, newId) => {
+    // Update mealPlans
+    setMealPlans((prev) =>
+      prev.map((day) =>
+        day.date === selectedDay
+          ? {
+              ...day,
+              meals: day.meals.map((meal) =>
+                meal.id === prevId ? { ...meal, id: newId } : meal
+              ),
+            }
+          : day
+      )
+    );
+
+    // Optimistically update selectedDayMeals
+    setSelectedDayMeals((prev) =>
+      prev.map((meal) =>
+        meal.id === prevId
+          ? {
+              ...meal,
+              id: newId,
+              ...recipes.find((recipe) => recipe.id === newId), // Merge new recipe details
+            }
+          : meal
+      )
+    );
+
+    console.log("Updated recipe ID:", prevId, "to", newId);
   };
 
   useEffect(() => {
@@ -186,7 +223,10 @@ export default function Home() {
         </div>
 
         <DaySelector
-          days={days}
+          days={days.map((day) => ({
+            ...day,
+            displayDate: day.displayDate,
+          }))}
           selectedDate={selectedDay}
           onDaySelect={handleDaySelect}
           currentWeek={currentWeek}
