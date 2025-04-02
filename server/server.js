@@ -535,7 +535,7 @@ app.post("/api/replace_recipe", verifyToken, async (req, res) => {
     const mealPlan = dateDoc.data();
     const meals = mealPlan.meals;
 
-    if (meals !== undefined && !Array.isArray(meals)) {
+    if (!meals || !Array.isArray(meals)) {
       return res.status(400).json({ error: "Invalid meal plan format" });
     }
 
