@@ -208,9 +208,11 @@ export default function Home() {
                     image={image}
                     nutrition={nutrition}
                     done={done}
+                    date={selectedDay}
                     onMealDone={handleMealDone}
                     allRecipes={recipes}
                     applicationContext="home"
+                    onReplaceRecipeId={updateRecipeId}
                   />
                 ))
             ) : (

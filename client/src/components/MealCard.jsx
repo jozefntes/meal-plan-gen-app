@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { getAuth } from "firebase/auth";
 import page from "page";
 import { getMealLabel } from "../utils/mealUtils";
 import ReplaceRecipeModal from "./ReplaceRecipeModal";
+import { SERVER_URL } from "../constants";
 
 import "./MealCard.css";
 
@@ -12,10 +14,12 @@ export default function MealCard({
   image,
   nutrition,
   done,
+  date,
   onMealDone,
   applicationContext,
   onDeleteRecipe,
   allRecipes,
+  onReplaceRecipeId,
 }) {
   const [deleteIcon, setDeleteIcon] = useState("../icons/trash-filled.svg");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,8 +41,43 @@ export default function MealCard({
     setIsModalOpen(true);
   };
 
-  const handleReplaceRecipe = (recipeId) => {
-    console.log(`Replacing recipe with ID: ${recipeId}`);
+  const handleReplaceRecipe = async (recipeId) => {
+    const formattedDate = new Date(date).toISOString().split("T")[0];
+
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+      const idToken = await user.getIdToken();
+      const uid = user.uid;
+
+      // Optimistically update the UI
+      onReplaceRecipeId(id, recipeId);
+
+      try {
+        const response = await fetch(`${SERVER_URL}/api/replace_recipe`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${idToken}`,
+          },
+          body: JSON.stringify({
+            uid,
+            date: formattedDate,
+            newMealId: recipeId,
+            currentMealId: id,
+          }),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to replace recipe");
+        }
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error("Error replacing recipe:", error);
+        onReplaceRecipeId(recipeId, id);
+      }
+    }
+
     setIsModalOpen(false);
   };
 

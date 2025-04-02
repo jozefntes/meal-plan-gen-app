@@ -20,7 +20,11 @@ export default function ReplaceRecipeModal({
         <h4>Replace Recipe</h4>
         <ul className="recipe-list">
           {filteredRecipes.map((recipe) => (
-            <li key={recipe.id} className="recipe-item" onClick={onReplace}>
+            <li
+              key={recipe.id}
+              className="recipe-item"
+              onClick={() => onReplace(recipe.id)}
+            >
               <img
                 src={recipe.image || "/images/placeholder.webp"}
                 alt={recipe.title}
