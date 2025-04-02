@@ -177,18 +177,6 @@ app.get("/api/meal_plans/:uid", verifyToken, async (req, res) => {
     const mealPlans = [];
     for (const doc of querySnapshot.docs) {
       const dateData = { id: doc.id, ...doc.data() };
-
-      // Format the date before adding it to the mealPlans array
-      const formattedDate = new Date(dateData.date).toLocaleDateString(
-        "en-US",
-        {
-          month: "2-digit",
-          day: "2-digit",
-          year: "numeric",
-        }
-      );
-      dateData.date = formattedDate;
-
       mealPlans.push(dateData);
     }
 
@@ -332,7 +320,7 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
       const mealPlan = JSON.parse(mealPlanText);
 
       const populatedMealPlan = mealPlan.dates.map(({ date, meals }) => ({
-        date,
+        date: new Date(date).toISOString().split("T")[0],
         meals: meals.map(({ id }) => ({
           id,
           done: false,
@@ -485,6 +473,72 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to create recipe" });
+  }
+});
+
+// Update a meal plan for a specific date
+app.post("/api/replace_recipe", verifyToken, async (req, res) => {
+  const { uid, date, currentMealId, newMealId } = req.body;
+
+  if (!uid || !date || !currentMealId || !newMealId) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  if (req.user.uid !== uid) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
+  // Verify that the newMealId is not the same as the currentMealId
+  if (currentMealId === newMealId) {
+    return res
+      .status(400)
+      .json({ error: "New meal ID must differ from the current meal ID" });
+  }
+
+  // Verify that the date is in YYYY-MM-DD format
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!dateRegex.test(date)) {
+    return res.status(400).json({ error: "Invalid date format" });
+  }
+
+  // Verify that the newMealId is valid
+  const docRef = db.collection("recipes").doc(newMealId);
+  const doc = await docRef.get();
+  if (!doc.exists) {
+    return res.status(404).json({ error: "New meal not found" });
+  }
+
+  try {
+    const userDocRef = db.collection("plans").doc(uid);
+    const userDoc = await userDocRef.get();
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const datesCollectionRef = userDocRef.collection("dates");
+    const dateDocRef = datesCollectionRef.doc(date);
+    const dateDoc = await dateDocRef.get();
+    if (!dateDoc.exists) {
+      return res.status(404).json({ error: "Meal plan not found" });
+    }
+    const mealPlan = dateDoc.data();
+    const meals = mealPlan.meals;
+
+    if (!meals || !Array.isArray(meals)) {
+      return res.status(400).json({ error: "Invalid meal plan format" });
+    }
+
+    const mealIndex = meals.findIndex((meal) => meal.id === currentMealId);
+    if (mealIndex === -1) {
+      return res.status(404).json({ error: "Current meal not found" });
+    }
+    meals[mealIndex].id = newMealId;
+    meals[mealIndex].done = false;
+    await dateDocRef.set({ meals }, { merge: true });
+
+    res.status(200).json({ message: "Meal plan updated successfully" });
+  } catch (error) {
+    console.error("Error updating meal plan:", error);
+    res.status(500).json({ error: "Failed to update meal plan" });
   }
 });
 
