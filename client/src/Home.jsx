@@ -33,28 +33,30 @@ export default function Home() {
   const [selectedDayProgress, setSelectedDayProgress] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const getFormattedDate = (date) => date.toISOString().split("T")[0];
+
   const generateDays = (weekOffset) => {
     const now = new Date();
-    const dayOfWeek = now.getDay(); // Get the day of the week in local timezone
+    const dayOfWeek = now.getDay();
     const baseDate = new Date(
       now.getFullYear(),
       now.getMonth(),
-      now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1) // Start from Monday (local timezone)
+      now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)
     );
 
     const days = [];
     for (let i = 0; i < 7; i++) {
       const date = new Date(baseDate);
-      date.setDate(baseDate.getDate() + i + weekOffset * 7); // Use local date
+      date.setDate(baseDate.getDate() + i + weekOffset * 7);
       const dayName = date.toLocaleDateString("en-US", {
         weekday: "long",
       });
-      const dayDate = date.toISOString().split("T")[0]; // Internal format: YYYY-MM-DD
+      const dayDate = getFormattedDate(date);
       const displayDate = date.toLocaleDateString("en-US", {
         month: "2-digit",
         day: "2-digit",
         year: "numeric",
-      }); // Display format: MM/DD/YYYY
+      });
       days.push({ name: dayName, date: dayDate, displayDate });
     }
     return days;
@@ -68,7 +70,7 @@ export default function Home() {
     } else if (date === "next") {
       setCurrentWeek((prev) => Math.min(prev + 1, MAX_WEEK));
     } else {
-      setSelectedDay(new Date(date).toISOString().split("T")[0]); // Format as YYYY-MM-DD
+      setSelectedDay(getFormattedDate(new Date(date)));
     }
   };
 
