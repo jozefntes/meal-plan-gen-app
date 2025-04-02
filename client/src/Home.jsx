@@ -39,7 +39,7 @@ export default function Home() {
     const baseDate = new Date(
       now.getFullYear(),
       now.getMonth(),
-      now.getDate() - dayOfWeek + 1 // Start from Monday (local timezone)
+      now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1) // Start from Monday (local timezone)
     );
 
     const days = [];
