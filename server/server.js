@@ -502,7 +502,9 @@ app.post("/api/replace_recipe", verifyToken, async (req, res) => {
 
   // Verify that the newMealId is not the same as the currentMealId
   if (currentMealId === newMealId) {
-    return res.status(400).json({ error: "New meal ID cannot be the same" });
+    return res
+      .status(400)
+      .json({ error: "New meal ID must differ from the current meal ID" });
   }
 
   // Verify that the date is in YYYY-MM-DD format
@@ -532,6 +534,11 @@ app.post("/api/replace_recipe", verifyToken, async (req, res) => {
     }
     const mealPlan = dateDoc.data();
     const meals = mealPlan.meals;
+
+    if (meals !== undefined && !Array.isArray(meals)) {
+      return res.status(400).json({ error: "Invalid meal plan format" });
+    }
+
     const mealIndex = meals.findIndex((meal) => meal.id === currentMealId);
     if (mealIndex === -1) {
       return res.status(404).json({ error: "Current meal not found" });
