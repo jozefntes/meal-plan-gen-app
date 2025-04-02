@@ -113,19 +113,14 @@ export default function Home() {
           );
 
           // Process recipes response
-          let recipes = [];
+          let recipeList = [];
           if (recipesResponse.status !== 404) {
-            recipes = await recipesResponse.json();
+            recipeList = await recipesResponse.json();
           }
-
-          // Filter recipes to only include the ones in meal plans
-          const filteredRecipes = recipes.filter((recipe) =>
-            mealRecipeIds.has(recipe.id)
-          );
 
           // Update state
           setMealPlans(mealPlans);
-          setRecipes(filteredRecipes);
+          setRecipes(recipeList);
         } catch (error) {
           console.error("Error fetching data:", error);
         } finally {
@@ -213,7 +208,11 @@ export default function Home() {
                     image={image}
                     nutrition={nutrition}
                     done={done}
+                    date={selectedDay}
                     onMealDone={handleMealDone}
+                    allRecipes={recipes}
+                    applicationContext="home"
+                    onReplaceRecipeId={updateRecipeId}
                   />
                 ))
             ) : (
