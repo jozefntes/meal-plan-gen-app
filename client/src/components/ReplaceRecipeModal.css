@@ -23,11 +23,28 @@
 
 .recipe-list {
     list-style: none;
-    padding: 24px 0;
+    padding: 24px 8px 24px 0;
     margin: 0;
     display: flex;
     flex-direction: column;
     gap: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    box-sizing: content-box;
+}
+
+.recipe-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.recipe-list::-webkit-scrollbar-thumb {
+    background: var(--target-bar);
+    border-radius: 4px;
+}
+
+.recipe-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
 }
 
 .recipe-item {
@@ -39,7 +56,7 @@
 }
 
 .recipe-item:hover {
-    background: var(--gray-100);
+    background: var(--target-bar);
     border-radius: 8px;
 }
 

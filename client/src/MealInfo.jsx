@@ -73,7 +73,7 @@ export default function MealInfo({ id }) {
               }p, ${meal?.nutrition?.carbs ?? 0}c, ${
                 meal?.nutrition?.fat ?? 0
               }f (per meal)`}</p>
-              <p>{getMealLabel(meal?.mealGroup)}</p>
+              <p className="body-s">{getMealLabel(meal?.mealGroup)}</p>
             </div>
           </div>
           <hr />
