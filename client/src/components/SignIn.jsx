@@ -111,6 +111,7 @@ const SignIn = () => {
               />
             )}
           </div>
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
           <button type="submit">Sign In</button>
         </form>
         <div className="google-button-container">
