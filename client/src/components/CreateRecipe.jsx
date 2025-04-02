@@ -1,11 +1,60 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { getAuth } from "firebase/auth";
 import { SERVER_URL } from "../constants";
 
 import "./CreateRecipe.css";
 
+const ingredientLists = {
+  1: [
+    "Eggs", "Bacon", "Sausage", "Toast", "Bagel", "Pancakes", "Waffles", "Oatmeal", 
+    "Cereal", "Milk", "Yogurt", "Banana", "Apple", "Orange Juice", "Cheese",
+    "Peanut Butter", "Avocado", "Tomato", "Spinach", "Mushrooms"
+  ], 
+
+  2: [
+    "Chicken", "Rice", "Pasta", "Turkey", "Beef", "Lettuce", "Tomato", "Onion",
+    "Cheese", "Avocado", "Tuna", "Beans", "Bread", "Mayonnaise", "Spinach",
+    "Carrots", "Cucumber", "Hummus", "Corn", "Pickles"
+  ], 
+
+  3: [
+    "Salmon", "Steak", "Pork", "Shrimp", "Broccoli", "Cauliflower", "Zucchini", 
+    "Garlic", "Olive Oil", "Soy Sauce", "Rice", "Quinoa", "Potatoes", "Mushrooms",
+    "Bell Peppers", "Tomato Sauce", "Cheese", "Noodles", "Tofu", "Eggplant"
+  ], 
+
+  4: [
+    "Almonds", "Cashews", "Yogurt", "Granola", "Peanut Butter", "Dark Chocolate",
+    "Popcorn", "Crackers", "Cheese", "Hummus", "Carrots", "Celery", "Fruit",
+    "Nuts", "Smoothie", "Protein Bar", "Boiled Eggs", "Cottage Cheese", "Seeds",
+    "Greek Yogurt"
+  ], 
+};
+
+
 const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedIngredients, setSelectedIngredients] = useState([]);
+  const [showIngredientList, setShowIngredientList] = useState(false);
+  const ingredientBoxRef = useRef(null);
+
+  const filteredIngredients = ingredientLists[mealGroup]?.filter((ingredient) =>
+    ingredient.toLowerCase().includes(searchTerm.toLowerCase())
+  ) || [];
+
+  const handleIngredientSelect = (ingredient) => {
+    setSelectedIngredients((prev) =>
+      prev.includes(ingredient)
+        ? prev.filter((item) => item !== ingredient)
+        : [...prev, ingredient]
+    );
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    setShowIngredientList(true); 
+  };
 
   const createRecipe = async (event) => {
     event.preventDefault();
@@ -20,7 +69,6 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
       const selectedMealGroup = parseInt(
         document.getElementById("meal-group").value
       );
-      const ingredients = document.getElementById("ingredients").value;
       const minProtein = parseInt(document.getElementById("min-protein").value);
       const maxCarbs = parseInt(document.getElementById("max-carbs").value);
       const maxFat = parseInt(document.getElementById("max-fat").value);
@@ -48,7 +96,7 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
           },
           body: JSON.stringify({
             uid,
-            ingredients,
+            ingredients: selectedIngredients,
             minProtein,
             maxCarbs,
             maxFat,
@@ -104,12 +152,48 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
               <option value="4">Snack</option>
             </select>
           </div>
-          <div className="form-group">
-            <label htmlFor="ingredients" className="body-s">
-              Ingredients
-            </label>
-            <input type="text" id="ingredients" name="ingredients" required />
-          </div>
+          <div className="form-group" ref={ingredientBoxRef} 
+          onMouseEnter={() => setShowIngredientList(true)}
+          onMouseLeave={() => setShowIngredientList(false)}
+          >
+         <label htmlFor="ingredient-search" className="body-s">
+          Ingredients
+        </label>
+        <input 
+          type = "text"
+          id="ingredient-search"
+          placeholder="Select ingredients"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          onFocus={() => setShowIngredientList(true)}
+        />
+
+        {showIngredientList ? (
+          <div className="ingredient-list">
+            {filteredIngredients.length > 0 ? (
+              filteredIngredients.map((ingredient) => (
+                <label key={ingredient} className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={selectedIngredients.includes(ingredient)}
+                    onChange={() => handleIngredientSelect(ingredient)}
+                  />
+                  {ingredient}
+                </label>
+              ))
+            ) : (
+              <p>No matching ingredients found.</p>
+            )}
+        </div>
+      ) : (
+            <div className="selected-ingredients">
+              {selectedIngredients.length > 0
+                ? selectedIngredients.join(", ")
+                : "No ingredients selected"}
+            </div>
+          )}
+      </div>
+
           <div className="form-group">
             <label htmlFor="min-protein" className="body-s">
               Min Protein (g) - Min 0, Max 60
