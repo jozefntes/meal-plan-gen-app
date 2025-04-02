@@ -1,6 +1,7 @@
 import { useState } from "react";
 import page from "page";
 import { getMealLabel } from "../utils/mealUtils";
+import ReplaceRecipeModal from "./ReplaceRecipeModal";
 
 import "./MealCard.css";
 
@@ -14,8 +15,10 @@ export default function MealCard({
   onMealDone,
   applicationContext,
   onDeleteRecipe,
+  allRecipes,
 }) {
   const [deleteIcon, setDeleteIcon] = useState("../icons/trash-filled.svg");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const backgroundStyle = {
     background: `linear-gradient(rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 50%), linear-gradient(45deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 50%),
@@ -29,9 +32,18 @@ export default function MealCard({
     page(`/recipe/${id}`);
   };
 
-  const handleReplaceRecipe = (e) => {
+  const openReplaceRecipeModal = (e) => {
     e.stopPropagation();
-    console.log(`Replacing recipe with ID: ${id}`);
+    setIsModalOpen(true);
+  };
+
+  const handleReplaceRecipe = (recipeId) => {
+    console.log(`Replacing recipe with ID: ${recipeId}`);
+    setIsModalOpen(false);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -88,13 +100,23 @@ export default function MealCard({
           {applicationContext !== "recipes" && (
             <button
               className="replace-recipe-btn"
-              onClick={handleReplaceRecipe}
+              onClick={openReplaceRecipeModal}
             >
               <img src="../icons/arrows-exchange.svg" alt="Arrow Right" />
             </button>
           )}
         </div>
       </li>
+
+      {isModalOpen && (
+        <ReplaceRecipeModal
+          mealGroup={mealGroup}
+          allRecipes={allRecipes}
+          onClose={handleCloseModal}
+          onReplace={handleReplaceRecipe}
+          currentRecipeId={id}
+        />
+      )}
     </>
   );
 }
