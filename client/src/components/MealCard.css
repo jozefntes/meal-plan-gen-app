@@ -1,6 +1,11 @@
+.meal-card,
+.meal-card * {
+    box-sizing: border-box;
+}
+
 .meal-card {
-    width: 214px;
-    height: 272px;
+    min-width: calc(214px + 20px);
+    min-height: calc(272px + 20px);
     padding: 10px;
     border-radius: 16px;
     background-color: var(--gray-400);
@@ -48,9 +53,36 @@
     color: var(--gray-200);
 }
 
+
 .meal-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    width: 100%;
+}
+
+.meal-footer-info {
     display: flex;
     flex-direction: column;
     gap: 0;
     padding: 8px;
+}
+
+.meal-footer button {
+    background: white;
+    border: none;
+    cursor: pointer;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    box-shadow: var(--btn-shadow);
+    transition: all 0.3s ease;
+}
+
+.meal-footer button:hover {
+    background: var(--gray-50);
+    transform: scale(0.90);
+    transition: all 0.3s ease;
 }

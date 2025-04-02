@@ -29,6 +29,11 @@ export default function MealCard({
     page(`/recipe/${id}`);
   };
 
+  const handleReplaceRecipe = (e) => {
+    e.stopPropagation();
+    console.log(`Replacing recipe with ID: ${id}`);
+  };
+
   return (
     <>
       <li
@@ -74,10 +79,20 @@ export default function MealCard({
           )}
         </div>
         <div className="meal-footer">
-          <p className="body-s">{nutrition.calories} kcal</p>
-          <p className="body-s">{nutrition.protein} g protein</p>
-          <p className="body-s">{nutrition.carbs} g carbs</p>
-          <p className="body-s">{nutrition.fat} g fat</p>
+          <div className="meal-footer-info">
+            <p className="body-s">{nutrition.calories} kcal</p>
+            <p className="body-s">{nutrition.protein} g protein</p>
+            <p className="body-s">{nutrition.carbs} g carbs</p>
+            <p className="body-s">{nutrition.fat} g fat</p>
+          </div>
+          {applicationContext !== "recipes" && (
+            <button
+              className="replace-recipe-btn"
+              onClick={handleReplaceRecipe}
+            >
+              <img src="../icons/arrows-exchange.svg" alt="Arrow Right" />
+            </button>
+          )}
         </div>
       </li>
     </>
