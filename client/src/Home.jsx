@@ -207,10 +207,7 @@ export default function Home() {
         </div>
 
         <DaySelector
-          days={days.map((day) => ({
-            ...day,
-            displayDate: day.displayDate,
-          }))}
+          days={days}
           selectedDate={selectedDay}
           onDaySelect={handleDaySelect}
           currentWeek={currentWeek}
