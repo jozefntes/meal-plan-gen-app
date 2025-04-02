@@ -177,18 +177,6 @@ app.get("/api/meal_plans/:uid", verifyToken, async (req, res) => {
     const mealPlans = [];
     for (const doc of querySnapshot.docs) {
       const dateData = { id: doc.id, ...doc.data() };
-
-      // Format the date before adding it to the mealPlans array
-      const formattedDate = new Date(dateData.date).toLocaleDateString(
-        "en-US",
-        {
-          month: "2-digit",
-          day: "2-digit",
-          year: "numeric",
-        }
-      );
-      dateData.date = formattedDate;
-
       mealPlans.push(dateData);
     }
 
@@ -332,7 +320,7 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
       const mealPlan = JSON.parse(mealPlanText);
 
       const populatedMealPlan = mealPlan.dates.map(({ date, meals }) => ({
-        date,
+        date: new Date(date).toISOString().split("T")[0],
         meals: meals.map(({ id }) => ({
           id,
           done: false,
