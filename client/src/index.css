@@ -32,6 +32,7 @@
   --pie-bg: var(--white-100);
   --energy: var(--gray-300);
   --box-shadow: 10px 10px 30px rgba(174, 174, 192, 0.4), -10px -10px 30px rgb(255, 255, 255);
+  --btn-shadow: 10px 10px 30px rgba(0, 0, 0, 0.15), -10px -10px 30px rgba(0, 0, 0, 0.15);
   --sidenav-shadow: 10px 10px 30px rgba(174, 174, 192, 0.4);
   --icon-color: var(--gray-400);
 }
@@ -83,6 +84,14 @@ h6 {
   line-height: 32px;
   letter-spacing: 0.04em;
   padding: 0;
+}
+
+a,
+span {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .body-l {

@@ -5,44 +5,59 @@ import DaySelector from "./components/DaySelector";
 import MealCard from "./components/MealCard";
 import TargetSummary from "./components/TargetSummary";
 import EnergySummary from "./components/EnergySummary";
-import { userData } from "./fakedata.json";
 import { SERVER_URL, MAX_WEEK, MIN_WEEK } from "./constants";
 
 import "./Home.css";
 import PlusIcon from "./icons/PlusIcon";
 
-export default function Home() {
-  const getFormattedDate = (date) => {
-    return date.toLocaleDateString("en-US", {
-      month: "2-digit",
-      day: "2-digit",
-      year: "numeric",
-    });
-  };
+const defaultRecipe = {
+  title: "Unavailable",
+  image: "/images/placeholder.webp",
+  done: false,
+  nutrition: { calories: 0, protein: 0, carbs: 0, fat: 0 },
+};
 
-  const today = getFormattedDate(new Date());
+export default function Home() {
+  const today = new Date(
+    new Date().getTime() - new Date().getTimezoneOffset() * 60000
+  )
+    .toISOString()
+    .split("T")[0];
 
   const [selectedDay, setSelectedDay] = useState(today);
   const [currentWeek, setCurrentWeek] = useState(0);
   const [mealPlans, setMealPlans] = useState([]);
   const [recipes, setRecipes] = useState([]);
+  const [userData, setUserData] = useState({});
   const [selectedDayMeals, setSelectedDayMeals] = useState(null);
   const [selectedDayProgress, setSelectedDayProgress] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const getFormattedDate = (date) => date.toISOString().split("T")[0];
+
   const generateDays = (weekOffset) => {
     const now = new Date();
     const dayOfWeek = now.getDay();
-    const baseDate = new Date(now);
-    baseDate.setDate(now.getDate() - dayOfWeek + 1);
+    const baseDate = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)
+    );
 
     const days = [];
     for (let i = 0; i < 7; i++) {
       const date = new Date(baseDate);
       date.setDate(baseDate.getDate() + i + weekOffset * 7);
-      const dayName = date.toLocaleDateString("en-US", { weekday: "long" });
+      const dayName = date.toLocaleDateString("en-US", {
+        weekday: "long",
+      });
       const dayDate = getFormattedDate(date);
-      days.push({ name: dayName, date: dayDate });
+      const displayDate = date.toLocaleDateString("en-US", {
+        month: "2-digit",
+        day: "2-digit",
+        year: "numeric",
+      });
+      days.push({ name: dayName, date: dayDate, displayDate });
     }
     return days;
   };
@@ -55,7 +70,7 @@ export default function Home() {
     } else if (date === "next") {
       setCurrentWeek((prev) => Math.min(prev + 1, MAX_WEEK));
     } else {
-      setSelectedDay(date);
+      setSelectedDay(getFormattedDate(new Date(date)));
     }
   };
 
@@ -63,6 +78,21 @@ export default function Home() {
     setSelectedDayMeals((prev) =>
       prev.map((meal) =>
         meal.id === id ? { ...meal, done: !meal.done } : meal
+      )
+    );
+  };
+
+  const updateRecipeId = (prevId, newId) => {
+    setMealPlans((prev) =>
+      prev.map((day) =>
+        day.date === selectedDay
+          ? {
+              ...day,
+              meals: day.meals.map((meal) =>
+                meal.id === prevId ? { ...meal, id: newId } : meal
+              ),
+            }
+          : day
       )
     );
   };
@@ -101,29 +131,48 @@ export default function Home() {
 
           // Extract unique recipe IDs from meal plans
           const mealRecipeIds = new Set();
-          mealPlans.forEach((day) =>
-            day.meals.forEach((meal) => mealRecipeIds.add(meal.id))
+          mealPlans?.forEach((day) =>
+            day.meals?.forEach((meal) => mealRecipeIds.add(meal.id))
           );
 
           // Process recipes response
-          let recipes = [];
+          let recipeList = [];
           if (recipesResponse.status !== 404) {
-            recipes = await recipesResponse.json();
+            recipeList = await recipesResponse.json();
           }
-
-          // Filter recipes to only include the ones in meal plans
-          const filteredRecipes = recipes.filter((recipe) =>
-            mealRecipeIds.has(recipe.id)
-          );
 
           // Update state
           setMealPlans(mealPlans);
-          setRecipes(filteredRecipes);
+          setRecipes(recipeList);
         } catch (error) {
           console.error("Error fetching data:", error);
         } finally {
           setLoading(false);
         }
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (user) {
+        const idToken = await user.getIdToken();
+        const uid = user.uid;
+
+        fetch(`${SERVER_URL}/api/users/${uid}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            setUserData(data);
+          })
+          .catch((error) => console.error("Error fetching user data:", error));
       }
     })();
   }, []);
@@ -136,7 +185,8 @@ export default function Home() {
     if (selectedDayRecords) {
       const mealsWithRecipes = selectedDayRecords.meals.map((meal) => {
         const recipe = recipes.find((r) => r.id === meal.id);
-        return recipe ? { ...meal, ...recipe } : meal;
+
+        return recipe ? { ...meal, ...recipe } : { ...meal, ...defaultRecipe };
       });
 
       setSelectedDayMeals(mealsWithRecipes);
@@ -166,7 +216,7 @@ export default function Home() {
         />
 
         {loading ? (
-          <h1>Loading...</h1>
+          <h4>Loading...</h4>
         ) : (
           <ul className="meals">
             {selectedDayMeals ? (
@@ -181,7 +231,11 @@ export default function Home() {
                     image={image}
                     nutrition={nutrition}
                     done={done}
+                    date={selectedDay}
                     onMealDone={handleMealDone}
+                    allRecipes={recipes}
+                    applicationContext="home"
+                    onReplaceRecipeId={updateRecipeId}
                   />
                 ))
             ) : (

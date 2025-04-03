@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { getAuth } from "firebase/auth";
+import page from "page";
 
 import CreateRecipe from "./components/CreateRecipe";
 import MealGroup from "./components/MealGroup";
+import ConfirmationModal from "./components/ConfirmationModal";
 
 import { SERVER_URL } from "./constants";
 
@@ -16,6 +18,7 @@ export default function MealPlanGenerator() {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [recipeIdForDeletion, setRecipeIdForDeletion] = useState(null);
 
   useEffect(() => {
     // Fetch initial recipes data from the server
@@ -72,11 +75,78 @@ export default function MealPlanGenerator() {
     setSearchQuery(e.target.value);
   };
 
-  const handleDeleteRecipe = (recipeId) => {
-    console.log("Delete recipe with ID:", recipeId);
-    setRecipes((prevRecipes) =>
-      prevRecipes.filter((recipe) => recipe.id !== recipeId)
-    );
+  const promptDeleteConfirmation = (recipeId) => {
+    setRecipeIdForDeletion(recipeId);
+  };
+
+  const handleConfirmDelete = () => {
+    if (recipeIdForDeletion !== null) {
+      const recipeIndex = recipes.findIndex(
+        (recipe) => recipe.id === recipeIdForDeletion
+      );
+
+      if (recipeIndex === -1) {
+        console.error("Recipe not found in the current state.");
+        setRecipeIdForDeletion(null);
+        return;
+      }
+
+      const recipeToDelete = recipes[recipeIndex];
+
+      // Optimistically update the state
+      setRecipes((prevRecipes) =>
+        prevRecipes.filter((recipe) => recipe.id !== recipeIdForDeletion)
+      );
+
+      (async () => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (user) {
+          const idToken = await user.getIdToken();
+
+          try {
+            const response = await fetch(
+              `${SERVER_URL}/api/recipes/${recipeIdForDeletion}`,
+              {
+                method: "DELETE",
+                headers: {
+                  Authorization: `Bearer ${idToken}`,
+                },
+              }
+            );
+
+            if (!response.ok) {
+              console.error("Error deleting recipe");
+              // Revert the state if the delete operation fails
+              setRecipes((prevRecipes) => {
+                const updatedRecipes = [...prevRecipes];
+                updatedRecipes.splice(recipeIndex, 0, recipeToDelete);
+                return updatedRecipes;
+              });
+            } else {
+              console.log("Recipe deleted successfully");
+            }
+          } catch (error) {
+            console.error("Error deleting recipe:", error);
+            // Revert the state if an error occurs
+            setRecipes((prevRecipes) => {
+              const updatedRecipes = [...prevRecipes];
+              updatedRecipes.splice(recipeIndex, 0, recipeToDelete);
+              return updatedRecipes;
+            });
+          }
+        } else {
+          console.log("No user is signed in.");
+          page("/");
+        }
+      })();
+    }
+    setRecipeIdForDeletion(null);
+  };
+
+  const handleCancelDelete = () => {
+    setRecipeIdForDeletion(null);
   };
 
   const filteredRecipes = recipes.filter((recipe) =>
@@ -117,7 +187,7 @@ export default function MealPlanGenerator() {
                 filteredRecipes.length > 0 &&
                 filteredRecipes.filter((recipe) => recipe.mealGroup === 1)
               }
-              onDeleteRecipe={handleDeleteRecipe}
+              onDeleteRecipe={promptDeleteConfirmation}
               applicationContext="recipes"
             />
             <MealGroup
@@ -126,7 +196,7 @@ export default function MealPlanGenerator() {
                 filteredRecipes.length > 0 &&
                 filteredRecipes.filter((recipe) => recipe.mealGroup === 2)
               }
-              onDeleteRecipe={handleDeleteRecipe}
+              onDeleteRecipe={promptDeleteConfirmation}
               applicationContext="recipes"
             />
             <MealGroup
@@ -135,7 +205,7 @@ export default function MealPlanGenerator() {
                 filteredRecipes.length > 0 &&
                 filteredRecipes.filter((recipe) => recipe.mealGroup === 3)
               }
-              onDeleteRecipe={handleDeleteRecipe}
+              onDeleteRecipe={promptDeleteConfirmation}
               applicationContext="recipes"
             />
             <MealGroup
@@ -144,7 +214,7 @@ export default function MealPlanGenerator() {
                 filteredRecipes.length > 0 &&
                 filteredRecipes.filter((recipe) => recipe.mealGroup === 4)
               }
-              onDeleteRecipe={handleDeleteRecipe}
+              onDeleteRecipe={promptDeleteConfirmation}
               applicationContext="recipes"
             />
           </div>
@@ -159,6 +229,13 @@ export default function MealPlanGenerator() {
         <CreateRecipe
           onClose={handleCloseModal}
           onAddRecipe={handleAddRecipe}
+        />
+      )}
+      {recipeIdForDeletion !== null && (
+        <ConfirmationModal
+          message="Are you sure you want to delete this recipe?"
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
         />
       )}
     </>

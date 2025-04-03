@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { getAuth } from "firebase/auth";
 import page from "page";
 import { getMealLabel } from "../utils/mealUtils";
+import ReplaceRecipeModal from "./ReplaceRecipeModal";
+import { SERVER_URL } from "../constants";
 
 import "./MealCard.css";
 
@@ -11,15 +14,19 @@ export default function MealCard({
   image,
   nutrition,
   done,
+  date,
   onMealDone,
   applicationContext,
   onDeleteRecipe,
+  allRecipes,
+  onReplaceRecipeId,
 }) {
   const [deleteIcon, setDeleteIcon] = useState("../icons/trash-filled.svg");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const backgroundStyle = {
     background: `linear-gradient(rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 50%), linear-gradient(45deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 50%),
-        url(data:image/png;base64,${image})`,
+        url(${image || "/images/placeholder.webp"})`,
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
@@ -27,6 +34,55 @@ export default function MealCard({
 
   const handleCardClick = () => {
     page(`/recipe/${id}`);
+  };
+
+  const openReplaceRecipeModal = (e) => {
+    e.stopPropagation();
+    setIsModalOpen(true);
+  };
+
+  const handleReplaceRecipe = async (recipeId) => {
+    const formattedDate = new Date(date).toISOString().split("T")[0];
+
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+      const idToken = await user.getIdToken();
+      const uid = user.uid;
+
+      // Optimistically update the UI
+      onReplaceRecipeId(id, recipeId);
+
+      try {
+        const response = await fetch(`${SERVER_URL}/api/replace_recipe`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${idToken}`,
+          },
+          body: JSON.stringify({
+            uid,
+            date: formattedDate,
+            newMealId: recipeId,
+            currentMealId: id,
+          }),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to replace recipe");
+        }
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error("Error replacing recipe:", error);
+        onReplaceRecipeId(recipeId, id);
+      }
+    }
+
+    setIsModalOpen(false);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -74,12 +130,32 @@ export default function MealCard({
           )}
         </div>
         <div className="meal-footer">
-          <p className="body-s">{nutrition.calories} kcal</p>
-          <p className="body-s">{nutrition.protein} g protein</p>
-          <p className="body-s">{nutrition.carbs} g carbs</p>
-          <p className="body-s">{nutrition.fat} g fat</p>
+          <div className="meal-footer-info">
+            <p className="body-s">{nutrition.calories} kcal</p>
+            <p className="body-s">{nutrition.protein} g protein</p>
+            <p className="body-s">{nutrition.carbs} g carbs</p>
+            <p className="body-s">{nutrition.fat} g fat</p>
+          </div>
+          {applicationContext !== "recipes" && (
+            <button
+              className="replace-recipe-btn"
+              onClick={openReplaceRecipeModal}
+            >
+              <img src="../icons/arrows-exchange.svg" alt="Arrow Right" />
+            </button>
+          )}
         </div>
       </li>
+
+      {isModalOpen && (
+        <ReplaceRecipeModal
+          mealGroup={mealGroup}
+          allRecipes={allRecipes}
+          onClose={handleCloseModal}
+          onReplace={handleReplaceRecipe}
+          currentRecipeId={id}
+        />
+      )}
     </>
   );
 }

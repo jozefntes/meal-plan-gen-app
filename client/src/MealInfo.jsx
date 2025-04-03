@@ -56,13 +56,14 @@ export default function MealInfo({ id }) {
   return (
     <div className="meal-info-page">
       {loading ? (
-        <p>Loading...</p>
+        <h4>Loading...</h4>
       ) : (
         <>
           <img
-            src={`data:image/png;base64,${meal?.image ?? ""}`}
+            src={meal?.image ?? "/images/placeholder.webp"}
             alt={meal?.title ?? "Meal Image"}
             className="recipe-img"
+            loading="lazy"
           />
           <div className="meal-title">
             <h4>{meal?.title ?? "Meal Title"}</h4>
@@ -72,7 +73,7 @@ export default function MealInfo({ id }) {
               }p, ${meal?.nutrition?.carbs ?? 0}c, ${
                 meal?.nutrition?.fat ?? 0
               }f (per meal)`}</p>
-              <p>{getMealLabel(meal?.mealGroup)}</p>
+              <p className="body-s">{getMealLabel(meal?.mealGroup)}</p>
             </div>
           </div>
           <hr />
