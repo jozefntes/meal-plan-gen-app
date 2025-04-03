@@ -26,19 +26,24 @@ const SignIn = () => {
     setShowPassword((prev) => !prev);
   };
 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    if (!email || !password) {
+      setErrorMessage("Email and password are required.");
+      return;
+    }
+  
     try {
       await signInWithEmailAndPassword(auth, email, password);
       page("/");
     } catch (error) {
-      console.error("Error signing in:", error);
-      if (error.code === "auth/user-not-found") {
-        setErrorMessage("No user found with this email.");
-      } else if (error.code === "auth/wrong-password") {
-        setErrorMessage("Incorrect password. Please try again.");
-      } else if (error.code === "auth/invalid-email") {
-        setErrorMessage("Invalid email address.");
+      console.error("Full error object:", error); // Log the full error object
+      console.error("Error signing in:", error.message);
+      console.error("Error code:", error.code);
+      if (error.code === "auth/invalid-credential") {
+        setErrorMessage("Email or Password is Incorrect.");
       } else {
         setErrorMessage("An error occurred. Please try again.");
       }
