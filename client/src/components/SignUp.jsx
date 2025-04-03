@@ -12,6 +12,7 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -25,13 +26,44 @@ const SignUp = () => {
     setShowPassword((prev) => !prev);
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     await createUserWithEmailAndPassword(auth, email, password);
+  //     page("/");
+  //   } catch (error) {
+  //     console.error("Error signing up:", error);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    if (!email || !password) {
+      setErrorMessage("Email and password are required.");
+      return;
+    }
+  
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       page("/");
     } catch (error) {
       console.error("Error signing up:", error);
+      console.error("Error code:", error.code);
+  
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          setErrorMessage("This email is already in use. Please use a different email.");
+          break;
+        case "auth/invalid-email":
+          setErrorMessage("Invalid email address. Please enter a valid email.");
+          break;
+        case "auth/weak-password":
+          setErrorMessage("Password is too weak. Please use a stronger password.");
+          break;
+        default:
+          setErrorMessage("An error occurred. Please try again.");
+      }
     }
   };
 
@@ -60,6 +92,7 @@ const SignUp = () => {
           </div>
           <h6 className="greeting">Welcome! Sign Up</h6>
         </div>
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
         <form onSubmit={handleSubmit}>
           <div className="email-container">
             <label htmlFor="email" className="body-s">
