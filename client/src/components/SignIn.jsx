@@ -12,6 +12,7 @@ const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -25,13 +26,27 @@ const SignIn = () => {
     setShowPassword((prev) => !prev);
   };
 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    if (!email || !password) {
+      setErrorMessage("Email and password are required.");
+      return;
+    }
+  
     try {
       await signInWithEmailAndPassword(auth, email, password);
       page("/");
     } catch (error) {
-      console.error("Error signing in:", error);
+      console.error("Full error object:", error); // Log the full error object
+      console.error("Error signing in:", error.message);
+      console.error("Error code:", error.code);
+      if (error.code === "auth/invalid-credential") {
+        setErrorMessage("Email or Password is Incorrect.");
+      } else {
+        setErrorMessage("An error occurred. Please try again.");
+      }
     }
   };
 
@@ -41,6 +56,7 @@ const SignIn = () => {
       page("/");
     } catch (error) {
       console.error("Error signing in with Google:", error);
+      setErrorMessage("An error occurred with Google Sign-In. Please try again.");
     }
   };
 
@@ -104,6 +120,7 @@ const SignIn = () => {
               />
             )}
           </div>
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
           <button type="submit" className="body-s">
             Sign In
           </button>
