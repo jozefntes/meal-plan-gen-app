@@ -39,8 +39,6 @@ const SignIn = () => {
       await signInWithEmailAndPassword(auth, email, password);
       page("/");
     } catch (error) {
-      console.error("Full error object:", error); // Log the full error object
-      console.error("Error signing in:", error.message);
       console.error("Error code:", error.code);
       if (error.code === "auth/invalid-credential") {
         setErrorMessage("Email or Password is Incorrect.");
@@ -77,6 +75,7 @@ const SignIn = () => {
           <h6 className="greeting">Nice to see you again</h6>
         </div>
         <form onSubmit={handleSubmit}>
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
           <div className="email-container">
             <label htmlFor="email" className="body-s">
               Email
@@ -120,7 +119,6 @@ const SignIn = () => {
               />
             )}
           </div>
-          {errorMessage && <p className="error-message">{errorMessage}</p>}
           <button type="submit" className="body-s">
             Sign In
           </button>
