@@ -26,16 +26,6 @@ const SignUp = () => {
     setShowPassword((prev) => !prev);
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     await createUserWithEmailAndPassword(auth, email, password);
-  //     page("/");
-  //   } catch (error) {
-  //     console.error("Error signing up:", error);
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -92,7 +82,7 @@ const SignUp = () => {
           </div>
           <h6 className="greeting">Welcome! Sign Up</h6>
         </div>
-        {errorMessage && <p className="error-message">{errorMessage}</p>}
+        {errorMessage && <p className="body-s error-message">{errorMessage}</p>}
         <form onSubmit={handleSubmit}>
           <div className="email-container">
             <label htmlFor="email" className="body-s">
