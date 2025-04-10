@@ -206,18 +206,18 @@ export default function Home() {
   }, [recipes]);
 
   const buildInvertedIndex = (recipes) => {
-    const index = {};
+    const ingredientIndex = {};
 
     recipes.forEach((recipe) => {
       recipe.ingredients.forEach((ingredient) => {
-        if (!index[ingredient]) {
-          index[ingredient] = [];
+        if (!ingredientIndex[ingredient]) {
+          ingredientIndex[ingredient] = [];
         }
-        index[ingredient].push(recipe.id);
+        ingredientIndex[ingredient].push(recipe.id);
       });
     });
 
-    return index;
+    return ingredientIndex;
   };
 
   return (
