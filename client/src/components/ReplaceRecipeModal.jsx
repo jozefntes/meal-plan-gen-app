@@ -12,6 +12,28 @@ export default function ReplaceRecipeModal({
     (recipe) => recipe.id === currentRecipeId
   );
 
+  // If no matching recipe is found, display a fallback message
+  if (!currentRecipe) {
+    return (
+      <div
+        className="modal-overlay"
+        onClick={(e) => e.target === e.currentTarget && onClose()}
+      >
+        <div className="modal-content">
+          <h4>Replace Recipe</h4>
+          <p className="no-recipes-message body-s">
+            The current recipe could not be found.
+          </p>
+          <div className="modal-footer">
+            <button className="btn btn-close" onClick={onClose}>
+              <span className="btn-text">Close</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const similarRecipes = findSimilarRecipes(
     currentRecipe,
     invertedIndex,
