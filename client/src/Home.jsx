@@ -31,6 +31,7 @@ export default function Home() {
   const [userData, setUserData] = useState({});
   const [selectedDayMeals, setSelectedDayMeals] = useState(null);
   const [selectedDayProgress, setSelectedDayProgress] = useState(null);
+  const [invertedIndex, setInvertedIndex] = useState({});
   const [loading, setLoading] = useState(true);
 
   const getFormattedDate = (date) => date.toISOString().split("T")[0];
@@ -197,6 +198,28 @@ export default function Home() {
     }
   }, [selectedDay, mealPlans, recipes]);
 
+  useEffect(() => {
+    if (recipes.length > 0) {
+      const index = buildInvertedIndex(recipes);
+      setInvertedIndex(index); // Save the index in state
+    }
+  }, [recipes]);
+
+  const buildInvertedIndex = (recipes) => {
+    const index = {};
+
+    recipes.forEach((recipe) => {
+      recipe.ingredients.forEach((ingredient) => {
+        if (!index[ingredient]) {
+          index[ingredient] = [];
+        }
+        index[ingredient].push(recipe.id);
+      });
+    });
+
+    return index;
+  };
+
   return (
     <>
       <div className="content">
@@ -236,6 +259,7 @@ export default function Home() {
                     allRecipes={recipes}
                     applicationContext="home"
                     onReplaceRecipeId={updateRecipeId}
+                    invertedIndex={invertedIndex}
                   />
                 ))
             ) : (

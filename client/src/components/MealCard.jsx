@@ -20,6 +20,7 @@ export default function MealCard({
   onDeleteRecipe,
   allRecipes,
   onReplaceRecipeId,
+  invertedIndex,
 }) {
   const [deleteIcon, setDeleteIcon] = useState("../icons/trash-filled.svg");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -154,6 +155,7 @@ export default function MealCard({
           onClose={handleCloseModal}
           onReplace={handleReplaceRecipe}
           currentRecipeId={id}
+          invertedIndex={invertedIndex}
         />
       )}
     </>
