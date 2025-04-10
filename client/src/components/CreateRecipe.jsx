@@ -144,6 +144,7 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
               name="meal-group"
               defaultValue={mealGroup}
               required
+              className = "body-s"
             >
               <option value="1">Breakfast</option>
               <option value="2">Lunch</option>
@@ -157,17 +158,18 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
             </label>
             <input 
               type="text"
-              id="ingredient-search"
+              id="ingredient-list"
               placeholder="Select ingredients"
               value={searchTerm}
               onChange={handleSearchChange}
               onFocus={() => setShowIngredientList(true)}
+              className="body-s"
             />
             {showIngredientList && (
-              <div className="ingredient-list" ref={ingredientListRef}>
+              <div className="ingredient-list body-s" ref={ingredientListRef}>
                 {filteredIngredients.length > 0 ? (
                   filteredIngredients.map((ingredient) => (
-                    <label key={ingredient} className="checkbox-label">
+                    <label key={ingredient} className="checkbox-label body-s">
                       <input
                         type="checkbox"
                         checked={selectedIngredients.includes(ingredient)}
@@ -177,14 +179,14 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
                     </label>
                   ))
                 ) : (
-                  <p>No matching ingredients found.</p>
+                  <p className="body-s">No matching ingredients found.</p>
                 )}
 
               </div>
             
             )}
             {!showIngredientList && (
-              <div className="selected-ingredients">
+              <div className="selected-ingredients body-s">
                 {selectedIngredients.length > 0
                   ? selectedIngredients.join(", ")
                   : "No ingredients selected"}
