@@ -74,7 +74,7 @@ const SignIn = () => {
           </div>
           <h6 className="greeting">Nice to see you again</h6>
         </div>
-        {errorMessage && <p className="error-message">{errorMessage}</p>}
+        {errorMessage && <p className="body-s error-message">{errorMessage}</p>}
         <form onSubmit={handleSubmit}>
           <div className="email-container">
             <label htmlFor="email" className="body-s">
