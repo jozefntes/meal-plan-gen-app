@@ -99,7 +99,7 @@ const findSimilarRecipes = (currentRecipe, invertedIndex, allRecipes) => {
     .map(([recipeId]) => recipeId);
 
   // Return the full recipe objects for the sorted IDs
-  return sortedRecipeIds.map((id) =>
-    allRecipes.find((recipe) => recipe.id === id)
-  );
+  return sortedRecipeIds
+    .map((id) => allRecipes.find((recipe) => recipe.id === id))
+    .filter((recipe) => recipe !== undefined);
 };
