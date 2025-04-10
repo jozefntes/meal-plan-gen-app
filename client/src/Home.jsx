@@ -201,7 +201,7 @@ export default function Home() {
   useEffect(() => {
     if (recipes.length > 0) {
       const index = buildInvertedIndex(recipes);
-      setInvertedIndex(index); // Save the index in state
+      setInvertedIndex(index);
     }
   }, [recipes]);
 
