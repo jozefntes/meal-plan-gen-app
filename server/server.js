@@ -290,7 +290,7 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
     console.log("Snack Recipes:", snackRecipes);
 
     try {
-      const prompt = `Generate a meal plan for the week starting on ${formattedWeekStartDate} MM/DD/YYYY (a Monday)
+      const prompt = `Generate a meal plan for the week starting on ${formattedWeekStartDate} in MM/DD/YYYY format (a Monday)
                     using the following meals:
                     Breakfast - ${breakfastRecipes
                       .map(
