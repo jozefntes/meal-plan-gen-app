@@ -10,11 +10,7 @@ export default function RecipeGrid({ recipes, onDeleteRecipe }) {
             <MealCard
               key={recipe.id}
               id={recipe.id}
-              mealGroup={recipe.mealGroup}
-              title={recipe.title}
-              image={recipe.image}
-              nutrition={recipe.nutrition}
-              done={recipe.done}
+              meal={recipe}
               applicationContext="recipes"
               onDeleteRecipe={onDeleteRecipe}
             />
