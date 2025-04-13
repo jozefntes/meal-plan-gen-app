@@ -10,10 +10,7 @@ import "./MealCard.css";
 export default function MealCard({
   id,
   mealGroup,
-  title,
-  image,
-  nutrition,
-  done,
+  meal,
   date,
   onMealDone,
   applicationContext,
@@ -24,6 +21,7 @@ export default function MealCard({
 }) {
   const [deleteIcon, setDeleteIcon] = useState("../icons/trash-filled.svg");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { title, image, nutrition, done, mealInstanceId } = meal;
 
   const backgroundStyle = {
     background: `linear-gradient(rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 50%), linear-gradient(45deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 50%),
@@ -107,7 +105,7 @@ export default function MealCard({
               className="add-btn"
               onClick={(e) => {
                 e.stopPropagation();
-                onMealDone(id);
+                onMealDone(mealInstanceId);
               }}
             >
               {done ? (
