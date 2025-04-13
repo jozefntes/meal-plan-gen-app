@@ -105,13 +105,6 @@ export default function MealPlanGenerator() {
       const idToken = await user.getIdToken();
       const uid = user.uid;
 
-      const selectedRecipeIds = [
-        ...selectedRecipes.breakfast,
-        ...selectedRecipes.lunch,
-        ...selectedRecipes.dinner,
-        ...selectedRecipes.snack,
-      ];
-
       // Validation logic
       const mealGroups = ["breakfast", "lunch", "dinner", "snack"];
       for (const group of mealGroups) {
@@ -134,7 +127,7 @@ export default function MealPlanGenerator() {
         },
         body: JSON.stringify({
           uid: uid,
-          selectedMeals: selectedRecipeIds,
+          selectedMeals: selectedRecipes,
           weekNumber: selectedWeek,
         }),
       })
