@@ -81,12 +81,8 @@ export default function MealPlanGenerator() {
   };
 
   const handleSelectRecipe = (mealGroup, recipeId, isSelected) => {
-    console.log(`Selected recipe ${recipeId} for ${mealGroup}: ${isSelected}`);
-
     setSelectedRecipes((prevSelectedRecipes) => {
       const updatedRecipes = { ...prevSelectedRecipes };
-
-      // Update the specific meal group
       if (isSelected) {
         if (!updatedRecipes[mealGroup].includes(recipeId)) {
           updatedRecipes[mealGroup].push(recipeId);
@@ -96,7 +92,7 @@ export default function MealPlanGenerator() {
           (id) => id !== recipeId
         );
       }
-
+      console.log(updatedRecipes);
       return updatedRecipes;
     });
   };
