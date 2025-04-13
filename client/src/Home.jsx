@@ -196,7 +196,7 @@ export default function Home() {
       const mealsWithRecipes = selectedDayRecords.meals.map((meal) => {
         const recipe = recipes.find((r) => r.id === meal.id);
 
-        return recipe ? { ...meal, ...recipe } : { ...meal, defaultRecipe };
+        return recipe ? { ...meal, ...recipe } : { ...meal, ...defaultRecipe };
       });
 
       setSelectedDayMeals(mealsWithRecipes);
