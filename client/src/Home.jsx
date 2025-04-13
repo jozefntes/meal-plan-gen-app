@@ -188,11 +188,6 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    console.log("Updating selectedDayMeals:", {
-      selectedDay,
-      mealPlans,
-      recipes,
-    });
     const selectedDayRecords = mealPlans.find(
       (day) => day.date === selectedDay
     );
@@ -201,12 +196,7 @@ export default function Home() {
       const mealsWithRecipes = selectedDayRecords.meals.map((meal) => {
         const recipe = recipes.find((r) => r.id === meal.id);
 
-        return recipe
-          ? {
-              ...meal,
-              ...recipe,
-            }
-          : { ...meal, defaultRecipe };
+        return recipe ? { ...meal, ...recipe } : { ...meal, defaultRecipe };
       });
 
       setSelectedDayMeals(mealsWithRecipes);
