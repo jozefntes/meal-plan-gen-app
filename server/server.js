@@ -279,10 +279,10 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
     }, {});
 
     // Associate recipes with their respective meal groups
-    const breakfastRecipes = selectedMeals.breakfast.map((id) => recipeMap[id]);
-    const lunchRecipes = selectedMeals.lunch.map((id) => recipeMap[id]);
-    const dinnerRecipes = selectedMeals.dinner.map((id) => recipeMap[id]);
-    const snackRecipes = selectedMeals.snack.map((id) => recipeMap[id]);
+    const breakfastRecipes = selectedMeals.breakfast.map((id) => recipeMap[id]).filter((recipe) => recipe !== undefined);
+    const lunchRecipes = selectedMeals.lunch.map((id) => recipeMap[id]).filter((recipe) => recipe !== undefined);
+    const dinnerRecipes = selectedMeals.dinner.map((id) => recipeMap[id]).filter((recipe) => recipe !== undefined);
+    const snackRecipes = selectedMeals.snack.map((id) => recipeMap[id]).filter((recipe) => recipe !== undefined);
 
     console.log("Breakfast Recipes:", breakfastRecipes);
     console.log("Lunch Recipes:", lunchRecipes);
