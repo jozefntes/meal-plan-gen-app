@@ -8,7 +8,6 @@ import { SERVER_URL } from "../constants";
 import "./MealCard.css";
 
 export default function MealCard({
-  id,
   mealGroup,
   meal,
   date,
@@ -21,7 +20,7 @@ export default function MealCard({
 }) {
   const [deleteIcon, setDeleteIcon] = useState("../icons/trash-filled.svg");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { title, image, nutrition, done, mealInstanceId } = meal;
+  const { id, title, image, nutrition, done, mealInstanceId } = meal;
 
   const backgroundStyle = {
     background: `linear-gradient(rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 50%), linear-gradient(45deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 50%),
