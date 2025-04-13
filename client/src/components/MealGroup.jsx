@@ -8,21 +8,18 @@ export default function MealGroup({
   onCreateNew,
   onSelectRecipe,
   selectedRecipes,
-  applicationContext,
 }) {
   return (
     <div className="meal-group">
       <h6>{title}</h6>
 
       <div className="picker">
-        {applicationContext !== "recipes" && (
-          <div className="create-new-btn" onClick={onCreateNew}>
-            <div>
-              <CircledPlusIcon size={80} />
-            </div>
-            <p className="body-s">+ Create New</p>
+        <div className="create-new-btn" onClick={onCreateNew}>
+          <div>
+            <CircledPlusIcon size={80} />
           </div>
-        )}
+          <p className="body-s">+ Create New</p>
+        </div>
         <ul>
           {recipes.length > 0 ? (
             recipes.map((recipe) => (
