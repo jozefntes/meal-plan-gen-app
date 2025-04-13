@@ -4,9 +4,11 @@ import CircledPlusIcon from "../icons/CircledPlusIcon";
 
 export default function MealGroup({
   title,
+  mealGroup,
   recipes,
   onCreateNew,
   onSelectRecipe,
+  selectedRecipes,
   applicationContext,
   onDeleteRecipe,
 }) {
@@ -28,7 +30,7 @@ export default function MealGroup({
             recipes.map((recipe) =>
               applicationContext === "recipes" ? (
                 <MealCard
-                  key={recipe.id}
+                  key={`${mealGroup}-${recipe.id}`}
                   id={recipe.id}
                   mealGroup={recipe.mealGroup}
                   title={recipe.title}
@@ -40,18 +42,19 @@ export default function MealGroup({
                   onDeleteRecipe={onDeleteRecipe}
                 />
               ) : (
-                <li className="picker__item" key={recipe.id}>
+                <li className="picker__item" key={`${mealGroup}-${recipe.id}`}>
                   <input
                     type="checkbox"
                     className="hidden-checkbox"
-                    id={`recipe-${recipe.id}`}
+                    id={`recipe-${mealGroup}-${recipe.id}`}
+                    checked={selectedRecipes.includes(recipe.id)}
                     onChange={(e) =>
-                      onSelectRecipe(recipe.id, e.target.checked)
+                      onSelectRecipe(mealGroup, recipe.id, e.target.checked)
                     }
                   />
                   <label
                     className="recipe-label"
-                    htmlFor={`recipe-${recipe.id}`}
+                    htmlFor={`recipe-${mealGroup}-${recipe.id}`}
                   >
                     <img
                       src={recipe?.image ?? "/images/placeholder.webp"}
