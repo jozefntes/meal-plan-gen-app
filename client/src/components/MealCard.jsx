@@ -102,19 +102,7 @@ export default function MealCard({
             )}
             <p className="body-s">{title}</p>
           </div>
-          {applicationContext === "recipes" ? (
-            <button
-              className="delete-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDeleteRecipe(id);
-              }}
-              onMouseOver={() => setDeleteIcon("../icons/trash-x.svg")}
-              onMouseOut={() => setDeleteIcon("../icons/trash-filled.svg")}
-            >
-              <img src={deleteIcon} alt="Delete" />
-            </button>
-          ) : (
+          {applicationContext !== "recipes" && (
             <button
               className="add-btn"
               onClick={(e) => {
@@ -137,7 +125,19 @@ export default function MealCard({
             <p className="body-s">{nutrition.carbs} g carbs</p>
             <p className="body-s">{nutrition.fat} g fat</p>
           </div>
-          {applicationContext !== "recipes" && (
+          {applicationContext === "recipes" ? (
+            <button
+              className="delete-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDeleteRecipe(id);
+              }}
+              onMouseOver={() => setDeleteIcon("../icons/trash-x.svg")}
+              onMouseOut={() => setDeleteIcon("../icons/trash-filled.svg")}
+            >
+              <img src={deleteIcon} alt="Delete" />
+            </button>
+          ) : (
             <button
               className="replace-recipe-btn"
               onClick={openReplaceRecipeModal}

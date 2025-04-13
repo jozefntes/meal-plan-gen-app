@@ -12,10 +12,10 @@ export default function ConfirmationModal({ onConfirm, onCancel, message }) {
       <div className="modal-content">
         <p className="body-m">{message}</p>
         <div className="modal-actions">
-          <button className="btn btn-cancel" onClick={onCancel}>
+          <button className="btn btn-text btn-cancel" onClick={onCancel}>
             Cancel
           </button>
-          <button className="btn btn-confirm" onClick={onConfirm}>
+          <button className="btn btn-text btn-confirm" onClick={onConfirm}>
             Confirm
           </button>
         </div>

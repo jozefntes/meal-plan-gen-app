@@ -3,7 +3,7 @@ import { getAuth } from "firebase/auth";
 import page from "page";
 
 import CreateRecipe from "./components/CreateRecipe";
-import MealGroup from "./components/MealGroup";
+import RecipeGrid from "./components/RecipeGrid";
 import ConfirmationModal from "./components/ConfirmationModal";
 
 import { SERVER_URL } from "./constants";
@@ -165,7 +165,7 @@ export default function MealPlanGenerator() {
                 placeholder="Search"
                 value={searchQuery}
                 onChange={handleSearchChange}
-                className="search-bar"
+                className="search-bar body-s"
               />
               <label htmlFor="search" className="search-label">
                 <SearchIcon />
@@ -181,41 +181,9 @@ export default function MealPlanGenerator() {
           <p className="meal-picker body-m">Loading...</p>
         ) : (
           <div className="meal-picker">
-            <MealGroup
-              title="Breakfast"
-              recipes={
-                filteredRecipes.length > 0 &&
-                filteredRecipes.filter((recipe) => recipe.mealGroup === 1)
-              }
+            <RecipeGrid
+              recipes={filteredRecipes.length > 0 && filteredRecipes}
               onDeleteRecipe={promptDeleteConfirmation}
-              applicationContext="recipes"
-            />
-            <MealGroup
-              title="Lunch"
-              recipes={
-                filteredRecipes.length > 0 &&
-                filteredRecipes.filter((recipe) => recipe.mealGroup === 2)
-              }
-              onDeleteRecipe={promptDeleteConfirmation}
-              applicationContext="recipes"
-            />
-            <MealGroup
-              title="Dinner"
-              recipes={
-                filteredRecipes.length > 0 &&
-                filteredRecipes.filter((recipe) => recipe.mealGroup === 3)
-              }
-              onDeleteRecipe={promptDeleteConfirmation}
-              applicationContext="recipes"
-            />
-            <MealGroup
-              title="Snack"
-              recipes={
-                filteredRecipes.length > 0 &&
-                filteredRecipes.filter((recipe) => recipe.mealGroup === 4)
-              }
-              onDeleteRecipe={promptDeleteConfirmation}
-              applicationContext="recipes"
             />
           </div>
         )}

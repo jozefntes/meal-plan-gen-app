@@ -1,11 +1,13 @@
 .meal-card,
 .meal-card * {
     box-sizing: border-box;
+    text-align: left;
 }
 
 .meal-card {
     min-width: calc(214px + 20px);
     min-height: calc(272px + 20px);
+    width: calc(214px + 20px);
     padding: 10px;
     border-radius: 16px;
     background-color: var(--gray-400);
@@ -33,6 +35,7 @@
     background: none;
     border: none;
     cursor: pointer;
+    text-align: center;
 }
 
 .meal-info {
@@ -79,6 +82,7 @@
     border-radius: 50%;
     box-shadow: var(--btn-shadow);
     transition: all 0.3s ease;
+    text-align: center;
 }
 
 .meal-footer button:hover {

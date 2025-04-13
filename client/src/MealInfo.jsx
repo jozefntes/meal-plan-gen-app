@@ -81,9 +81,11 @@ export default function MealInfo({ id }) {
             <div className="ingredients-header">
               <h6>Ingredients</h6>
             </div>
-            <ul>
+            <ul className="list body-s">
               {meal?.ingredients?.map((ingredient, index) => (
-                <li key={index}>{ingredient}</li>
+                <li className="list-item" key={index}>
+                  {ingredient}
+                </li>
               ))}
             </ul>
           </div>
@@ -92,9 +94,11 @@ export default function MealInfo({ id }) {
             <div className="instructions-header">
               <h6>Instructions</h6>
             </div>
-            <ol>
+            <ol className="list body-s">
               {meal?.instructions?.map((instruction, index) => (
-                <li key={index}>{instruction}</li>
+                <li className="list-item" key={index}>
+                  {instruction}
+                </li>
               ))}
             </ol>
           </div>
