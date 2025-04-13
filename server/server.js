@@ -248,9 +248,14 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
     year: "numeric",
   });
 
+  // Get unique meal IDs
+  const uniqueMealIds = [...new Set(Object.values(selectedMeals).flat())];
+
+  console.log("Unique Meal IDs:", uniqueMealIds);
+
   try {
     const recipes = [];
-    for (const mealId of selectedMeals) {
+    for (const mealId of uniqueMealIds) {
       const docRef = db.collection("recipes").doc(mealId);
       const doc = await docRef.get();
 
@@ -267,14 +272,25 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
       recipes.push(recipe);
     }
 
-    // filter recipes by meal group
-    const breakfastRecipes = recipes.filter((recipe) => recipe.mealGroup === 1);
-    const lunchRecipes = recipes.filter((recipe) => recipe.mealGroup === 2);
-    const dinnerRecipes = recipes.filter((recipe) => recipe.mealGroup === 3);
-    const snackRecipes = recipes.filter((recipe) => recipe.mealGroup === 4);
+    // Create a map of recipes for quick lookup
+    const recipeMap = recipes.reduce((map, recipe) => {
+      map[recipe.id] = recipe;
+      return map;
+    }, {});
+
+    // Associate recipes with their respective meal groups
+    const breakfastRecipes = selectedMeals.breakfast.map((id) => recipeMap[id]);
+    const lunchRecipes = selectedMeals.lunch.map((id) => recipeMap[id]);
+    const dinnerRecipes = selectedMeals.dinner.map((id) => recipeMap[id]);
+    const snackRecipes = selectedMeals.snack.map((id) => recipeMap[id]);
+
+    console.log("Breakfast Recipes:", breakfastRecipes);
+    console.log("Lunch Recipes:", lunchRecipes);
+    console.log("Dinner Recipes:", dinnerRecipes);
+    console.log("Snack Recipes:", snackRecipes);
 
     try {
-      const prompt = `Generate a meal plan for the week starting on ${formattedWeekStartDate} (a Monday)
+      const prompt = `Generate a meal plan for the week starting on ${formattedWeekStartDate} MM/DD/YYYY (a Monday)
                     using the following meals:
                     Breakfast - ${breakfastRecipes
                       .map(
