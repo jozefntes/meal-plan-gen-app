@@ -105,13 +105,6 @@ export default function MealPlanGenerator() {
       const idToken = await user.getIdToken();
       const uid = user.uid;
 
-      const selectedRecipeIds = [
-        ...selectedRecipes.breakfast,
-        ...selectedRecipes.lunch,
-        ...selectedRecipes.dinner,
-        ...selectedRecipes.snack,
-      ];
-
       // Validation logic
       const mealGroups = ["breakfast", "lunch", "dinner", "snack"];
       for (const group of mealGroups) {
@@ -134,7 +127,7 @@ export default function MealPlanGenerator() {
         },
         body: JSON.stringify({
           uid: uid,
-          selectedMeals: selectedRecipeIds,
+          selectedMeals: selectedRecipes,
           weekNumber: selectedWeek,
         }),
       })
@@ -175,47 +168,35 @@ export default function MealPlanGenerator() {
           <div className="meal-picker">
             <MealGroup
               title="Breakfast"
-              recipes={
-                recipes.length > 0 &&
-                recipes.filter((recipe) => recipe.mealGroup === 1)
-              }
+              mealGroup="breakfast"
+              recipes={recipes}
+              selectedRecipes={selectedRecipes.breakfast}
               onCreateNew={() => handleOpenModal(1)}
-              onSelectRecipe={(recipeId, isSelected) =>
-                handleSelectRecipe("breakfast", recipeId, isSelected)
-              }
+              onSelectRecipe={handleSelectRecipe}
             />
             <MealGroup
               title="Lunch"
-              recipes={
-                recipes.length > 0 &&
-                recipes.filter((recipe) => recipe.mealGroup === 2)
-              }
+              mealGroup="lunch"
+              recipes={recipes}
+              selectedRecipes={selectedRecipes.lunch}
               onCreateNew={() => handleOpenModal(2)}
-              onSelectRecipe={(recipeId, isSelected) =>
-                handleSelectRecipe("lunch", recipeId, isSelected)
-              }
+              onSelectRecipe={handleSelectRecipe}
             />
             <MealGroup
               title="Dinner"
-              recipes={
-                recipes.length > 0 &&
-                recipes.filter((recipe) => recipe.mealGroup === 3)
-              }
+              mealGroup="dinner"
+              recipes={recipes}
+              selectedRecipes={selectedRecipes.dinner}
               onCreateNew={() => handleOpenModal(3)}
-              onSelectRecipe={(recipeId, isSelected) =>
-                handleSelectRecipe("dinner", recipeId, isSelected)
-              }
+              onSelectRecipe={handleSelectRecipe}
             />
             <MealGroup
               title="Snack"
-              recipes={
-                recipes.length > 0 &&
-                recipes.filter((recipe) => recipe.mealGroup === 4)
-              }
+              mealGroup="snack"
+              recipes={recipes}
+              selectedRecipes={selectedRecipes.snack}
               onCreateNew={() => handleOpenModal(4)}
-              onSelectRecipe={(recipeId, isSelected) =>
-                handleSelectRecipe("snack", recipeId, isSelected)
-              }
+              onSelectRecipe={handleSelectRecipe}
             />
           </div>
         )}
