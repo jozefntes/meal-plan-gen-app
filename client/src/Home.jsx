@@ -75,10 +75,12 @@ export default function Home() {
     }
   };
 
-  const handleMealDone = (id) => {
+  const handleMealDone = (mealInstanceId) => {
     setSelectedDayMeals((prev) =>
       prev.map((meal) =>
-        meal.id === id ? { ...meal, done: !meal.done } : meal
+        meal.mealInstanceId === mealInstanceId
+          ? { ...meal, done: !meal.done }
+          : meal
       )
     );
   };
@@ -128,6 +130,13 @@ export default function Home() {
           let mealPlans = [];
           if (mealPlansResponse.status !== 404) {
             mealPlans = await mealPlansResponse.json();
+
+            // Add unique mealInstanceId to each meal
+            mealPlans?.forEach((day) => {
+              day.meals?.forEach((meal, index) => {
+                meal.mealInstanceId = `${meal.id}-${index}-${day.date}`;
+              });
+            });
           }
 
           // Extract unique recipe IDs from meal plans
@@ -243,25 +252,20 @@ export default function Home() {
         ) : (
           <ul className="meals">
             {selectedDayMeals ? (
-              [...selectedDayMeals]
-                .sort((a, b) => a.mealGroup - b.mealGroup)
-                .map(({ id, mealGroup, title, image, nutrition, done }) => (
-                  <MealCard
-                    key={id}
-                    id={id}
-                    mealGroup={mealGroup}
-                    title={title}
-                    image={image}
-                    nutrition={nutrition}
-                    done={done}
-                    date={selectedDay}
-                    onMealDone={handleMealDone}
-                    allRecipes={recipes}
-                    applicationContext="home"
-                    onReplaceRecipeId={updateRecipeId}
-                    invertedIndex={invertedIndex}
-                  />
-                ))
+              [...selectedDayMeals].map((meal, index) => (
+                <MealCard
+                  key={meal.mealInstanceId}
+                  id={meal.id}
+                  mealGroup={index + 1}
+                  meal={meal}
+                  date={selectedDay}
+                  onMealDone={handleMealDone}
+                  allRecipes={recipes}
+                  applicationContext="home"
+                  onReplaceRecipeId={updateRecipeId}
+                  invertedIndex={invertedIndex}
+                />
+              ))
             ) : (
               <h4>No meals for this day</h4>
             )}
