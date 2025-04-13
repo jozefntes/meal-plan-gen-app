@@ -5,8 +5,7 @@
 }
 
 .meal-card {
-    min-width: calc(214px + 20px);
-    min-height: calc(272px + 20px);
+    height: calc(272px + 20px);
     width: calc(214px + 20px);
     padding: 10px;
     border-radius: 16px;
@@ -50,6 +49,16 @@
 
 .meal-info p {
     text-wrap: wrap;
+}
+
+.meal-info p {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
 }
 
 .meal-group-info {
