@@ -251,7 +251,7 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
   // Get unique meal IDs
   const uniqueMealIds = [...new Set(Object.values(selectedMeals).flat())];
 
-  console.log("Unique Meal IDs:", uniqueMealIds);
+  console.debug("Unique Meal IDs:", uniqueMealIds);
 
   try {
     const recipes = [];
