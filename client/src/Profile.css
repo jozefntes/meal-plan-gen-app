@@ -1,0 +1,261 @@
+.generate-page {
+  margin-left: 280px;
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.generate-page .header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 32px;
+}
+
+.generate-page h4 {
+  font-family: 'Epilogue', sans-serif;
+  font-weight: 700;
+  font-size: 33px;
+  line-height: 48px;
+  letter-spacing: 0.04em;
+  color: var(--brand-color);
+}
+
+.profile-picture {
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--btn-primary-outline);
+}
+
+.profile-img:hover {
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.file-input {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--text-color);
+}
+
+.profile-form {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 32px 48px;
+  background-color: var(--component-bg);
+  border-radius: 8px;
+  box-shadow: var(--box-shadow);
+}
+
+.profile-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile-content {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.profile-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-right: 1rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.weight-tracker {
+  background-color: var(--component-bg);
+  padding: 1rem;
+  border-radius: 10px;
+  flex: 1;
+  box-shadow: var(--box-shadow);
+  color: var(--text-color);
+}
+
+.progress-bar {
+  height: 10px;
+  background: var(--gray-200);
+  border-radius: 5px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--protein);
+  transition: width 0.3s ease-in-out;
+}
+
+.goal-message {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  color: var(--protein);
+  animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.fitness-goals-section {
+  margin-top: 2rem;
+  background-color: var(--component-bg);
+  padding: 1rem;
+  border-radius: 10px;
+  flex: 1;
+  box-shadow: var(--box-shadow);
+  color: var(--text-color);
+}
+
+.fitness-goals-dropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.goal-option {
+  font-size: 0.95rem;
+}
+
+.goal-list {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0.5rem;
+}
+
+.goal-list li {
+  margin-bottom: 0.25rem;
+}
+
+.profile-form label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.profile-form input {
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 4px;
+  border: 1px solid var(--src-primary-outline);
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  color: var(--text-color);
+  background-color: var(--white-100);
+}
+
+.profile-form span {
+  font-size: 16px;
+  color: var(--src-primary-text);
+  display: inline-block;
+  margin-top: 5px;
+}
+
+.height-input {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+.height-dropdown {
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid var(--src-primary-outline);
+  width: 100px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  color: var(--text-color);
+  background-color: var(--white-100);
+}
+
+.weight-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lbs {
+  font-size: 16px;
+  color: var(--text-color);
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+}
+
+.profile-actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.btn {
+  background-color: var(--btn-primary);
+  color: var(--btn-primary-text);
+  border: var(--btn-primary-outline) 1px solid;
+  padding: 12px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: var(--btn-shadow);
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  transition: transform 0.3s ease;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 2px solid var(--btn-primary);
+  color: var(--btn-primary);
+  padding: 12px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+}
+
+.btn-outline:hover {
+  background-color: var(--btn-primary);
+  color: var(--btn-primary-text);
+  opacity: 0.8;
+}
+
