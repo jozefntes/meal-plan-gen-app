@@ -149,9 +149,16 @@ export default function MealPlanGenerator() {
     setRecipeIdForDeletion(null);
   };
 
-  const filteredRecipes = recipes.filter((recipe) =>
-    recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredRecipes = searchQuery
+  ? recipes.filter((recipe) => {
+      const query = searchQuery.toLowerCase();
+      const matchesTitle = recipe.title.toLowerCase().includes(query);
+      const matchesIngredients = recipe.ingredients?.some((ingredient) =>
+        ingredient.toLowerCase().includes(query)
+      );
+      return matchesTitle || matchesIngredients;
+    })
+  : recipes;
 
   return (
     <>
