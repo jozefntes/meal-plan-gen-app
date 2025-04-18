@@ -21,7 +21,7 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [showIngredientList, setShowIngredientList] = useState(false);
-  
+
   const ingredientListRef = useRef(null);
 
   const filteredIngredients = allIngredients.filter((ingredient) =>
@@ -38,7 +38,7 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
-    setShowIngredientList(true); 
+    setShowIngredientList(true);
   };
 
   const createRecipe = async (event) => {
@@ -54,7 +54,6 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
       const selectedMealGroup = parseInt(
         document.getElementById("meal-group").value
       );
-      const ingredients = document.getElementById("ingredients").value;
       const minProtein = parseInt(document.getElementById("min-protein").value);
       const maxCarbs = parseInt(document.getElementById("max-carbs").value);
       const maxFat = parseInt(document.getElementById("max-fat").value);
@@ -118,7 +117,10 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (ingredientListRef.current && !ingredientListRef.current.contains(event.target)) {
+      if (
+        ingredientListRef.current &&
+        !ingredientListRef.current.contains(event.target)
+      ) {
         setShowIngredientList(false);
       }
     };
@@ -144,7 +146,7 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
               name="meal-group"
               defaultValue={mealGroup}
               required
-              className = "body-s"
+              className="body-s"
             >
               <option value="1">Breakfast</option>
               <option value="2">Lunch</option>
@@ -156,7 +158,7 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
             <label htmlFor="ingredient-search" className="body-s">
               Ingredients
             </label>
-            <input 
+            <input
               type="text"
               id="ingredient-list"
               placeholder="Select ingredients"
@@ -169,21 +171,25 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
               <div className="ingredient-list body-s" ref={ingredientListRef}>
                 {filteredIngredients.length > 0 ? (
                   filteredIngredients.map((ingredient) => (
-                    <label key={ingredient} className="checkbox-label body-s">
+                    <div key={ingredient} className="checkbox-wrapper">
                       <input
                         type="checkbox"
+                        id={`ingredient-${ingredient}`}
                         checked={selectedIngredients.includes(ingredient)}
                         onChange={() => handleIngredientSelect(ingredient)}
                       />
-                      {ingredient}
-                    </label>
+                      <label
+                        htmlFor={`ingredient-${ingredient}`}
+                        className="checkbox-label body-s"
+                      >
+                        {ingredient}
+                      </label>
+                    </div>
                   ))
                 ) : (
                   <p className="body-s">No matching ingredients found.</p>
                 )}
-
               </div>
-            
             )}
             {!showIngredientList && (
               <div className="selected-ingredients body-s">
