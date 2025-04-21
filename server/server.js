@@ -214,6 +214,33 @@ app.get("/api/users/:uid", verifyToken, async (req, res) => {
   }
 });
 
+app.get("/api/users/:uid", verifyToken, async (req, res) => {
+  const uid = req.params.uid;
+
+  if (!uid) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  if (req.user.uid !== uid) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
+  try {
+    const userDocRef = db.collection("users").doc(uid);
+    const userDoc = await userDocRef.get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const userData = userDoc.data();
+    res.status(200).json(userData);
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    res.status(500).json({ error: "Failed to fetch user data" });
+  }
+});
+
 app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
   const { uid, selectedMeals, weekNumber } = req.body;
 
