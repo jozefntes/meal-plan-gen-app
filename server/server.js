@@ -595,16 +595,19 @@ app.post("/api/users", verifyToken, async (req, res) => {
     }
 
     const userDocRef = db.collection("users").doc(uid);
-    await userDocRef.set({
-      name,
-      age,
-      height,
-      currentWeight,
-      goalWeight,
-      fitnessGoal,
-      dietaryPreferences,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
+    await userDocRef.set(
+      {
+        name,
+        age,
+        height,
+        currentWeight,
+        goalWeight,
+        fitnessGoal,
+        dietaryPreferences,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    );
 
     res.status(200).json({ message: "User details saved successfully" });
   } catch (error) {
