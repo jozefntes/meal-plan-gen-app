@@ -14,7 +14,6 @@ export default function Profile() {
     goalWeight: "",
     fitnessGoals: [],
     dietaryPreferences: [],
-    profilePicture: "",
   });
 
   const [editMode, setEditMode] = useState(false);
@@ -35,17 +34,6 @@ export default function Profile() {
     }
     console.log("User data saved", formData);
     setEditMode(false);
-  };
-
-  const handleProfilePictureChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData((prev) => ({ ...prev, profilePicture: reader.result }));
-      };
-      reader.readAsDataURL(file);
-    }
   };
 
   const progressPercent =
@@ -71,23 +59,6 @@ export default function Profile() {
     <div className="generate-page profile-layout">
       <div className="header">
         <h4>Profile</h4>
-        <div className="profile-picture">
-          <label htmlFor="profile-upload">
-            <img
-              src={formData.profilePicture || "/logo-light.svg"}
-              alt="Profile"
-              className="profile-img"
-              style={{ cursor: "pointer" }}
-            />
-          </label>
-          <input
-            id="profile-upload"
-            type="file"
-            accept="image/*"
-            onChange={handleProfilePictureChange}
-            style={{ display: "none" }}
-          />
-        </div>
       </div>
       <div className="profile-content">
         <div className="profile-form body-s">
@@ -233,7 +204,7 @@ export default function Profile() {
             <h5>Fitness Goals</h5>
             {editMode ? (
               <div className="fitness-goals-dropdown">
-                {["Lose weight", "Build muscle", "Eat healthier", "Gain weight"].map((goal) => (
+                {["Lose weight", "Build muscle", "Maintain weight"].map((goal) => (
                   <label key={goal} className="goal-option">
                     <input
                       type="checkbox"
