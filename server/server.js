@@ -600,17 +600,12 @@ app.post("/api/users", verifyToken, async (req, res) => {
   if (typeof goalWeight !== "number" || goalWeight < 0) {
     return res.status(400).json({ error: "Invalid goal weight" });
   }
-  if (typeof fitnessGoal !== "number" || fitnessGoal < 1 || fitnessGoal > 3) {
-    return res
-      .status(400)
-      .json({ error: "Fitness goal must be between 1 and 3" });
-  }
   if (!Array.isArray(dietaryPreferences)) {
     return res
       .status(400)
       .json({ error: "Dietary preferences must be an array" });
   }
-  if (dietaryPreferences.length < 0 || dietaryPreferences.length > 8) {
+  if (dietaryPreferences.length > 8) {
     return res
       .status(400)
       .json({ error: "Dietary preferences must be between 0 and 8" });
