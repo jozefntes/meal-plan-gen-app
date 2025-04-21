@@ -558,6 +558,86 @@ app.post("/api/replace_recipe", verifyToken, async (req, res) => {
   }
 });
 
+app.post("/api/users", verifyToken, async (req, res) => {
+  const {
+    uid,
+    name,
+    age,
+    height,
+    currentWeight,
+    goalWeight,
+    fitnessGoal,
+    dietaryPreferences,
+  } = req.body;
+
+  if (
+    !uid ||
+    !name ||
+    !age ||
+    !height ||
+    !currentWeight ||
+    !goalWeight ||
+    !fitnessGoal ||
+    !dietaryPreferences
+  ) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  if (fitnessGoal < 1 || fitnessGoal > 3) {
+    return res
+      .status(400)
+      .json({ error: "Fitness goal must be between 1 and 3" });
+  }
+  if (typeof age !== "number" || age < 0) {
+    return res.status(400).json({ error: "Invalid age" });
+  }
+  if (typeof height !== "number" || height < 0) {
+    return res.status(400).json({ error: "Invalid height" });
+  }
+  if (typeof currentWeight !== "number" || currentWeight < 0) {
+    return res.status(400).json({ error: "Invalid current weight" });
+  }
+  if (typeof goalWeight !== "number" || goalWeight < 0) {
+    return res.status(400).json({ error: "Invalid goal weight" });
+  }
+  if (!Array.isArray(dietaryPreferences)) {
+    return res
+      .status(400)
+      .json({ error: "Dietary preferences must be an array" });
+  }
+  if (dietaryPreferences.length > 8) {
+    return res
+      .status(400)
+      .json({ error: "Dietary preferences must be between 0 and 8" });
+  }
+
+  try {
+    if (req.user.uid !== uid) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const userDocRef = db.collection("users").doc(uid);
+    await userDocRef.set(
+      {
+        name,
+        age,
+        height,
+        currentWeight,
+        goalWeight,
+        fitnessGoal,
+        dietaryPreferences,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      },
+      { merge: true }
+    );
+
+    res.status(200).json({ message: "User details saved successfully" });
+  } catch (error) {
+    console.error("Error saving user details:", error);
+    res.status(500).json({ error: "Failed to save user details" });
+  }
+});
+
 // Delete a specific recipe by document ID
 app.delete("/api/recipes/:id", verifyToken, async (req, res) => {
   const recipeId = req.params.id;
