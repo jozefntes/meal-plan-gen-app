@@ -76,13 +76,75 @@ export default function Home() {
   };
 
   const handleMealDone = (mealInstanceId) => {
-    setSelectedDayMeals((prev) =>
-      prev.map((meal) =>
+    setSelectedDayMeals((prev) => {
+      const updatedMeals = prev.map((meal) =>
         meal.mealInstanceId === mealInstanceId
           ? { ...meal, done: !meal.done }
           : meal
-      )
-    );
+      );
+  
+      const progress = {
+        energy: {
+          current: updatedMeals.reduce(
+            (sum, meal) => sum + (meal.done ? meal.nutrition.calories || 0 : 0),
+            0
+          ),
+          percentage: Math.floor(
+            (updatedMeals.reduce(
+              (sum, meal) => sum + (meal.done ? meal.nutrition.calories || 0 : 0),
+              0
+            ) /
+              (userData?.targets?.energy || 1)) *
+              100
+          ),
+        },
+        protein: {
+          current: updatedMeals.reduce(
+            (sum, meal) => sum + (meal.done ? meal.nutrition.protein || 0 : 0),
+            0
+          ),
+          percentage: Math.floor(
+            (updatedMeals.reduce(
+              (sum, meal) => sum + (meal.done ? meal.nutrition.protein || 0 : 0),
+              0
+            ) /
+              (userData?.targets?.protein || 1)) *
+              100
+          ),
+        },
+        carbs: {
+          current: updatedMeals.reduce(
+            (sum, meal) => sum + (meal.done ? meal.nutrition.carbs || 0 : 0),
+            0
+          ),
+          percentage: Math.floor(
+            (updatedMeals.reduce(
+              (sum, meal) => sum + (meal.done ? meal.nutrition.carbs || 0 : 0),
+              0
+            ) /
+              (userData?.targets?.carbs || 1)) *
+              100
+          ),
+        },
+        fat: {
+          current: updatedMeals.reduce(
+            (sum, meal) => sum + (meal.done ? meal.nutrition.fat || 0 : 0),
+            0
+          ),
+          percentage: Math.floor(
+            (updatedMeals.reduce(
+              (sum, meal) => sum + (meal.done ? meal.nutrition.fat || 0 : 0),
+              0
+            ) /
+              (userData?.targets?.fat || 1)) *
+              100
+          ),
+        },
+      };
+  
+      setSelectedDayProgress(progress);
+      return updatedMeals;
+    });
   };
 
   const updateRecipeId = (prevId, newId) => {
@@ -198,6 +260,41 @@ export default function Home() {
 
         return recipe ? { ...meal, ...recipe } : { ...meal, ...defaultRecipe };
       });
+
+      const progress = {
+        energy: {
+          current: mealsWithRecipes.reduce(
+            (sum, meal) => sum + (meal.nutrition.calories || 0),
+            0
+          ),
+          percentage: Math.floor(
+            (mealsWithRecipes.reduce(
+              (sum, meal) => sum + (meal.nutrition.calories || 0),
+              0
+            ) /
+              (userData?.targets?.energy || 1)) *
+              100
+          ),
+        },
+        fat: {
+          current: mealsWithRecipes.reduce(
+            (sum, meal) => sum + (meal.nutrition.fat || 0),
+            0
+          ),
+        },
+        carbs: {
+          current: mealsWithRecipes.reduce(
+            (sum, meal) => sum + (meal.nutrition.carbs || 0),
+            0
+          ),
+        },
+        protein: {
+          current: mealsWithRecipes.reduce(
+            (sum, meal) => sum + (meal.nutrition.protein || 0),
+            0
+          ),
+        },
+      };
 
       setSelectedDayMeals(mealsWithRecipes);
       setSelectedDayProgress(selectedDayRecords.progress);

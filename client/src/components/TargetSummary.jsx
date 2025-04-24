@@ -22,7 +22,7 @@ export default function TargetSummary({ progress, userData }) {
               <div
                 className={`progress ${name}`}
                 style={{
-                  width: `${progress?.[name]?.percentage ?? 0}%`,
+                  width: `${Math.min(progress?.[name]?.percentage ?? 0, 98)}%`,
                 }}
               ></div>
             </div>
