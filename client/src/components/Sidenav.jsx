@@ -78,7 +78,11 @@ export default function Sidenav({ onToggleTheme }) {
               <CalendarIcon color="var(--icon-color)" />
               <p className="body-m">Generate Plan</p>
             </a>
-            <a href="/" className="nav-item">
+            <a href="/profile" 
+              className={`nav-item ${
+                currentPath === "/profile" ? "active" : ""
+              }`}
+>
               <UserIcon color="var(--icon-color)" />
               <p className="body-m">Profile</p>
             </a>
