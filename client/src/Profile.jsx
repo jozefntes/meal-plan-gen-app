@@ -1,9 +1,7 @@
 import { useState } from "react";
-import useTheme from "./hooks/useTheme";
 import "./Profile.css";
 
 export default function Profile() {
-  const { theme } = useTheme();
   const [formData, setFormData] = useState({
     name: "",
     age: "",
@@ -21,7 +19,10 @@ export default function Profile() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
-    if ((name === "weight" || name === "age" || name === "startingWeight") && isNaN(value)) {
+    if (
+      (name === "weight" || name === "age" || name === "startingWeight") &&
+      isNaN(value)
+    ) {
       return;
     }
 
@@ -37,7 +38,9 @@ export default function Profile() {
   };
 
   const progressPercent =
-    formData.weight && formData.goalWeight && formData.startingWeight &&
+    formData.weight &&
+    formData.goalWeight &&
+    formData.startingWeight &&
     parseFloat(formData.startingWeight) !== parseFloat(formData.goalWeight)
       ? Math.max(
           0,
@@ -56,7 +59,7 @@ export default function Profile() {
     parseFloat(formData.weight) <= parseFloat(formData.goalWeight);
 
   return (
-    <div className="generate-page profile-layout">
+    <div className="profile-page profile-layout">
       <div className="header">
         <h4>Profile</h4>
       </div>
@@ -167,18 +170,32 @@ export default function Profile() {
                 <span className="lbs">lbs</span>
               </div>
             ) : (
-              <span>{formData.goalWeight ? `${formData.goalWeight} lbs` : "—"}</span>
+              <span>
+                {formData.goalWeight ? `${formData.goalWeight} lbs` : "—"}
+              </span>
             )}
           </label>
 
           <div className="profile-actions">
             {editMode ? (
               <>
-                <button className="btn" onClick={handleSave}>Save</button>
-                <button className="btn-outline" onClick={() => setEditMode(false)}>Cancel</button>
+                <button className="btn btn-text" onClick={handleSave}>
+                  Save
+                </button>
+                <button
+                  className="btn btn-text"
+                  onClick={() => setEditMode(false)}
+                >
+                  Cancel
+                </button>
               </>
             ) : (
-              <button className="btn" onClick={() => setEditMode(true)}>Edit</button>
+              <button
+                className="btn btn-text"
+                onClick={() => setEditMode(true)}
+              >
+                Edit
+              </button>
             )}
           </div>
         </div>
@@ -186,7 +203,9 @@ export default function Profile() {
         <div className="side-column body-s">
           <div className="weight-tracker body-s">
             <h5>Weight Progress</h5>
-            <p>Starting Weight: {formData.startingWeight || "—"} lbs</p>
+            <p className="body-s">
+              Starting Weight: {formData.startingWeight || "—"} lbs
+            </p>
             <p>Current Weight: {formData.weight || "—"} lbs</p>
             <p>Goal Weight: {formData.goalWeight || "—"} lbs</p>
             <div className="progress-bar">
@@ -196,7 +215,10 @@ export default function Profile() {
               ></div>
             </div>
             {goalReached && (
-              <p className="goal-message"> Congrats! You've reached your goal weight!</p>
+              <p className="goal-message">
+                {" "}
+                Congrats! You&apos;ve reached your goal weight!
+              </p>
             )}
           </div>
 
@@ -204,28 +226,30 @@ export default function Profile() {
             <h5>Fitness Goals</h5>
             {editMode ? (
               <div className="fitness-goals-dropdown">
-                {["Lose weight", "Build muscle", "Maintain weight"].map((goal) => (
-                  <label key={goal} className="goal-option">
-                    <input
-                      type="checkbox"
-                      value={goal}
-                      checked={formData.fitnessGoals.includes(goal)}
-                      onChange={(e) => {
-                        const checked = e.target.checked;
-                        setFormData((prev) => {
-                          const goals = prev.fitnessGoals || [];
-                          return {
-                            ...prev,
-                            fitnessGoals: checked
-                              ? [...goals, goal]
-                              : goals.filter((g) => g !== goal),
-                          };
-                        });
-                      }}
-                    />
-                    {goal}
-                  </label>
-                ))}
+                {["Lose weight", "Build muscle", "Maintain weight"].map(
+                  (goal) => (
+                    <label key={goal} className="goal-option">
+                      <input
+                        type="checkbox"
+                        value={goal}
+                        checked={formData.fitnessGoals.includes(goal)}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setFormData((prev) => {
+                            const goals = prev.fitnessGoals || [];
+                            return {
+                              ...prev,
+                              fitnessGoals: checked
+                                ? [...goals, goal]
+                                : goals.filter((g) => g !== goal),
+                            };
+                          });
+                        }}
+                      />
+                      {goal}
+                    </label>
+                  )
+                )}
               </div>
             ) : formData.fitnessGoals.length > 0 ? (
               <ul className="goal-list">
@@ -242,7 +266,16 @@ export default function Profile() {
             <h5>Dietary Preferences</h5>
             {editMode ? (
               <div className="fitness-goals-dropdown">
-                {["Vegetarian", "Vegan", "Keto", "Paleo", "Gluten-Free", "Dairy-Free", "Low-Carb", "High-Protein"].map((pref) => (
+                {[
+                  "Vegetarian",
+                  "Vegan",
+                  "Keto",
+                  "Paleo",
+                  "Gluten-Free",
+                  "Dairy-Free",
+                  "Low-Carb",
+                  "High-Protein",
+                ].map((pref) => (
                   <label key={pref} className="goal-option">
                     <input
                       type="checkbox"
@@ -278,6 +311,5 @@ export default function Profile() {
         </div>
       </div>
     </div>
-    
   );
 }

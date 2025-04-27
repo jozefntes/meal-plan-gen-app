@@ -1,4 +1,4 @@
-.generate-page {
+.profile-page {
   margin-left: 280px;
   padding: 48px;
   display: flex;
@@ -9,47 +9,12 @@
   color: var(--text-color);
 }
 
-.generate-page .header {
+.profile-page .header {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
   padding: 32px;
-}
-
-.generate-page h4 {
-  font-family: 'Epilogue', sans-serif;
-  font-weight: 700;
-  font-size: 33px;
-  line-height: 48px;
-  letter-spacing: 0.04em;
-  color: var(--brand-color);
-}
-
-.profile-picture {
-  margin-left: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.profile-img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--btn-primary-outline);
-}
-
-.profile-img:hover {
-  opacity: 0.8;
-  transition: opacity 0.2s ease;
-}
-
-.file-input {
-  margin-top: 10px;
-  font-size: 12px;
-  color: var(--text-color);
 }
 
 .profile-form {
@@ -82,12 +47,6 @@
   margin-right: 1rem;
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
 .weight-tracker {
   background-color: var(--component-bg);
   padding: 1rem;
@@ -95,20 +54,6 @@
   flex: 1;
   box-shadow: var(--box-shadow);
   color: var(--text-color);
-}
-
-.progress-bar {
-  height: 10px;
-  background: var(--gray-200);
-  border-radius: 5px;
-  margin-top: 8px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background-color: var(--protein);
-  transition: width 0.3s ease-in-out;
 }
 
 .goal-message {
@@ -228,42 +173,4 @@
   gap: 20px;
 }
 
-.btn {
-  background-color: var(--btn-primary);
-  color: var(--btn-primary-text);
-  border: var(--btn-primary-outline) 1px solid;
-  padding: 12px 24px;
-  border-radius: 4px;
-  cursor: pointer;
-  box-shadow: var(--btn-shadow);
-  font-family: 'Poppins', sans-serif;
-  font-weight: bold;
-  font-size: 16px;
-  letter-spacing: 0.04em;
-  transition: transform 0.3s ease;
-}
-
-.btn:hover {
-  transform: scale(1.05);
-  opacity: 0.9;
-}
-
-.btn-outline {
-  background-color: var(--btn-primary);
-  border: 1px solid var(--btn-primary-outline);
-  color: var(--btn-primary-text);
-  padding: 12px 24px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  font-weight: bold;
-  font-size: 16px;
-  letter-spacing: 0.04em;
-}
-
-.btn-outline:hover {
-  background-color: var(--btn-primary);
-  color: var(--btn-primary-text);
-  opacity: 0.8;
-}
 

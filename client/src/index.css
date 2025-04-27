@@ -4,6 +4,10 @@
   --primary-300: #79E5C2;
   --primary-50: #C9F7EC;
   --gray-900: #1A231F;
+  --gray-800: #2A3230;
+  --gray-700: #363E3D;
+  --gray-600: #404746;
+  --gray-500: #494F4F;
   --gray-400: #505656;
   --gray-300: #575C5C;
   --gray-200: #9DA0A0;
@@ -54,8 +58,8 @@
   --btn-primary-text: var(--white-200);
   --src-primary-outline: var(--white-200);
   --src-primary-text: var(--gray-200);
-  --component-bg: var(--gray-400);
-  --target-bar: var(--gray-400);
+  --component-bg: var(--gray-800);
+  --target-bar: var(--gray-300);
   --pie-bg: var(--gray-200);
   --energy: var(--white-200);
   --box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.4), -10px -10px 30px rgba(0, 0, 0, 0.2);
