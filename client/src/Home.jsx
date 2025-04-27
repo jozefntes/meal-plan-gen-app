@@ -82,7 +82,7 @@ export default function Home() {
           ? { ...meal, done: !meal.done }
           : meal
       );
-  
+
       const progress = {
         energy: {
           current: updatedMeals.reduce(
@@ -91,7 +91,8 @@ export default function Home() {
           ),
           percentage: Math.floor(
             (updatedMeals.reduce(
-              (sum, meal) => sum + (meal.done ? meal.nutrition.calories || 0 : 0),
+              (sum, meal) =>
+                sum + (meal.done ? meal.nutrition.calories || 0 : 0),
               0
             ) /
               (userData?.targets?.energy || 1)) *
@@ -105,7 +106,8 @@ export default function Home() {
           ),
           percentage: Math.floor(
             (updatedMeals.reduce(
-              (sum, meal) => sum + (meal.done ? meal.nutrition.protein || 0 : 0),
+              (sum, meal) =>
+                sum + (meal.done ? meal.nutrition.protein || 0 : 0),
               0
             ) /
               (userData?.targets?.protein || 1)) *
@@ -141,7 +143,7 @@ export default function Home() {
           ),
         },
       };
-  
+
       setSelectedDayProgress(progress);
       return updatedMeals;
     });
@@ -260,41 +262,6 @@ export default function Home() {
 
         return recipe ? { ...meal, ...recipe } : { ...meal, ...defaultRecipe };
       });
-
-      const progress = {
-        energy: {
-          current: mealsWithRecipes.reduce(
-            (sum, meal) => sum + (meal.nutrition.calories || 0),
-            0
-          ),
-          percentage: Math.floor(
-            (mealsWithRecipes.reduce(
-              (sum, meal) => sum + (meal.nutrition.calories || 0),
-              0
-            ) /
-              (userData?.targets?.energy || 1)) *
-              100
-          ),
-        },
-        fat: {
-          current: mealsWithRecipes.reduce(
-            (sum, meal) => sum + (meal.nutrition.fat || 0),
-            0
-          ),
-        },
-        carbs: {
-          current: mealsWithRecipes.reduce(
-            (sum, meal) => sum + (meal.nutrition.carbs || 0),
-            0
-          ),
-        },
-        protein: {
-          current: mealsWithRecipes.reduce(
-            (sum, meal) => sum + (meal.nutrition.protein || 0),
-            0
-          ),
-        },
-      };
 
       setSelectedDayMeals(mealsWithRecipes);
       setSelectedDayProgress(selectedDayRecords.progress);
