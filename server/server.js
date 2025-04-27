@@ -638,6 +638,58 @@ app.post("/api/users", verifyToken, async (req, res) => {
   }
 });
 
+app.patch("/api/meal_done", verifyToken, async (req, res) => {
+  const { uid, date, mealId, done } = req.body;
+
+  if (!uid || !date || !mealId || typeof done !== "boolean") {
+    return res
+      .status(400)
+      .json({ error: "All fields are required and 'done' must be a boolean" });
+  }
+
+  if (req.user.uid !== uid) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
+  try {
+    const dateDocRef = db
+      .collection("plans")
+      .doc(uid)
+      .collection("dates")
+      .doc(date);
+    const dateDoc = await dateDocRef.get();
+
+    if (!dateDoc.exists) {
+      return res
+        .status(404)
+        .json({ error: "Meal plan for the specified date not found" });
+    }
+
+    const mealPlan = dateDoc.data();
+    const meals = mealPlan.meals;
+
+    if (!meals || !Array.isArray(meals)) {
+      return res.status(400).json({ error: "Invalid meal plan format" });
+    }
+
+    const mealIndex = meals.findIndex((meal) => meal.id === mealId);
+    if (mealIndex === -1) {
+      return res.status(404).json({ error: "Meal not found" });
+    }
+
+    meals[mealIndex].done = done;
+
+    await dateDocRef.set({ meals }, { merge: true });
+
+    res
+      .status(200)
+      .json({ message: "Meal updated successfully", meal: meals[mealIndex] });
+  } catch (error) {
+    console.error("Error updating meal:", error);
+    res.status(500).json({ error: "Failed to update meal" });
+  }
+});
+
 // Delete a specific recipe by document ID
 app.delete("/api/recipes/:id", verifyToken, async (req, res) => {
   const recipeId = req.params.id;
