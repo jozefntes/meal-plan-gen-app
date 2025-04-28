@@ -12,14 +12,14 @@ export default function EnergySummary({ progress, userData }) {
   useEffect(() => {
     const targetEnergy = userData?.targets?.energy ?? 0;
     const newConsumed = progress?.energy?.current ?? 0;
-
+  
     setConsumed(newConsumed);
     setRemaining(targetEnergy - newConsumed);
-
+  
     if (progress && targetEnergy > 0) {
       const fatCals = (progress?.fat?.current ?? 0) * 9;
       const carbCals = (progress?.carbs?.current ?? 0) * 4;
-
+  
       const fatPercent =
         newConsumed > 0 ? Math.floor((fatCals / newConsumed) * 100) : 0;
       const carbsPercent =
@@ -28,19 +28,25 @@ export default function EnergySummary({ progress, userData }) {
         targetEnergy > 0
           ? 100 - Math.floor((newConsumed / targetEnergy) * 100)
           : 0;
-
+  
       setConsumedPieStyle({
-        background: `conic-gradient(var(--fat) 0% ${fatPercent}%, var(--carbs) ${fatPercent}% ${
-          carbsPercent + fatPercent
-        }%, var(--protein) ${carbsPercent + fatPercent}% 100%)`,
+        background: newConsumed > 0
+          ? `conic-gradient(var(--fat) 0% ${fatPercent}%, var(--carbs) ${fatPercent}% ${
+              carbsPercent + fatPercent
+            }%, var(--protein) ${carbsPercent + fatPercent}% 100%)`
+          : `conic-gradient(var(--gray-100) 0% 100%)`,
       });
-
+  
       setRemainingPieStyle({
         background: `conic-gradient(var(--gray-100) 0% ${remainingPercent}%, var(--gray-400) ${remainingPercent}% 100%)`,
       });
     } else {
-      setConsumedPieStyle({});
-      setRemainingPieStyle({});
+      setConsumedPieStyle({
+        background: `conic-gradient(var(--gray-100) 0% 100%)`,
+      });
+      setRemainingPieStyle({
+        background: `conic-gradient(var(--gray-100) 0% 100%)`,
+      });
       setConsumed(0);
       setRemaining(0);
     }
