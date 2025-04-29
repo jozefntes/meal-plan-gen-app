@@ -62,7 +62,10 @@ export default function Sidenav({ onToggleTheme }) {
             <a
               href="/myrecipes"
               className={`nav-item ${
-                currentPath === "/myrecipes" ? "active" : ""
+                currentPath === "/myrecipes" ||
+                currentPath.startsWith("/recipe/")
+                  ? "active"
+                  : ""
               }`}
             >
               <ChefHatIcon color="var(--icon-color)" />
