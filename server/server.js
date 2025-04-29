@@ -203,10 +203,25 @@ app.get("/api/users/:uid", verifyToken, async (req, res) => {
     const userDoc = await userDocRef.get();
 
     if (!userDoc.exists) {
-      return res.status(404).json({ error: "User not found" });
+      console.log("User doc not found for UID:", uid);
+
+      const defaultUser = {
+        uid,
+        name: "",
+        age: 0,
+        height: { feet: 0, inches: 0 },
+        currentWeight: 0,
+        goalWeight: 0,
+        fitnessGoal: 1,
+        dietaryPreferences: [],
+      };
+
+      await userDocRef.set(defaultUser);
+      return res.status(200).json(defaultUser);
     }
 
     const userData = userDoc.data();
+    
     res.status(200).json(userData);
   } catch (error) {
     console.error("Error fetching user data: ", error);
@@ -559,6 +574,7 @@ app.post("/api/replace_recipe", verifyToken, async (req, res) => {
 });
 
 app.post("/api/users", verifyToken, async (req, res) => {
+  console.log("Received user data:", req.body);
   const {
     uid,
     name,
@@ -570,15 +586,19 @@ app.post("/api/users", verifyToken, async (req, res) => {
     dietaryPreferences,
   } = req.body;
 
+  function isMissing(value) {
+    return value === undefined || value === null || value === "";
+  }
+
   if (
-    !uid ||
-    !name ||
-    !age ||
-    !height ||
-    !currentWeight ||
-    !goalWeight ||
-    !fitnessGoal ||
-    !dietaryPreferences
+    isMissing(uid) ||
+    isMissing(name) ||
+    isMissing(age) ||
+    isMissing(height) ||
+    isMissing(currentWeight) ||
+    isMissing(goalWeight) ||
+    isMissing(fitnessGoal) ||
+    isMissing(dietaryPreferences)
   ) {
     return res.status(400).json({ error: "All fields are required" });
   }
@@ -591,9 +611,24 @@ app.post("/api/users", verifyToken, async (req, res) => {
   if (typeof age !== "number" || age < 0) {
     return res.status(400).json({ error: "Invalid age" });
   }
-  if (typeof height !== "number" || height < 0) {
-    return res.status(400).json({ error: "Invalid height" });
+  if (
+    typeof height !== "object" ||
+    height === null ||
+    typeof height.feet !== "number" ||
+    typeof height.inches !== "number"
+  ) {
+    return res.status(400).json({ error: "Invalid height format" });
   }
+  
+  if (
+    isNaN(height.feet) || isNaN(height.inches) ||
+    height.feet < 0 || height.feet > 10 ||
+    height.inches < 0 || height.inches > 11
+  ) {
+    return res.status(400).json({ error: "Invalid height values" });
+  }
+  
+
   if (typeof currentWeight !== "number" || currentWeight < 0) {
     return res.status(400).json({ error: "Invalid current weight" });
   }

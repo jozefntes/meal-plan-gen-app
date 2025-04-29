@@ -1,12 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getAuth } from "firebase/auth"; 
 import "./Profile.css";
+
+import { SERVER_URL } from "./constants";
 
 export default function Profile() {
   const [formData, setFormData] = useState({
     name: "",
     age: "",
-    heightFeet: "",
-    heightInches: "",
+    height: { 
+      feet: "", 
+      inches: "", 
+    },
     weight: "",
     startingWeight: "",
     goalWeight: "",
@@ -15,6 +20,51 @@ export default function Profile() {
   });
 
   const [editMode, setEditMode] = useState(false);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (user) {
+          const idToken = await user.getIdToken();
+          const response = await fetch(`${SERVER_URL}/api/users/${user.uid}`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${idToken}`,
+            }
+          });
+          if (!response.ok) {
+            throw new Error("Failed to fetch user data");
+          }
+          const data = await response.json();
+          const totalCm = data.height || 0;
+          const totalInches = totalCm / 2.54;
+          const feet = Math.floor(totalInches / 12);
+          const inches = Math.round(totalInches % 12);
+          
+          setFormData({
+            name: data.name || "",
+            age: data.age || "",
+            height: {
+              feet,
+              inches,
+            },
+            weight: data.currentWeight || "",
+            startingWeight: data.startingWeight || "",
+            goalWeight: data.goalWeight || "",
+            fitnessGoals: mapFitnessGoalToArray(data.fitnessGoal),
+            dietaryPreferences: data.dietaryPreferences || [],
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -29,12 +79,116 @@ export default function Profile() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    if (!formData.startingWeight) {
-      setFormData((prev) => ({ ...prev, startingWeight: prev.weight }));
+  const handleHeightChange = (e) => {
+    const { name, value } = e.target;
+
+    const newValue = value === "" ? 0 : parseInt(value, 10);
+  
+    setFormData((prevState) => ({
+      ...prevState,
+      height: {
+        ...prevState.height,
+        [name]: newValue,
+      },
+    }));
+  };
+
+  const handleSave = async () => {
+    try {
+      if (!formData.startingWeight) {
+        setFormData((prev) => ({ ...prev, startingWeight: prev.weight }));
+      }
+
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (!user) {
+        console.error("User not authenticated");
+        return;
+      }
+
+      const idToken = await user.getIdToken(true);
+
+      const feet = Number(formData.height.feet);
+      const inches = Number(formData.height.inches);
+
+      console.log('Feet:', feet, 'Inches:', inches);
+
+      if (isNaN(feet) || feet < 0 || feet > 10) {
+        throw new Error("Feet must be a valid number between 0 and 10");
+      }
+
+      if (isNaN(inches) || inches < 0 || inches > 11) {
+        throw new Error("Inches must be a valid number between 0 and 11");
+      }
+      const heightCm = feet * 30.48 + inches * 2.54;
+
+      const requestBody = {
+        uid: user.uid,
+        name: formData.name,
+        age: Number(formData.age),
+        height: heightCm,
+        currentWeight: Number(formData.weight),
+        startingWeight: formData.startingWeight 
+        ? Number(formData.startingWeight) 
+        : Number(formData.weight),
+        goalWeight: Number(formData.goalWeight),
+        fitnessGoal: mapFitnessGoalToNumber(formData.fitnessGoals),
+        dietaryPreferences: formData.dietaryPreferences,
+      };
+
+      const response = await fetch(`${SERVER_URL}/api/users`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      console.log("Sending to server:", requestBody);
+      if (!response.ok) {
+        let errorMessage = "Failed to save user data";
+  
+        const contentType = response.headers.get("Content-Type") || "";
+
+        if (contentType.includes("application/json")) {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } else {
+          const errorText = await response.text();
+          errorMessage = errorText || errorMessage;
+        }
+  
+        throw new Error(errorMessage); 
     }
-    console.log("User data saved", formData);
-    setEditMode(false);
+      console.log("User data saved", formData);
+      setEditMode(false);
+    } catch (error) {
+      console.error("Error saving user data:", error.message);
+    
+      alert(`Error: ${error.message}`);
+    }
+  };
+
+  const mapFitnessGoalToNumber = (goalsArray) => {
+    if (goalsArray.includes("Lose weight")) return 1;
+    if (goalsArray.includes("Build muscle")) return 2;
+    if (goalsArray.includes("Maintain weight")) return 3;
+    return null;
+  };
+
+  const mapFitnessGoalToArray = (goalNumber) => {
+    switch (goalNumber) {
+      case 1:
+        return ["Lose weight"];
+      case 2:
+        return ["Build muscle"];
+      case 3:
+        return ["Maintain weight"];
+      default:
+        return [];
+    }
   };
 
   const progressPercent =
@@ -101,9 +255,9 @@ export default function Profile() {
             {editMode ? (
               <div className="height-input">
                 <select
-                  name="heightFeet"
-                  value={formData.heightFeet}
-                  onChange={handleInputChange}
+                  name="feet"
+                  value={formData.height.feet}
+                  onChange={handleHeightChange}
                   className="height-dropdown"
                 >
                   <option value="">Feet</option>
@@ -114,9 +268,9 @@ export default function Profile() {
                   ))}
                 </select>
                 <select
-                  name="heightInches"
-                  value={formData.heightInches}
-                  onChange={handleInputChange}
+                  name="inches"
+                  value={formData.height.inches}
+                  onChange={handleHeightChange}
                   className="height-dropdown"
                 >
                   <option value="">Inches</option>
@@ -129,8 +283,8 @@ export default function Profile() {
               </div>
             ) : (
               <span>
-                {formData.heightFeet && formData.heightInches
-                  ? `${formData.heightFeet} ft ${formData.heightInches} in`
+                {formData.height.feet && formData.height.inches
+                  ? `${formData.height.feet || 0} ft ${formData.height.inches || 0} in`
                   : "—"}
               </span>
             )}
