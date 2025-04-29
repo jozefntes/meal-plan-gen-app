@@ -6,7 +6,6 @@ import useTheme from "../hooks/useTheme";
 import "./Sidenav.css";
 import HomeIcon from "../icons/HomeIcon";
 import UserIcon from "../icons/UserIcon";
-import SettingIcon from "../icons/SettingIcon";
 import MoonIcon from "../icons/MoonIcon";
 import SidebarIcon from "../icons/SidebarIcon";
 import ChefHatIcon from "../icons/ChefHatIcon";
@@ -78,17 +77,14 @@ export default function Sidenav({ onToggleTheme }) {
               <CalendarIcon color="var(--icon-color)" />
               <p className="body-m">Generate Plan</p>
             </a>
-            <a href="/profile" 
+            <a
+              href="/profile"
               className={`nav-item ${
                 currentPath === "/profile" ? "active" : ""
               }`}
->
+            >
               <UserIcon color="var(--icon-color)" />
               <p className="body-m">Profile</p>
-            </a>
-            <a href="/" className="nav-item">
-              <SettingIcon color="var(--icon-color)" />
-              <p className="body-m">Settings</p>
             </a>
           </div>
         </div>
