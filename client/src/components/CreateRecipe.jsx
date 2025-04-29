@@ -16,7 +16,7 @@ const allIngredients = [
   "Smoothie", "Protein Bar", "Boiled Eggs", "Cottage Cheese", "Seeds", "Greek Yogurt"
 ];
 
-const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
+const CreateRecipe = ({ onClose, onAddRecipe }) => {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedIngredients, setSelectedIngredients] = useState([]);
@@ -51,9 +51,6 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
       const idToken = await user.getIdToken();
       const uid = user.uid;
 
-      const selectedMealGroup = parseInt(
-        document.getElementById("meal-group").value
-      );
       const minProtein = parseInt(document.getElementById("min-protein").value);
       const maxCarbs = parseInt(document.getElementById("max-carbs").value);
       const maxFat = parseInt(document.getElementById("max-fat").value);
@@ -85,7 +82,6 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
             minProtein,
             maxCarbs,
             maxFat,
-            mealGroup: selectedMealGroup,
           }),
         });
 
@@ -137,23 +133,6 @@ const CreateRecipe = ({ onClose, mealGroup, onAddRecipe }) => {
       <div className="modal-content">
         <h6>Create New Recipe</h6>
         <form>
-          <div className="form-group">
-            <label htmlFor="meal-group" className="body-s">
-              Meal Group
-            </label>
-            <select
-              id="meal-group"
-              name="meal-group"
-              defaultValue={mealGroup}
-              required
-              className="body-s"
-            >
-              <option value="1">Breakfast</option>
-              <option value="2">Lunch</option>
-              <option value="3">Dinner</option>
-              <option value="4">Snack</option>
-            </select>
-          </div>
           <div className="form-group">
             <label htmlFor="ingredient-search" className="body-s">
               Ingredients
