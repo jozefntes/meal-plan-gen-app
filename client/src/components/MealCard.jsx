@@ -56,7 +56,7 @@ export default function MealCard({
       const uid = user.uid;
 
       // Optimistically update the UI
-      onReplaceRecipeId(id, recipeId);
+      const newMealInstanceId = onReplaceRecipeId(mealInstanceId, recipeId);
 
       try {
         const response = await fetch(`${SERVER_URL}/api/replace_recipe`, {
@@ -79,7 +79,9 @@ export default function MealCard({
         console.log(data);
       } catch (error) {
         console.error("Error replacing recipe:", error);
-        onReplaceRecipeId(recipeId, id);
+
+        // Rollback to the previous state
+        onReplaceRecipeId(newMealInstanceId, id);
       }
     }
 
