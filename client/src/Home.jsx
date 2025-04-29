@@ -82,7 +82,51 @@ export default function Home() {
           ? { ...meal, done: !meal.done }
           : meal
       );
-
+  
+      // Find the updated meal
+      const updatedMeal = updatedMeals.find(
+        (meal) => meal.mealInstanceId === mealInstanceId
+      );
+  
+      // Send the update to the server
+      const updateMealStatus = async () => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+  
+        if (user) {
+          const idToken = await user.getIdToken();
+          const uid = user.uid;
+  
+          try {
+            const response = await fetch(`${SERVER_URL}/api/meal_done`, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${idToken}`,
+              },
+              body: JSON.stringify({
+                uid,
+                date: selectedDay,
+                mealId: updatedMeal.id,
+                done: updatedMeal.done,
+              }),
+            });
+  
+            if (!response.ok) {
+              throw new Error("Failed to update meal status");
+            }
+  
+            const data = await response.json();
+            console.log("Meal updated successfully:", data);
+          } catch (error) {
+            console.error("Error updating meal status:", error);
+          }
+        }
+      };
+  
+      updateMealStatus();
+  
+      // Recalculate progress
       const progress = {
         energy: {
           current: updatedMeals.reduce(
@@ -91,8 +135,7 @@ export default function Home() {
           ),
           percentage: Math.floor(
             (updatedMeals.reduce(
-              (sum, meal) =>
-                sum + (meal.done ? meal.nutrition.calories || 0 : 0),
+              (sum, meal) => sum + (meal.done ? meal.nutrition.calories || 0 : 0),
               0
             ) /
               (userData?.targets?.energy || 1)) *
@@ -106,8 +149,7 @@ export default function Home() {
           ),
           percentage: Math.floor(
             (updatedMeals.reduce(
-              (sum, meal) =>
-                sum + (meal.done ? meal.nutrition.protein || 0 : 0),
+              (sum, meal) => sum + (meal.done ? meal.nutrition.protein || 0 : 0),
               0
             ) /
               (userData?.targets?.protein || 1)) *
@@ -143,8 +185,9 @@ export default function Home() {
           ),
         },
       };
-
+  
       setSelectedDayProgress(progress);
+  
       return updatedMeals;
     });
   };
@@ -255,16 +298,76 @@ export default function Home() {
     const selectedDayRecords = mealPlans.find(
       (day) => day.date === selectedDay
     );
-
+  
     if (selectedDayRecords) {
       const mealsWithRecipes = selectedDayRecords.meals.map((meal) => {
         const recipe = recipes.find((r) => r.id === meal.id);
-
+  
         return recipe ? { ...meal, ...recipe } : { ...meal, ...defaultRecipe };
       });
-
+  
+      // Recalculate progress
+      const progress = {
+        energy: {
+          current: mealsWithRecipes.reduce(
+            (sum, meal) => sum + (meal.done ? meal.nutrition.calories || 0 : 0),
+            0
+          ),
+          percentage: Math.floor(
+            (mealsWithRecipes.reduce(
+              (sum, meal) => sum + (meal.done ? meal.nutrition.calories || 0 : 0),
+              0
+            ) /
+              (userData?.targets?.energy || 1)) *
+              100
+          ),
+        },
+        protein: {
+          current: mealsWithRecipes.reduce(
+            (sum, meal) => sum + (meal.done ? meal.nutrition.protein || 0 : 0),
+            0
+          ),
+          percentage: Math.floor(
+            (mealsWithRecipes.reduce(
+              (sum, meal) => sum + (meal.done ? meal.nutrition.protein || 0 : 0),
+              0
+            ) /
+              (userData?.targets?.protein || 1)) *
+              100
+          ),
+        },
+        carbs: {
+          current: mealsWithRecipes.reduce(
+            (sum, meal) => sum + (meal.done ? meal.nutrition.carbs || 0 : 0),
+            0
+          ),
+          percentage: Math.floor(
+            (mealsWithRecipes.reduce(
+              (sum, meal) => sum + (meal.done ? meal.nutrition.carbs || 0 : 0),
+              0
+            ) /
+              (userData?.targets?.carbs || 1)) *
+              100
+          ),
+        },
+        fat: {
+          current: mealsWithRecipes.reduce(
+            (sum, meal) => sum + (meal.done ? meal.nutrition.fat || 0 : 0),
+            0
+          ),
+          percentage: Math.floor(
+            (mealsWithRecipes.reduce(
+              (sum, meal) => sum + (meal.done ? meal.nutrition.fat || 0 : 0),
+              0
+            ) /
+              (userData?.targets?.fat || 1)) *
+              100
+          ),
+        },
+      };
+  
       setSelectedDayMeals(mealsWithRecipes);
-      setSelectedDayProgress(selectedDayRecords.progress);
+      setSelectedDayProgress(progress); // Dynamically calculate progress
     } else {
       setSelectedDayMeals(null);
       setSelectedDayProgress(null);
