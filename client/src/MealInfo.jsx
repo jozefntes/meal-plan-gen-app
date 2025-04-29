@@ -59,6 +59,9 @@ export default function MealInfo({ id }) {
         <h4>Loading...</h4>
       ) : (
         <>
+          <button className="back-btn" onClick={() => page("/myrecipes")}>
+            <img src="/icons/chevron-left-white.svg" alt="Back" />
+          </button>
           <img
             src={meal?.image ?? "/images/placeholder.webp"}
             alt={meal?.title ?? "Meal Image"}
