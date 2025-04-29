@@ -382,17 +382,9 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
 });
 
 app.post("/api/generate_recipe", verifyToken, async (req, res) => {
-  const { uid, ingredients, minProtein, maxCarbs, maxFat, mealGroup } =
-    req.body;
+  const { uid, ingredients, minProtein, maxCarbs, maxFat } = req.body;
 
-  if (
-    !uid ||
-    !ingredients ||
-    !minProtein ||
-    !maxCarbs ||
-    !maxFat ||
-    !mealGroup
-  ) {
+  if (!uid || !ingredients || !minProtein || !maxCarbs || !maxFat) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
@@ -432,7 +424,6 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
       recipe = parsedRecipe;
     }
 
-    recipe.mealGroup = mealGroup;
     recipe.uid = uid;
     recipe.image = null;
 
