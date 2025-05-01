@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAuth } from "firebase/auth"; 
+import { getAuth } from "firebase/auth";
 import "./Profile.css";
 
 import { SERVER_URL } from "./constants";
@@ -8,9 +8,9 @@ export default function Profile() {
   const [formData, setFormData] = useState({
     name: "",
     age: "",
-    height: { 
-      feet: "", 
-      inches: "", 
+    height: {
+      feet: "",
+      inches: "",
     },
     weight: "",
     startingWeight: "",
@@ -30,10 +30,10 @@ export default function Profile() {
         if (user) {
           const idToken = await user.getIdToken();
           const response = await fetch(`${SERVER_URL}/api/users/${user.uid}`, {
-            method: 'GET',
+            method: "GET",
             headers: {
-              'Authorization': `Bearer ${idToken}`,
-            }
+              Authorization: `Bearer ${idToken}`,
+            },
           });
           if (!response.ok) {
             throw new Error("Failed to fetch user data");
@@ -43,7 +43,7 @@ export default function Profile() {
           const totalInches = totalCm / 2.54;
           const feet = Math.floor(totalInches / 12);
           const inches = Math.round(totalInches % 12);
-          
+
           setFormData({
             name: data.name || "",
             age: data.age || "",
@@ -85,7 +85,12 @@ export default function Profile() {
       return;
     }
 
-    if ((name === "weight" || name === "startingWeight" || name === "goalWeight") && value.length > 3) {
+    if (
+      (name === "weight" ||
+        name === "startingWeight" ||
+        name === "goalWeight") &&
+      value.length > 3
+    ) {
       return;
     }
 
@@ -96,7 +101,7 @@ export default function Profile() {
     const { name, value } = e.target;
 
     const newValue = value === "" ? 0 : parseInt(value, 10);
-  
+
     setFormData((prevState) => ({
       ...prevState,
       height: {
@@ -125,7 +130,7 @@ export default function Profile() {
       const feet = Number(formData.height.feet);
       const inches = Number(formData.height.inches);
 
-      console.log('Feet:', feet, 'Inches:', inches);
+      console.log("Feet:", feet, "Inches:", inches);
 
       if (isNaN(feet) || feet < 0 || feet > 10) {
         throw new Error("Feet must be a valid number between 0 and 10");
@@ -142,9 +147,9 @@ export default function Profile() {
         age: Number(formData.age),
         height: heightCm,
         currentWeight: Number(formData.weight),
-        startingWeight: formData.startingWeight 
-        ? Number(formData.startingWeight) 
-        : Number(formData.weight),
+        startingWeight: formData.startingWeight
+          ? Number(formData.startingWeight)
+          : Number(formData.weight),
         goalWeight: Number(formData.goalWeight),
         fitnessGoal: mapFitnessGoalToNumber(formData.fitnessGoals),
         dietaryPreferences: formData.dietaryPreferences,
@@ -162,7 +167,7 @@ export default function Profile() {
       console.log("Sending to server:", requestBody);
       if (!response.ok) {
         let errorMessage = "Failed to save user data";
-  
+
         const contentType = response.headers.get("Content-Type") || "";
 
         if (contentType.includes("application/json")) {
@@ -172,14 +177,14 @@ export default function Profile() {
           const errorText = await response.text();
           errorMessage = errorText || errorMessage;
         }
-  
-        throw new Error(errorMessage); 
-    }
+
+        throw new Error(errorMessage);
+      }
       console.log("User data saved", formData);
       setEditMode(false);
     } catch (error) {
       console.error("Error saving user data:", error.message);
-    
+
       alert(`Error: ${error.message}`);
     }
   };
@@ -205,35 +210,34 @@ export default function Profile() {
   };
 
   const progressPercent =
-  formData.weight &&
-  formData.goalWeight &&
-  formData.startingWeight
-    ? formData.startingWeight > formData.goalWeight 
-      ? Math.max(
-          0,
-          Math.min(
-            100,
-            ((formData.startingWeight - formData.weight) /
-              (formData.startingWeight - formData.goalWeight)) *
-              100
+    formData.weight && formData.goalWeight && formData.startingWeight
+      ? formData.startingWeight > formData.goalWeight
+        ? Math.max(
+            0,
+            Math.min(
+              100,
+              ((formData.startingWeight - formData.weight) /
+                (formData.startingWeight - formData.goalWeight)) *
+                100
+            )
           )
-        ) 
-      : Math.max(
-          0,
-          Math.min(
-            100,
-            ((formData.weight - formData.startingWeight) /
-              (formData.goalWeight - formData.startingWeight)) *
-              100
+        : Math.max(
+            0,
+            Math.min(
+              100,
+              ((formData.weight - formData.startingWeight) /
+                (formData.goalWeight - formData.startingWeight)) *
+                100
+            )
           )
-        )
-    : 0;
+      : 0;
 
-    const goalReached = formData.goalWeight && formData.weight
-    ? formData.startingWeight > formData.goalWeight
-      ? parseFloat(formData.weight) <= parseFloat(formData.goalWeight)
-      : parseFloat(formData.weight) >= parseFloat(formData.goalWeight)
-    : false;
+  const goalReached =
+    formData.goalWeight && formData.weight
+      ? formData.startingWeight > formData.goalWeight
+        ? parseFloat(formData.weight) <= parseFloat(formData.goalWeight)
+        : parseFloat(formData.weight) >= parseFloat(formData.goalWeight)
+      : false;
 
   return (
     <div className="profile-page profile-layout">
@@ -307,7 +311,9 @@ export default function Profile() {
             ) : (
               <span>
                 {formData.height.feet && formData.height.inches
-                  ? `${formData.height.feet || 0} ft ${formData.height.inches || 0} in`
+                  ? `${formData.height.feet || 0} ft ${
+                      formData.height.inches || 0
+                    } in`
                   : "—"}
               </span>
             )}
@@ -385,9 +391,9 @@ export default function Profile() {
             </p>
             <p>Current Weight: {formData.weight || "—"} lbs</p>
             <p>Goal Weight: {formData.goalWeight || "—"} lbs</p>
-            <div className="progress-bar">
+            <div className="profile-progress-bar">
               <div
-                className="progress-fill"
+                className="profile-progress-fill"
                 style={{ width: `${progressPercent}%` }}
               ></div>
             </div>
