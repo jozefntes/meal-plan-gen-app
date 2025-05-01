@@ -496,6 +496,22 @@ export default function Home() {
 
           <EnergySummary progress={selectedDayProgress} userData={userData} />
         </div>
+
+        <div className="home-ingredient-list">
+          <h6 className="home-ingredient-list-title">Ingredient List</h6>
+          <ul className="home-ingredient-list-items two-columns">
+            {selectedDayMeals?.flatMap((meal) =>
+              meal.ingredients.map((ingredient, index) => (
+                <li
+                  key={`${meal.id}-${index}`}
+                  className="home-ingredient-list-item body-s"
+                >
+                  {ingredient}
+                </li>
+              ))
+            )}
+          </ul>
+        </div>
       </div>
     </>
   );
