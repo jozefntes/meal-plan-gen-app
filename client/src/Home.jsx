@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
+import page from "page";
 
 import DaySelector from "./components/DaySelector";
 import MealCard from "./components/MealCard";
@@ -8,7 +9,7 @@ import EnergySummary from "./components/EnergySummary";
 import { SERVER_URL, MAX_WEEK, MIN_WEEK } from "./constants";
 
 import "./Home.css";
-import PlusIcon from "./icons/PlusIcon";
+import SearchIcon from "./icons/SearchIcon";
 
 const defaultRecipe = {
   title: "Unavailable",
@@ -29,6 +30,7 @@ export default function Home() {
   const [mealPlans, setMealPlans] = useState([]);
   const [recipes, setRecipes] = useState([]);
   const [userData, setUserData] = useState({});
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedDayMeals, setSelectedDayMeals] = useState(null);
   const [selectedDayProgress, setSelectedDayProgress] = useState(null);
   const [invertedIndex, setInvertedIndex] = useState({});
@@ -75,6 +77,12 @@ export default function Home() {
     }
   };
 
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      page(`/myrecipes?search=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
   const handleMealDone = (mealInstanceId) => {
     setSelectedDayMeals((prev) => {
       const updatedMeals = prev.map((meal) =>
@@ -82,19 +90,19 @@ export default function Home() {
           ? { ...meal, done: !meal.done }
           : meal
       );
-  
+
       const updatedMeal = updatedMeals.find(
         (meal) => meal.mealInstanceId === mealInstanceId
       );
-  
+
       const updateMealStatus = async () => {
         const auth = getAuth();
         const user = auth.currentUser;
-  
+
         if (user) {
           const idToken = await user.getIdToken();
           const uid = user.uid;
-  
+
           try {
             const response = await fetch(`${SERVER_URL}/api/meal_done`, {
               method: "PATCH",
@@ -120,7 +128,7 @@ export default function Home() {
             if (!response.ok) {
               throw new Error("Failed to update meal status");
             }
-  
+
             const data = await response.json();
             console.log("Meal updated successfully:", data);
           } catch (error) {
@@ -128,9 +136,9 @@ export default function Home() {
           }
         }
       };
-  
+
       updateMealStatus();
-  
+
       const progress = {
         energy: {
           current: updatedMeals.reduce(
@@ -139,7 +147,8 @@ export default function Home() {
           ),
           percentage: Math.floor(
             (updatedMeals.reduce(
-              (sum, meal) => sum + (meal.done ? meal.nutrition.calories || 0 : 0),
+              (sum, meal) =>
+                sum + (meal.done ? meal.nutrition.calories || 0 : 0),
               0
             ) /
               (userData?.targets?.energy || 1)) *
@@ -153,7 +162,8 @@ export default function Home() {
           ),
           percentage: Math.floor(
             (updatedMeals.reduce(
-              (sum, meal) => sum + (meal.done ? meal.nutrition.protein || 0 : 0),
+              (sum, meal) =>
+                sum + (meal.done ? meal.nutrition.protein || 0 : 0),
               0
             ) /
               (userData?.targets?.protein || 1)) *
@@ -189,9 +199,9 @@ export default function Home() {
           ),
         },
       };
-  
+
       setSelectedDayProgress(progress);
-  
+
       return updatedMeals;
     });
   };
@@ -315,14 +325,14 @@ export default function Home() {
     const selectedDayRecords = mealPlans.find(
       (day) => day.date === selectedDay
     );
-  
+
     if (selectedDayRecords) {
       const mealsWithRecipes = selectedDayRecords.meals.map((meal) => {
         const recipe = recipes.find((r) => r.id === meal.id);
-  
+
         return recipe ? { ...meal, ...recipe } : { ...meal, ...defaultRecipe };
       });
-  
+
       // Recalculate progress
       const progress = {
         energy: {
@@ -332,7 +342,8 @@ export default function Home() {
           ),
           percentage: Math.floor(
             (mealsWithRecipes.reduce(
-              (sum, meal) => sum + (meal.done ? meal.nutrition.calories || 0 : 0),
+              (sum, meal) =>
+                sum + (meal.done ? meal.nutrition.calories || 0 : 0),
               0
             ) /
               (userData?.targets?.energy || 1)) *
@@ -346,7 +357,8 @@ export default function Home() {
           ),
           percentage: Math.floor(
             (mealsWithRecipes.reduce(
-              (sum, meal) => sum + (meal.done ? meal.nutrition.protein || 0 : 0),
+              (sum, meal) =>
+                sum + (meal.done ? meal.nutrition.protein || 0 : 0),
               0
             ) /
               (userData?.targets?.protein || 1)) *
@@ -382,7 +394,7 @@ export default function Home() {
           ),
         },
       };
-  
+
       setSelectedDayMeals(mealsWithRecipes);
       setSelectedDayProgress(progress); // Dynamically calculate progress
     } else {
@@ -418,10 +430,31 @@ export default function Home() {
       <div className="content">
         <div className="header">
           <h4>Personal Meal Plan</h4>
-          <a className="btn" href="/generate">
-            <PlusIcon />
-            <p className="btn-text">Create Plan</p>
-          </a>
+          <div className="actions">
+            <div className="search-bar-container">
+              <input
+                type="text"
+                placeholder="Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSearch();
+                  }
+                }}
+                className="search-bar body-s"
+              />
+              <label htmlFor="search" className="search-label">
+                <SearchIcon />
+              </label>
+              <button
+                className="search-btn btn btn-text"
+                onClick={handleSearch}
+              >
+                <SearchIcon size={28} />
+              </button>
+            </div>
+          </div>
         </div>
 
         <DaySelector
