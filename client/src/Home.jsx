@@ -83,12 +83,10 @@ export default function Home() {
           : meal
       );
   
-      // Find the updated meal
       const updatedMeal = updatedMeals.find(
         (meal) => meal.mealInstanceId === mealInstanceId
       );
   
-      // Send the update to the server
       const updateMealStatus = async () => {
         const auth = getAuth();
         const user = auth.currentUser;
@@ -107,11 +105,18 @@ export default function Home() {
               body: JSON.stringify({
                 uid,
                 date: selectedDay,
-                mealId: updatedMeal.id,
+                mealInstanceId: updatedMeal.mealInstanceId,
                 done: updatedMeal.done,
               }),
             });
-  
+
+            console.log("Sending meal update:", {
+              uid,
+              date: selectedDay,
+              mealInstanceId: updatedMeal.mealInstanceId,
+              done: updatedMeal.done,
+            });
+
             if (!response.ok) {
               throw new Error("Failed to update meal status");
             }
@@ -126,7 +131,6 @@ export default function Home() {
   
       updateMealStatus();
   
-      // Recalculate progress
       const progress = {
         energy: {
           current: updatedMeals.reduce(

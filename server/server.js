@@ -639,9 +639,9 @@ app.post("/api/users", verifyToken, async (req, res) => {
 });
 
 app.patch("/api/meal_done", verifyToken, async (req, res) => {
-  const { uid, date, mealId, done } = req.body;
+  const { uid, date, mealInstanceId, done } = req.body;
 
-  if (!uid || !date || !mealId || typeof done !== "boolean") {
+  if (!uid || !date || !mealInstanceId || typeof done !== "boolean") {
     return res
       .status(400)
       .json({ error: "All fields are required and 'done' must be a boolean" });
@@ -672,7 +672,7 @@ app.patch("/api/meal_done", verifyToken, async (req, res) => {
       return res.status(400).json({ error: "Invalid meal plan format" });
     }
 
-    const mealIndex = meals.findIndex((meal) => meal.id === mealId);
+    const mealIndex = meals.findIndex((meal) => meal.mealInstanceId === mealInstanceId);
     if (mealIndex === -1) {
       return res.status(404).json({ error: "Meal not found" });
     }
