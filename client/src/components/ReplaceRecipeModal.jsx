@@ -4,7 +4,6 @@ import { useState } from "react";
 import "./ReplaceRecipeModal.css";
 
 export default function ReplaceRecipeModal({
-  mealGroup,
   allRecipes,
   currentRecipeId,
   onClose,

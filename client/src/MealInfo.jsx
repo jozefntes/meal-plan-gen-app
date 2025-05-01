@@ -59,7 +59,7 @@ export default function MealInfo({ id }) {
         <h4>Loading...</h4>
       ) : (
         <>
-          <button className="back-btn" onClick={() => page("/myrecipes")}>
+          <button className="back-btn" onClick={() => window.history.back()}>
             <img src="/icons/chevron-left-white.svg" alt="Back" />
           </button>
           <img
