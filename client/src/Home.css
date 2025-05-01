@@ -54,12 +54,17 @@
 }
 
 .home-ingredient-list-items {
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    width: 100%;
-    padding: 16px;
-    gap: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 32px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.home-ingredient-list-item {
+    padding: 8px;
+    border-bottom: 1px solid var(--gray-100)
 }
 
 .vertical-line {

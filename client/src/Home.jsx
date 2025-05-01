@@ -499,7 +499,7 @@ export default function Home() {
 
         <div className="home-ingredient-list">
           <h6 className="home-ingredient-list-title">Ingredient List</h6>
-          <ul className="home-ingredient-list-items">
+          <ul className="home-ingredient-list-items two-columns">
             {selectedDayMeals?.flatMap((meal) =>
               meal.ingredients.map((ingredient, index) => (
                 <li
