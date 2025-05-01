@@ -46,6 +46,22 @@
     padding: 32px 48px;
 }
 
+.home-ingredient-list {
+    display: flex;
+    flex-direction: column;
+    padding: 32px 48px;
+    gap: 10px;
+}
+
+.home-ingredient-list-items {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    width: 100%;
+    padding: 16px;
+    gap: 16px;
+}
+
 .vertical-line {
     width: 1px;
     background-color: black;
