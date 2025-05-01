@@ -451,7 +451,7 @@ export default function Home() {
                 className="search-btn btn btn-text"
                 onClick={handleSearch}
               >
-                <img src="/icons/search.svg" alt="Search" />
+                <SearchIcon size={28} />
               </button>
             </div>
           </div>
