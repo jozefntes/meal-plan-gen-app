@@ -403,7 +403,11 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
     !validMaxCarbs ||
     !validMaxFat
   ) {
-    return res.status(400).json({ error: "All fields are required" });
+    return res
+      .status(400)
+      .json({
+        error: "All fields are required and fall within the specified ranges",
+      });
   }
 
   // Verify that the uid from the token matches the uid parameter
