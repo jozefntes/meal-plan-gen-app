@@ -337,8 +337,9 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
 
       const populatedMealPlan = mealPlan.dates.map(({ date, meals }) => ({
         date: new Date(date).toISOString().split("T")[0],
-        meals: meals.map(({ id }) => ({
+        meals: meals.map(({ id }, index) => ({
           id,
+          mealInstanceId: `${id}-${index}-${date}`,
           done: false,
         })),
       }));
@@ -381,17 +382,9 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
 });
 
 app.post("/api/generate_recipe", verifyToken, async (req, res) => {
-  const { uid, ingredients, minProtein, maxCarbs, maxFat, mealGroup } =
-    req.body;
+  const { uid, ingredients, minProtein, maxCarbs, maxFat } = req.body;
 
-  if (
-    !uid ||
-    !ingredients ||
-    !minProtein ||
-    !maxCarbs ||
-    !maxFat ||
-    !mealGroup
-  ) {
+  if (!uid || !ingredients || !minProtein || !maxCarbs || !maxFat) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
@@ -431,7 +424,6 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
       recipe = parsedRecipe;
     }
 
-    recipe.mealGroup = mealGroup;
     recipe.uid = uid;
     recipe.image = null;
 
@@ -547,8 +539,14 @@ app.post("/api/replace_recipe", verifyToken, async (req, res) => {
     if (mealIndex === -1) {
       return res.status(404).json({ error: "Current meal not found" });
     }
-    meals[mealIndex].id = newMealId;
-    meals[mealIndex].done = false;
+
+    meals[mealIndex] = {
+      id: newMealId,
+      mealInstanceId: `${newMealId}-${mealIndex}-${date}`,
+      done: false,
+    };
+
+    // Save the updated meal plan back to Firestore
     await dateDocRef.set({ meals }, { merge: true });
 
     res.status(200).json({ message: "Meal plan updated successfully" });
@@ -672,7 +670,11 @@ app.patch("/api/meal_done", verifyToken, async (req, res) => {
       return res.status(400).json({ error: "Invalid meal plan format" });
     }
 
-    const mealIndex = meals.findIndex((meal) => meal.mealInstanceId === mealInstanceId);
+
+    const mealIndex = meals.findIndex(
+      (meal) => meal.mealInstanceId === mealInstanceId
+    );
+    
     if (mealIndex === -1) {
       return res.status(404).json({ error: "Meal not found" });
     }

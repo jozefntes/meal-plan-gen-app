@@ -20,14 +20,21 @@ export default function MealCard({
 }) {
   const [deleteIcon, setDeleteIcon] = useState("../icons/trash-filled.svg");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { id, title, image, nutrition, done, mealInstanceId } = meal;
+  const [backgroundImage, setBackgroundImage] = useState(
+    meal.image || "/images/placeholder.webp"
+  );
+  const { id, title, nutrition, done, mealInstanceId } = meal;
 
   const backgroundStyle = {
     background: `linear-gradient(rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 50%), linear-gradient(45deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 50%),
-        url(${image || "/images/placeholder.webp"})`,
+        url(${backgroundImage})`,
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
+  };
+
+  const handleImageError = () => {
+    setBackgroundImage("/images/placeholder.webp");
   };
 
   const handleCardClick = () => {
@@ -49,7 +56,7 @@ export default function MealCard({
       const uid = user.uid;
 
       // Optimistically update the UI
-      onReplaceRecipeId(id, recipeId);
+      const newMealInstanceId = onReplaceRecipeId(mealInstanceId, recipeId);
 
       try {
         const response = await fetch(`${SERVER_URL}/api/replace_recipe`, {
@@ -72,7 +79,9 @@ export default function MealCard({
         console.log(data);
       } catch (error) {
         console.error("Error replacing recipe:", error);
-        onReplaceRecipeId(recipeId, id);
+
+        // Rollback to the previous state
+        onReplaceRecipeId(newMealInstanceId, id);
       }
     }
 
@@ -85,6 +94,13 @@ export default function MealCard({
 
   return (
     <>
+      <img
+        src={meal.image || "/images/placeholder.webp"}
+        alt="Hidden for error detection"
+        style={{ display: "none" }}
+        onError={handleImageError}
+      />
+
       <li
         className="meal-card"
         style={backgroundStyle}

@@ -1,7 +1,7 @@
 ul.grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    grid-gap: 10px;
+    grid-gap: 24px;
     list-style: none;
     padding: 0;
 }
@@ -9,6 +9,5 @@ ul.grid {
 ul.grid li {
     background-color: #f0f0f0;
     padding: 15px;
-    border: 1px solid #ccc;
     text-align: center;
 }

@@ -196,19 +196,32 @@ export default function Home() {
     });
   };
 
-  const updateRecipeId = (prevId, newId) => {
+  const updateRecipeId = (prevMealInstanceId, newId) => {
+    let newMealInstanceId = null;
+
     setMealPlans((prev) =>
-      prev.map((day) =>
-        day.date === selectedDay
-          ? {
-              ...day,
-              meals: day.meals.map((meal) =>
-                meal.id === prevId ? { ...meal, id: newId } : meal
-              ),
-            }
-          : day
-      )
+      prev.map((day) => {
+        if (day.date === selectedDay) {
+          return {
+            ...day,
+            meals: day.meals.map((meal, index) => {
+              if (meal.mealInstanceId === prevMealInstanceId) {
+                newMealInstanceId = `${newId}-${index}-${day.date}`; // Generate the new mealInstanceId
+                return {
+                  ...meal,
+                  id: newId,
+                  mealInstanceId: newMealInstanceId,
+                };
+              }
+              return meal;
+            }),
+          };
+        }
+        return day;
+      })
     );
+
+    return newMealInstanceId; // Return the new mealInstanceId
   };
 
   useEffect(() => {
