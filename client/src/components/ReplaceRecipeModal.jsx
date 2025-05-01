@@ -84,10 +84,18 @@ export default function ReplaceRecipeModal({
           </ul>
         ) : (
           <>
-            <p className="no-recipes-message body-s">No recipes found.</p>
-            {!searchQuery.trim() && (
+            {!searchQuery.trim() ? (
+              <>
+                <p className="no-recipes-message body-s">
+                  No similar recipes found.
+                </p>
+                <p className="no-recipes-message body-s">
+                  Try searching for a recipe.
+                </p>
+              </>
+            ) : (
               <p className="no-recipes-message body-s">
-                Try searching for a recipe.
+                No recipes match your search.
               </p>
             )}
           </>
