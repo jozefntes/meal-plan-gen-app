@@ -52,7 +52,7 @@ export default function Profile() {
               inches,
             },
             weight: data.currentWeight || "",
-            startingWeight: data.startingWeight || "",
+            startingWeight: data.startingWeight || data.currentWeight,
             goalWeight: data.goalWeight || "",
             fitnessGoals: mapFitnessGoalToArray(data.fitnessGoal),
             dietaryPreferences: data.dietaryPreferences || [],
@@ -69,10 +69,23 @@ export default function Profile() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
+    if (name === "name") {
+      const lettersOnly = /^[A-Za-z\s]*$/;
+      if (!lettersOnly.test(value)) return;
+    }
+
+    if (name === "age") {
+      if (isNaN(value) || value.length > 2) return;
+    }
+
     if (
       (name === "weight" || name === "age" || name === "startingWeight") &&
       isNaN(value)
     ) {
+      return;
+    }
+
+    if ((name === "weight" || name === "startingWeight" || name === "goalWeight") && value.length > 3) {
       return;
     }
 
@@ -192,10 +205,10 @@ export default function Profile() {
   };
 
   const progressPercent =
-    formData.weight &&
-    formData.goalWeight &&
-    formData.startingWeight &&
-    parseFloat(formData.startingWeight) !== parseFloat(formData.goalWeight)
+  formData.weight &&
+  formData.goalWeight &&
+  formData.startingWeight
+    ? formData.startingWeight > formData.goalWeight 
       ? Math.max(
           0,
           Math.min(
@@ -204,13 +217,23 @@ export default function Profile() {
               (formData.startingWeight - formData.goalWeight)) *
               100
           )
+        ) 
+      : Math.max(
+          0,
+          Math.min(
+            100,
+            ((formData.weight - formData.startingWeight) /
+              (formData.goalWeight - formData.startingWeight)) *
+              100
+          )
         )
-      : 0;
+    : 0;
 
-  const goalReached =
-    formData.goalWeight &&
-    formData.weight &&
-    parseFloat(formData.weight) <= parseFloat(formData.goalWeight);
+    const goalReached = formData.goalWeight && formData.weight
+    ? formData.startingWeight > formData.goalWeight
+      ? parseFloat(formData.weight) <= parseFloat(formData.goalWeight)
+      : parseFloat(formData.weight) >= parseFloat(formData.goalWeight)
+    : false;
 
   return (
     <div className="profile-page profile-layout">
