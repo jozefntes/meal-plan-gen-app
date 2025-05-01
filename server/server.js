@@ -670,9 +670,11 @@ app.patch("/api/meal_done", verifyToken, async (req, res) => {
       return res.status(400).json({ error: "Invalid meal plan format" });
     }
 
+
     const mealIndex = meals.findIndex(
       (meal) => meal.mealInstanceId === mealInstanceId
     );
+    
     if (mealIndex === -1) {
       return res.status(404).json({ error: "Meal not found" });
     }
