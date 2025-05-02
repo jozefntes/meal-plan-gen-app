@@ -18,7 +18,46 @@ export default function MealPlanGenerator() {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [recipeIdForDeletion, setRecipeIdForDeletion] = useState(null);
+
+  useEffect(() => {
+    const queryString = window.location.search;
+    const params = new URLSearchParams(queryString);
+    const initialSearchQuery = params.get("search") || "";
+
+    setSearchQuery(initialSearchQuery);
+
+    filterRecipes(initialSearchQuery);
+  }, [recipes]);
+
+  const filterRecipes = (query) => {
+    const lowerCaseQuery = query.toLowerCase();
+
+    if (!lowerCaseQuery.trim()) {
+      setFilteredRecipes(recipes);
+      return;
+    }
+
+    const filtered = recipes.filter((recipe) => {
+      const matchesTitle = recipe.title.toLowerCase().includes(lowerCaseQuery);
+      const matchesIngredients = recipe.ingredients?.some((ingredient) =>
+        ingredient.toLowerCase().includes(lowerCaseQuery)
+      );
+      return matchesTitle || matchesIngredients;
+    });
+
+    setFilteredRecipes(filtered);
+  };
+
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    page(`/myrecipes?search=${encodeURIComponent(query)}`);
+
+    filterRecipes(query);
+  };
 
   useEffect(() => {
     // Fetch initial recipes data from the server
@@ -69,10 +108,6 @@ export default function MealPlanGenerator() {
     setRecipes((prevRecipes) =>
       prevRecipes ? [...prevRecipes, newRecipe] : [newRecipe]
     );
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
   };
 
   const promptDeleteConfirmation = (recipeId) => {
@@ -148,17 +183,6 @@ export default function MealPlanGenerator() {
   const handleCancelDelete = () => {
     setRecipeIdForDeletion(null);
   };
-
-  const filteredRecipes = searchQuery
-  ? recipes.filter((recipe) => {
-      const query = searchQuery.toLowerCase();
-      const matchesTitle = recipe.title.toLowerCase().includes(query);
-      const matchesIngredients = recipe.ingredients?.some((ingredient) =>
-        ingredient.toLowerCase().includes(query)
-      );
-      return matchesTitle || matchesIngredients;
-    })
-  : recipes;
 
   return (
     <>

@@ -15,6 +15,19 @@
     padding: 32px;
 }
 
+.actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.search-btn {
+    margin-left: 4px;
+    height: 65px;
+}
+
 .meals {
     display: flex;
     flex-direction: row;
@@ -31,6 +44,27 @@
     align-items: start;
     justify-content: space-between;
     padding: 32px 48px;
+}
+
+.home-ingredient-list {
+    display: flex;
+    flex-direction: column;
+    padding: 32px 48px;
+    gap: 10px;
+}
+
+.home-ingredient-list-items {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 64px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.home-ingredient-list-item {
+    padding: 8px;
+    border-bottom: 1px solid var(--gray-100)
 }
 
 .vertical-line {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
+import page from "page";
 
 import DaySelector from "./components/DaySelector";
 import MealCard from "./components/MealCard";
@@ -8,7 +9,7 @@ import EnergySummary from "./components/EnergySummary";
 import { SERVER_URL, MAX_WEEK, MIN_WEEK } from "./constants";
 
 import "./Home.css";
-import PlusIcon from "./icons/PlusIcon";
+import SearchIcon from "./icons/SearchIcon";
 
 const defaultRecipe = {
   title: "Unavailable",
@@ -29,6 +30,7 @@ export default function Home() {
   const [mealPlans, setMealPlans] = useState([]);
   const [recipes, setRecipes] = useState([]);
   const [userData, setUserData] = useState({});
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedDayMeals, setSelectedDayMeals] = useState(null);
   const [selectedDayProgress, setSelectedDayProgress] = useState(null);
   const [invertedIndex, setInvertedIndex] = useState({});
@@ -75,6 +77,12 @@ export default function Home() {
     }
   };
 
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      page(`/myrecipes?search=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
   const handleMealDone = (mealInstanceId) => {
     setSelectedDayMeals((prev) => {
       const updatedMeals = prev.map((meal) =>
@@ -82,6 +90,54 @@ export default function Home() {
           ? { ...meal, done: !meal.done }
           : meal
       );
+
+      const updatedMeal = updatedMeals.find(
+        (meal) => meal.mealInstanceId === mealInstanceId
+      );
+
+      const updateMealStatus = async () => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (user) {
+          const idToken = await user.getIdToken();
+          const uid = user.uid;
+
+          try {
+            const response = await fetch(`${SERVER_URL}/api/meal_done`, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${idToken}`,
+              },
+              body: JSON.stringify({
+                uid,
+                date: selectedDay,
+                mealInstanceId: updatedMeal.mealInstanceId,
+                done: updatedMeal.done,
+              }),
+            });
+
+            console.log("Sending meal update:", {
+              uid,
+              date: selectedDay,
+              mealInstanceId: updatedMeal.mealInstanceId,
+              done: updatedMeal.done,
+            });
+
+            if (!response.ok) {
+              throw new Error("Failed to update meal status");
+            }
+
+            const data = await response.json();
+            console.log("Meal updated successfully:", data);
+          } catch (error) {
+            console.error("Error updating meal status:", error);
+          }
+        }
+      };
+
+      updateMealStatus();
 
       const progress = {
         energy: {
@@ -145,6 +201,7 @@ export default function Home() {
       };
 
       setSelectedDayProgress(progress);
+
       return updatedMeals;
     });
   };
@@ -276,8 +333,70 @@ export default function Home() {
         return recipe ? { ...meal, ...recipe } : { ...meal, ...defaultRecipe };
       });
 
+      // Recalculate progress
+      const progress = {
+        energy: {
+          current: mealsWithRecipes.reduce(
+            (sum, meal) => sum + (meal.done ? meal.nutrition.calories || 0 : 0),
+            0
+          ),
+          percentage: Math.floor(
+            (mealsWithRecipes.reduce(
+              (sum, meal) =>
+                sum + (meal.done ? meal.nutrition.calories || 0 : 0),
+              0
+            ) /
+              (userData?.targets?.energy || 1)) *
+              100
+          ),
+        },
+        protein: {
+          current: mealsWithRecipes.reduce(
+            (sum, meal) => sum + (meal.done ? meal.nutrition.protein || 0 : 0),
+            0
+          ),
+          percentage: Math.floor(
+            (mealsWithRecipes.reduce(
+              (sum, meal) =>
+                sum + (meal.done ? meal.nutrition.protein || 0 : 0),
+              0
+            ) /
+              (userData?.targets?.protein || 1)) *
+              100
+          ),
+        },
+        carbs: {
+          current: mealsWithRecipes.reduce(
+            (sum, meal) => sum + (meal.done ? meal.nutrition.carbs || 0 : 0),
+            0
+          ),
+          percentage: Math.floor(
+            (mealsWithRecipes.reduce(
+              (sum, meal) => sum + (meal.done ? meal.nutrition.carbs || 0 : 0),
+              0
+            ) /
+              (userData?.targets?.carbs || 1)) *
+              100
+          ),
+        },
+        fat: {
+          current: mealsWithRecipes.reduce(
+            (sum, meal) => sum + (meal.done ? meal.nutrition.fat || 0 : 0),
+            0
+          ),
+          percentage: Math.floor(
+            (mealsWithRecipes.reduce(
+              (sum, meal) => sum + (meal.done ? meal.nutrition.fat || 0 : 0),
+              0
+            ) /
+              (userData?.targets?.fat || 1)) *
+              100
+          ),
+        },
+      };
+
       setSelectedDayMeals(mealsWithRecipes);
-      setSelectedDayProgress(selectedDayRecords.progress);
+      setSelectedDayProgress(progress); // Dynamically calculate progress
     } else {
       setSelectedDayMeals(null);
       setSelectedDayProgress(null);
@@ -311,10 +430,31 @@ export default function Home() {
       <div className="content">
         <div className="header">
           <h4>Personal Meal Plan</h4>
-          <a className="btn" href="/generate">
-            <PlusIcon />
-            <p className="btn-text">Create Plan</p>
-          </a>
+          <div className="actions">
+            <div className="search-bar-container">
+              <input
+                type="text"
+                placeholder="Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSearch();
+                  }
+                }}
+                className="search-bar body-s"
+              />
+              <label htmlFor="search" className="search-label">
+                <SearchIcon />
+              </label>
+              <button
+                className="search-btn btn btn-text"
+                onClick={handleSearch}
+              >
+                <SearchIcon size={28} />
+              </button>
+            </div>
+          </div>
         </div>
 
         <DaySelector
@@ -355,6 +495,22 @@ export default function Home() {
           <div className="vertical-line" style={{ height: "308px" }}></div>
 
           <EnergySummary progress={selectedDayProgress} userData={userData} />
+        </div>
+
+        <div className="home-ingredient-list">
+          <h6 className="home-ingredient-list-title">Ingredient List</h6>
+          <ul className="home-ingredient-list-items two-columns">
+            {selectedDayMeals?.flatMap((meal) =>
+              meal.ingredients.map((ingredient, index) => (
+                <li
+                  key={`${meal.id}-${index}`}
+                  className="home-ingredient-list-item body-s"
+                >
+                  {ingredient}
+                </li>
+              ))
+            )}
+          </ul>
         </div>
       </div>
     </>

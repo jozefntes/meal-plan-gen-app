@@ -8,6 +8,28 @@
     align-items: center;
 }
 
+.back-btn {
+    position: absolute;
+    top: 64px;
+    left: calc(280px + 64px);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--gray-100);
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.back-btn:hover {
+    background-color: var(--gray-200);
+    transform: scale(1.05);
+    transition: all 0.2s ease-in-out;
+}
+
 .recipe-img {
     width: 75%;
     height: 350px;

@@ -279,10 +279,18 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
     }, {});
 
     // Associate recipes with their respective meal groups
-    const breakfastRecipes = selectedMeals.breakfast.map((id) => recipeMap[id]).filter((recipe) => recipe !== undefined);
-    const lunchRecipes = selectedMeals.lunch.map((id) => recipeMap[id]).filter((recipe) => recipe !== undefined);
-    const dinnerRecipes = selectedMeals.dinner.map((id) => recipeMap[id]).filter((recipe) => recipe !== undefined);
-    const snackRecipes = selectedMeals.snack.map((id) => recipeMap[id]).filter((recipe) => recipe !== undefined);
+    const breakfastRecipes = selectedMeals.breakfast
+      .map((id) => recipeMap[id])
+      .filter((recipe) => recipe !== undefined);
+    const lunchRecipes = selectedMeals.lunch
+      .map((id) => recipeMap[id])
+      .filter((recipe) => recipe !== undefined);
+    const dinnerRecipes = selectedMeals.dinner
+      .map((id) => recipeMap[id])
+      .filter((recipe) => recipe !== undefined);
+    const snackRecipes = selectedMeals.snack
+      .map((id) => recipeMap[id])
+      .filter((recipe) => recipe !== undefined);
 
     console.log("Breakfast Recipes:", breakfastRecipes);
     console.log("Lunch Recipes:", lunchRecipes);
@@ -384,8 +392,22 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
 app.post("/api/generate_recipe", verifyToken, async (req, res) => {
   const { uid, ingredients, minProtein, maxCarbs, maxFat } = req.body;
 
-  if (!uid || !ingredients || !minProtein || !maxCarbs || !maxFat) {
-    return res.status(400).json({ error: "All fields are required" });
+  const validMinProtein = minProtein >= 0 && minProtein <= 60;
+  const validMaxCarbs = maxCarbs >= 0 && maxCarbs <= 100;
+  const validMaxFat = maxFat >= 0 && maxFat <= 100;
+
+  if (
+    !uid ||
+    !ingredients ||
+    !validMinProtein ||
+    !validMaxCarbs ||
+    !validMaxFat
+  ) {
+    return res
+      .status(400)
+      .json({
+        error: "All fields are required and fall within the specified ranges",
+      });
   }
 
   // Verify that the uid from the token matches the uid parameter
@@ -673,6 +695,7 @@ app.patch("/api/meal_done", verifyToken, async (req, res) => {
     const mealIndex = meals.findIndex(
       (meal) => meal.mealInstanceId === mealInstanceId
     );
+
     if (mealIndex === -1) {
       return res.status(404).json({ error: "Meal not found" });
     }

@@ -30,7 +30,7 @@
     white-space: nowrap;
 }
 
-ul {
+.picker__item {
     list-style: none;
 }
 

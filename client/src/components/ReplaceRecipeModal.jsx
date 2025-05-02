@@ -4,7 +4,6 @@ import { useState } from "react";
 import "./ReplaceRecipeModal.css";
 
 export default function ReplaceRecipeModal({
-  mealGroup,
   allRecipes,
   currentRecipeId,
   onClose,
@@ -45,9 +44,11 @@ export default function ReplaceRecipeModal({
     allRecipes
   );
 
-  const filteredRecipes = similarRecipes.filter((recipe) =>
-    recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredRecipes = searchQuery.trim()
+    ? allRecipes.filter((recipe) =>
+        recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : similarRecipes;
 
   return (
     <div
@@ -82,7 +83,22 @@ export default function ReplaceRecipeModal({
             ))}
           </ul>
         ) : (
-          <p className="no-recipes-message body-s">No similar recipes found.</p>
+          <>
+            {!searchQuery.trim() ? (
+              <>
+                <p className="no-recipes-message body-s">
+                  No similar recipes found.
+                </p>
+                <p className="no-recipes-message body-s">
+                  Try searching for a recipe.
+                </p>
+              </>
+            ) : (
+              <p className="no-recipes-message body-s">
+                No recipes match your search.
+              </p>
+            )}
+          </>
         )}
         <div className="modal-footer">
           <button className="btn btn-close" onClick={onClose}>
