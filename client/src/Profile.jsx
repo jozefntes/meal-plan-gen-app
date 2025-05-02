@@ -424,9 +424,7 @@ export default function Profile() {
                             const goals = prev.fitnessGoals || [];
                             return {
                               ...prev,
-                              fitnessGoals: checked
-                                ? [...goals, goal]
-                                : goals.filter((g) => g !== goal),
+                              fitnessGoals: checked ? [goal] : [],
                             };
                           });
                         }}
