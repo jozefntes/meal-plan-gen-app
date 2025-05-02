@@ -72,6 +72,8 @@ export default function Profile() {
     if (name === "name") {
       const lettersOnly = /^[A-Za-z\s]*$/;
       if (!lettersOnly.test(value)) return;
+
+      if (value.length > 25) return;
     }
 
     if (name === "age") {
@@ -255,6 +257,7 @@ export default function Profile() {
                 onChange={handleInputChange}
                 type="text"
                 className="input-field"
+                maxLength={25}
               />
             ) : (
               <span>{formData.name || "—"}</span>
@@ -310,10 +313,9 @@ export default function Profile() {
               </div>
             ) : (
               <span>
-                {formData.height.feet && formData.height.inches
-                  ? `${formData.height.feet || 0} ft ${
-                      formData.height.inches || 0
-                    } in`
+                {formData.height.feet !== "" && formData.height.inches !== ""
+                  ? `${formData.height.feet} ft ${formData.height.inches} in`
+
                   : "—"}
               </span>
             )}
