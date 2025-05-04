@@ -4,21 +4,67 @@ import "./Profile.css";
 
 import { SERVER_URL } from "./constants";
 
+const getGoalRateLabel = (goalRate) => {
+  switch (goalRate) {
+    case "slow":
+      return "Slow (0.25 lbs/week)";
+    case "medium":
+      return "Medium (0.5 lbs/week)";
+    case "fast":
+      return "Fast (0.75 lbs/week)";
+    case "very-fast":
+      return "Very Fast (1 lbs/week)";
+    default:
+      return "—";
+  }
+};
+
+const getActivityLevelLabel = (activityLevel) => {
+  switch (activityLevel) {
+    case "none":
+      return "None";
+    case "sedentary":
+      return "Sedentary";
+    case "lightly-active":
+      return "Lightly Active";
+    case "moderately-active":
+      return "Moderately Active";
+    case "very-active":
+      return "Very Active";
+    default:
+      return "—";
+  }
+};
+
+const getGenderLabel = (gender) => {
+  switch (gender) {
+    case "male":
+      return "Male";
+    case "female":
+      return "Female";
+    default:
+      return "—";
+  }
+};
+
 export default function Profile() {
   const [formData, setFormData] = useState({
     name: "",
     age: "",
+    gender: "",
     height: {
       feet: "",
       inches: "",
     },
+    activityLevel: "",
     weight: "",
     startingWeight: "",
     goalWeight: "",
-    fitnessGoals: [],
+    weightGoalRate: "",
     dietaryPreferences: [],
   });
 
+  const [originalFormData, setOriginalFormData] = useState(null);
   const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
@@ -47,14 +93,16 @@ export default function Profile() {
           setFormData({
             name: data.name || "",
             age: data.age || "",
+            gender: data.gender || "",
             height: {
               feet,
               inches,
             },
+            activityLevel: data.baselineActivity || "",
             weight: data.currentWeight || "",
             startingWeight: data.startingWeight || data.currentWeight,
             goalWeight: data.goalWeight || "",
-            fitnessGoals: mapFitnessGoalToArray(data.fitnessGoal),
+            goalRate: data.weightGoalRate || "",
             dietaryPreferences: data.dietaryPreferences || [],
           });
         }
@@ -113,6 +161,11 @@ export default function Profile() {
     }));
   };
 
+  const handleCancel = () => {
+    setFormData(originalFormData);
+    setEditMode(false);
+  };
+
   const handleSave = async () => {
     try {
       if (!formData.startingWeight) {
@@ -147,13 +200,12 @@ export default function Profile() {
         uid: user.uid,
         name: formData.name,
         age: Number(formData.age),
+        gender: formData.gender,
+        baselineActivity: formData.activityLevel,
         height: heightCm,
         currentWeight: Number(formData.weight),
-        startingWeight: formData.startingWeight
-          ? Number(formData.startingWeight)
-          : Number(formData.weight),
         goalWeight: Number(formData.goalWeight),
-        fitnessGoal: mapFitnessGoalToNumber(formData.fitnessGoals),
+        weightGoalRate: formData.goalRate,
         dietaryPreferences: formData.dietaryPreferences,
       };
 
@@ -188,26 +240,6 @@ export default function Profile() {
       console.error("Error saving user data:", error.message);
 
       alert(`Error: ${error.message}`);
-    }
-  };
-
-  const mapFitnessGoalToNumber = (goalsArray) => {
-    if (goalsArray.includes("Lose weight")) return 1;
-    if (goalsArray.includes("Build muscle")) return 2;
-    if (goalsArray.includes("Maintain weight")) return 3;
-    return null;
-  };
-
-  const mapFitnessGoalToArray = (goalNumber) => {
-    switch (goalNumber) {
-      case 1:
-        return ["Lose weight"];
-      case 2:
-        return ["Build muscle"];
-      case 3:
-        return ["Maintain weight"];
-      default:
-        return [];
     }
   };
 
@@ -281,6 +313,26 @@ export default function Profile() {
           </label>
 
           <label>
+            Gender:
+            {editMode ? (
+              <div className="gender-input">
+                <select
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleInputChange}
+                  className="input-field"
+                >
+                  <option value="">Select</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+            ) : (
+              <span>{getGenderLabel(formData.gender)}</span>
+            )}
+          </label>
+
+          <label>
             Height:
             {editMode ? (
               <div className="height-input">
@@ -315,9 +367,31 @@ export default function Profile() {
               <span>
                 {formData.height.feet !== "" && formData.height.inches !== ""
                   ? `${formData.height.feet} ft ${formData.height.inches} in`
-
                   : "—"}
               </span>
+            )}
+          </label>
+
+          <label>
+            Activity Level:
+            {editMode ? (
+              <div className="activity-input">
+                <select
+                  name="activityLevel"
+                  value={formData.activityLevel}
+                  onChange={handleInputChange}
+                  className="input-field"
+                >
+                  <option value="">Select</option>
+                  <option value="none">None</option>
+                  <option value="sedentary">Sedentary</option>
+                  <option value="lightly-active">Lightly Active</option>
+                  <option value="moderately-active">Moderately Active</option>
+                  <option value="very-active">Very Active</option>
+                </select>
+              </div>
+            ) : (
+              <span>{getActivityLevelLabel(formData.activityLevel)}</span>
             )}
           </label>
 
@@ -367,17 +441,17 @@ export default function Profile() {
                 <button className="btn btn-text" onClick={handleSave}>
                   Save
                 </button>
-                <button
-                  className="btn btn-text"
-                  onClick={() => setEditMode(false)}
-                >
+                <button className="btn btn-text" onClick={handleCancel}>
                   Cancel
                 </button>
               </>
             ) : (
               <button
                 className="btn btn-text"
-                onClick={() => setEditMode(true)}
+                onClick={() => {
+                  setOriginalFormData(formData);
+                  setEditMode(true);
+                }}
               >
                 Edit
               </button>
@@ -408,41 +482,27 @@ export default function Profile() {
           </div>
 
           <div className="fitness-goals-section">
-            <h5>Fitness Goals</h5>
-            {editMode ? (
-              <div className="fitness-goals-dropdown">
-                {["Lose weight", "Build muscle", "Maintain weight"].map(
-                  (goal) => (
-                    <label key={goal} className="goal-option">
-                      <input
-                        type="checkbox"
-                        value={goal}
-                        checked={formData.fitnessGoals.includes(goal)}
-                        onChange={(e) => {
-                          const checked = e.target.checked;
-                          setFormData((prev) => {
-                            const goals = prev.fitnessGoals || [];
-                            return {
-                              ...prev,
-                              fitnessGoals: checked ? [goal] : [],
-                            };
-                          });
-                        }}
-                      />
-                      {goal}
-                    </label>
-                  )
-                )}
-              </div>
-            ) : formData.fitnessGoals.length > 0 ? (
-              <ul className="goal-list">
-                {formData.fitnessGoals.map((goal) => (
-                  <li key={goal}>{goal}</li>
-                ))}
-              </ul>
-            ) : (
-              <p>—</p>
-            )}
+            <h5>Weight Goal Rate:</h5>
+            <label>
+              {editMode ? (
+                <div className="goal-rate-input">
+                  <select
+                    name="goalRate"
+                    value={formData.goalRate}
+                    onChange={handleInputChange}
+                    className="input-field"
+                  >
+                    <option value="">Select</option>
+                    <option value="slow">Slow (0.25 lbs/week)</option>
+                    <option value="medium">Medium (0.5 lbs/week)</option>
+                    <option value="fast">Fast (0.75 lbs/week)</option>
+                    <option value="very-fast">Very Fast (1 lbs/week)</option>
+                  </select>
+                </div>
+              ) : (
+                <p>{getGoalRateLabel(formData.goalRate)}</p>
+              )}
+            </label>
           </div>
 
           <div className="fitness-goals-section">
