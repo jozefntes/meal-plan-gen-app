@@ -604,7 +604,7 @@ app.post("/api/users", verifyToken, async (req, res) => {
     return res.status(400).json({ error: "All fields are required" });
   }
 
-  if (typeof name !== "string" || name.length < 1 || name.length > 50) {
+  if (typeof name !== "string" || name.length < 1 || name.length > 25) {
     return res
       .status(400)
       .json({ error: "Name must be a string between 1 and 25 characters" });
