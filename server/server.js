@@ -612,20 +612,6 @@ app.post("/api/users", verifyToken, async (req, res) => {
   if (typeof age !== "number" || age < 0) {
     return res.status(400).json({ error: "Invalid age" });
   }
-  if (!["male", "female"].includes(gender)) {
-    return res.status(400).json({ error: "Invalid gender" });
-  }
-  if (
-    ![
-      "none",
-      "sedentary",
-      "lightly-active",
-      "moderately-active",
-      "very-active",
-    ].includes(baselineActivity)
-  ) {
-    return res.status(400).json({ error: "Invalid baseline activity level" });
-  }
   if (typeof height !== "number" || height < 0) {
     return res.status(400).json({ error: "Invalid height" });
   }
@@ -634,9 +620,6 @@ app.post("/api/users", verifyToken, async (req, res) => {
   }
   if (typeof goalWeight !== "number" || goalWeight < 0) {
     return res.status(400).json({ error: "Invalid goal weight" });
-  }
-  if (!["slow", "medium", "fast", "very fast"].includes(weightGoalRate)) {
-    return res.status(400).json({ error: "Invalid weight goal rate" });
   }
   if (!Array.isArray(dietaryPreferences)) {
     return res
@@ -656,6 +639,8 @@ app.post("/api/users", verifyToken, async (req, res) => {
     BMR = 88.362 + 13.397 * weightInKg + 4.799 * height - 5.677 * age;
   } else if (gender === "female") {
     BMR = 447.593 + 9.247 * weightInKg + 3.098 * height - 4.33 * age;
+  } else {
+    return res.status(400).json({ error: "Invalid gender" });
   }
 
   switch (baselineActivity) {
@@ -688,7 +673,7 @@ app.post("/api/users", verifyToken, async (req, res) => {
     case "fast":
       calorieChange = 375;
       break;
-    case "very fast":
+    case "very-fast":
       calorieChange = 500;
       break;
     default:
