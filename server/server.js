@@ -403,11 +403,9 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
     !validMaxCarbs ||
     !validMaxFat
   ) {
-    return res
-      .status(400)
-      .json({
-        error: "All fields are required and fall within the specified ranges",
-      });
+    return res.status(400).json({
+      error: "All fields are required and fall within the specified ranges",
+    });
   }
 
   // Verify that the uid from the token matches the uid parameter
@@ -583,10 +581,12 @@ app.post("/api/users", verifyToken, async (req, res) => {
     uid,
     name,
     age,
+    gender,
+    baselineActivity,
     height,
     currentWeight,
     goalWeight,
-    fitnessGoal,
+    weightGoalRate,
     dietaryPreferences,
   } = req.body;
 
@@ -595,19 +595,14 @@ app.post("/api/users", verifyToken, async (req, res) => {
     !name ||
     !age ||
     !height ||
+    !gender ||
+    !baselineActivity ||
     !currentWeight ||
-    !goalWeight ||
-    !fitnessGoal ||
-    !dietaryPreferences
+    !goalWeight
   ) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
-  if (fitnessGoal < 1 || fitnessGoal > 3) {
-    return res
-      .status(400)
-      .json({ error: "Fitness goal must be between 1 and 3" });
-  }
   if (typeof age !== "number" || age < 0) {
     return res.status(400).json({ error: "Invalid age" });
   }
@@ -631,6 +626,74 @@ app.post("/api/users", verifyToken, async (req, res) => {
       .json({ error: "Dietary preferences must be between 0 and 8" });
   }
 
+  const weightInKg = currentWeight * 0.453592;
+
+  let BMR;
+  if (gender === "male") {
+    BMR = 88.362 + 13.397 * weightInKg + 4.799 * height - 5.677 * age;
+  } else if (gender === "female") {
+    BMR = 447.593 + 9.247 * weightInKg + 3.098 * height - 4.33 * age;
+  }
+
+  switch (baselineActivity) {
+    case "none":
+      break;
+    case "sedentary":
+      BMR *= 1.2;
+      break;
+    case "lightly-active":
+      BMR *= 1.375;
+      break;
+    case "moderately-active":
+      BMR *= 1.5;
+      break;
+    case "very-active":
+      BMR *= 1.9;
+      break;
+    default:
+      return res.status(400).json({ error: "Invalid activity level" });
+  }
+
+  let calorieChange;
+  switch (weightGoalRate) {
+    case "slow":
+      calorieChange = 125;
+      break;
+    case "medium":
+      calorieChange = 250;
+      break;
+    case "fast":
+      calorieChange = 375;
+      break;
+    case "very fast":
+      calorieChange = 500;
+      break;
+    default:
+      return res.status(400).json({ error: "Invalid weight goal rate" });
+  }
+
+  let energyTarget;
+  let fitnessGoal;
+  if (goalWeight < currentWeight) {
+    fitnessGoal = 1; // weight loss
+  } else if (goalWeight > currentWeight) {
+    fitnessGoal = 2; // weight gain
+  } else {
+    fitnessGoal = 3; // maintenance
+  }
+
+  switch (fitnessGoal) {
+    case 1:
+      energyTarget = BMR - calorieChange;
+      break;
+    case 2:
+      energyTarget = BMR + calorieChange;
+      break;
+    case 3:
+      energyTarget = BMR;
+      break;
+  }
+
   try {
     if (req.user.uid !== uid) {
       return res.status(403).json({ error: "Forbidden" });
@@ -641,11 +704,19 @@ app.post("/api/users", verifyToken, async (req, res) => {
       {
         name,
         age,
+        gender,
         height,
+        baselineActivity,
         currentWeight,
         goalWeight,
-        fitnessGoal,
+        weightGoalRate,
         dietaryPreferences,
+        targets: {
+          energy: Math.round(energyTarget),
+          protein: Math.round((energyTarget * 0.3) / 4),
+          carbs: Math.round((energyTarget * 0.4) / 4),
+          fat: Math.round((energyTarget * 0.3) / 9),
+        },
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
       },
       { merge: true }
