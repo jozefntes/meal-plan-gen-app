@@ -594,17 +594,37 @@ app.post("/api/users", verifyToken, async (req, res) => {
     !uid ||
     !name ||
     !age ||
-    !height ||
     !gender ||
     !baselineActivity ||
+    !height ||
     !currentWeight ||
-    !goalWeight
+    !goalWeight ||
+    !weightGoalRate
   ) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
+  if (typeof name !== "string" || name.length < 1 || name.length > 50) {
+    return res
+      .status(400)
+      .json({ error: "Name must be a string between 1 and 25 characters" });
+  }
   if (typeof age !== "number" || age < 0) {
     return res.status(400).json({ error: "Invalid age" });
+  }
+  if (!["male", "female"].includes(gender)) {
+    return res.status(400).json({ error: "Invalid gender" });
+  }
+  if (
+    ![
+      "none",
+      "sedentary",
+      "lightly-active",
+      "moderately-active",
+      "very-active",
+    ].includes(baselineActivity)
+  ) {
+    return res.status(400).json({ error: "Invalid baseline activity level" });
   }
   if (typeof height !== "number" || height < 0) {
     return res.status(400).json({ error: "Invalid height" });
@@ -614,6 +634,9 @@ app.post("/api/users", verifyToken, async (req, res) => {
   }
   if (typeof goalWeight !== "number" || goalWeight < 0) {
     return res.status(400).json({ error: "Invalid goal weight" });
+  }
+  if (!["slow", "medium", "fast", "very fast"].includes(weightGoalRate)) {
+    return res.status(400).json({ error: "Invalid weight goal rate" });
   }
   if (!Array.isArray(dietaryPreferences)) {
     return res
