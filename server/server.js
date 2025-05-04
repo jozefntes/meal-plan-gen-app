@@ -681,16 +681,16 @@ app.post("/api/users", verifyToken, async (req, res) => {
   }
 
   let energyTarget;
-  let fitnessGoal;
+  let goalDirection;
   if (goalWeight < currentWeight) {
-    fitnessGoal = 1; // weight loss
+    goalDirection = 1; // weight loss
   } else if (goalWeight > currentWeight) {
-    fitnessGoal = 2; // weight gain
+    goalDirection = 2; // weight gain
   } else {
-    fitnessGoal = 3; // maintenance
+    goalDirection = 3; // maintenance
   }
 
-  switch (fitnessGoal) {
+  switch (goalDirection) {
     case 1:
       energyTarget = BMR - calorieChange;
       break;
