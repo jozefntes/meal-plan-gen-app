@@ -4,8 +4,8 @@ import "./Profile.css";
 
 import { SERVER_URL } from "./constants";
 
-const getGoalRateLabel = (goalRate) => {
-  switch (goalRate) {
+const getGoalRateLabel = (weightGoalRate) => {
+  switch (weightGoalRate) {
     case "slow":
       return "Slow (0.25 lbs/week)";
     case "medium":
@@ -102,7 +102,7 @@ export default function Profile() {
             weight: data.currentWeight || "",
             startingWeight: data.startingWeight || data.currentWeight,
             goalWeight: data.goalWeight || "",
-            goalRate: data.weightGoalRate || "",
+            weightGoalRate: data.weightGoalRate || "",
             dietaryPreferences: data.dietaryPreferences || [],
           });
         }
@@ -205,7 +205,7 @@ export default function Profile() {
         height: heightCm,
         currentWeight: Number(formData.weight),
         goalWeight: Number(formData.goalWeight),
-        weightGoalRate: formData.goalRate,
+        weightGoalRate: formData.weightGoalRate,
         dietaryPreferences: formData.dietaryPreferences,
       };
 
@@ -320,9 +320,11 @@ export default function Profile() {
                   name="gender"
                   value={formData.gender}
                   onChange={handleInputChange}
-                  className="input-field"
+                  className="input-field dropdown"
                 >
-                  <option value="">Select</option>
+                  <option value="" disabled>
+                    --Select--
+                  </option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
                 </select>
@@ -380,9 +382,11 @@ export default function Profile() {
                   name="activityLevel"
                   value={formData.activityLevel}
                   onChange={handleInputChange}
-                  className="input-field"
+                  className="input-field dropdown"
                 >
-                  <option value="">Select</option>
+                  <option value="" disabled>
+                    --Select--
+                  </option>
                   <option value="none">None</option>
                   <option value="sedentary">Sedentary</option>
                   <option value="lightly-active">Lightly Active</option>
@@ -487,12 +491,14 @@ export default function Profile() {
               {editMode ? (
                 <div className="goal-rate-input">
                   <select
-                    name="goalRate"
-                    value={formData.goalRate}
+                    name="weightGoalRate"
+                    value={formData.weightGoalRate}
                     onChange={handleInputChange}
-                    className="input-field"
+                    className="input-field dropdown"
                   >
-                    <option value="">Select</option>
+                    <option value="" disabled>
+                      --Select--
+                    </option>
                     <option value="slow">Slow (0.25 lbs/week)</option>
                     <option value="medium">Medium (0.5 lbs/week)</option>
                     <option value="fast">Fast (0.75 lbs/week)</option>
@@ -500,7 +506,7 @@ export default function Profile() {
                   </select>
                 </div>
               ) : (
-                <p>{getGoalRateLabel(formData.goalRate)}</p>
+                <p>{getGoalRateLabel(formData.weightGoalRate)}</p>
               )}
             </label>
           </div>
