@@ -107,7 +107,7 @@ function App() {
           <MealPlanGenerator
             recipes={recipes}
             loading={loadingRecipes}
-            onAddRecipes={handleAddRecipe}
+            onAddRecipe={handleAddRecipe}
           />
         </ProtectedRoute>
       )}
@@ -117,7 +117,7 @@ function App() {
           <Recipes
             recipes={recipes}
             loadingRecipes={loadingRecipes}
-            onAddRecipes={handleAddRecipe}
+            onAddRecipe={handleAddRecipe}
             errorMessage={errorMessage}
           />
         </ProtectedRoute>
