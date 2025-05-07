@@ -302,86 +302,93 @@ export default function Home({ recipes }) {
   }, []);
 
   useEffect(() => {
-    const selectedDayRecords = mealPlans.find(
-      (day) => day.date === selectedDay
-    );
+    if (recipes.length > 0 && mealPlans.length > 0) {
+      const selectedDayRecords = mealPlans.find(
+        (day) => day.date === selectedDay
+      );
 
-    if (selectedDayRecords) {
-      const mealsWithRecipes = selectedDayRecords.meals.map((meal) => {
-        const recipe = recipes.find((r) => r.id === meal.id);
+      if (selectedDayRecords) {
+        const mealsWithRecipes = selectedDayRecords.meals.map((meal) => {
+          const recipe = recipes.find((r) => r.id === meal.id);
 
-        return recipe ? { ...meal, ...recipe } : { ...meal, ...defaultRecipe };
-      });
+          return recipe
+            ? { ...meal, ...recipe }
+            : { ...meal, ...defaultRecipe };
+        });
 
-      // Recalculate progress
-      const progress = {
-        energy: {
-          current: mealsWithRecipes.reduce(
-            (sum, meal) => sum + (meal.done ? meal.nutrition.calories || 0 : 0),
-            0
-          ),
-          percentage: Math.floor(
-            (mealsWithRecipes.reduce(
+        // Recalculate progress
+        const progress = {
+          energy: {
+            current: mealsWithRecipes.reduce(
               (sum, meal) =>
                 sum + (meal.done ? meal.nutrition.calories || 0 : 0),
               0
-            ) /
-              (userData?.targets?.energy || 1)) *
-              100
-          ),
-        },
-        protein: {
-          current: mealsWithRecipes.reduce(
-            (sum, meal) => sum + (meal.done ? meal.nutrition.protein || 0 : 0),
-            0
-          ),
-          percentage: Math.floor(
-            (mealsWithRecipes.reduce(
+            ),
+            percentage: Math.floor(
+              (mealsWithRecipes.reduce(
+                (sum, meal) =>
+                  sum + (meal.done ? meal.nutrition.calories || 0 : 0),
+                0
+              ) /
+                (userData?.targets?.energy || 1)) *
+                100
+            ),
+          },
+          protein: {
+            current: mealsWithRecipes.reduce(
               (sum, meal) =>
                 sum + (meal.done ? meal.nutrition.protein || 0 : 0),
               0
-            ) /
-              (userData?.targets?.protein || 1)) *
-              100
-          ),
-        },
-        carbs: {
-          current: mealsWithRecipes.reduce(
-            (sum, meal) => sum + (meal.done ? meal.nutrition.carbs || 0 : 0),
-            0
-          ),
-          percentage: Math.floor(
-            (mealsWithRecipes.reduce(
+            ),
+            percentage: Math.floor(
+              (mealsWithRecipes.reduce(
+                (sum, meal) =>
+                  sum + (meal.done ? meal.nutrition.protein || 0 : 0),
+                0
+              ) /
+                (userData?.targets?.protein || 1)) *
+                100
+            ),
+          },
+          carbs: {
+            current: mealsWithRecipes.reduce(
               (sum, meal) => sum + (meal.done ? meal.nutrition.carbs || 0 : 0),
               0
-            ) /
-              (userData?.targets?.carbs || 1)) *
-              100
-          ),
-        },
-        fat: {
-          current: mealsWithRecipes.reduce(
-            (sum, meal) => sum + (meal.done ? meal.nutrition.fat || 0 : 0),
-            0
-          ),
-          percentage: Math.floor(
-            (mealsWithRecipes.reduce(
+            ),
+            percentage: Math.floor(
+              (mealsWithRecipes.reduce(
+                (sum, meal) =>
+                  sum + (meal.done ? meal.nutrition.carbs || 0 : 0),
+                0
+              ) /
+                (userData?.targets?.carbs || 1)) *
+                100
+            ),
+          },
+          fat: {
+            current: mealsWithRecipes.reduce(
               (sum, meal) => sum + (meal.done ? meal.nutrition.fat || 0 : 0),
               0
-            ) /
-              (userData?.targets?.fat || 1)) *
-              100
-          ),
-        },
-      };
+            ),
+            percentage: Math.floor(
+              (mealsWithRecipes.reduce(
+                (sum, meal) => sum + (meal.done ? meal.nutrition.fat || 0 : 0),
+                0
+              ) /
+                (userData?.targets?.fat || 1)) *
+                100
+            ),
+          },
+        };
 
-      setSelectedDayMeals(mealsWithRecipes);
-      setSelectedDayProgress(progress); // Dynamically calculate progress
-    } else {
-      setSelectedDayMeals(null);
-      setSelectedDayProgress(null);
+        setSelectedDayMeals(mealsWithRecipes);
+        setSelectedDayProgress(progress);
+      } else {
+        setSelectedDayMeals(null);
+        setSelectedDayProgress(null);
+      }
     }
-  }, [selectedDay, mealPlans, recipes]);
+  }, [selectedDay, mealPlans, recipes, userData]);
 
   useEffect(() => {
     if (recipes.length > 0) {
