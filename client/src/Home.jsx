@@ -18,7 +18,7 @@ const defaultRecipe = {
   nutrition: { calories: 0, protein: 0, carbs: 0, fat: 0 },
 };
 
-export default function Home() {
+export default function Home({ recipes }) {
   const today = new Date(
     new Date().getTime() - new Date().getTimezoneOffset() * 60000
   )
@@ -28,7 +28,6 @@ export default function Home() {
   const [selectedDay, setSelectedDay] = useState(today);
   const [currentWeek, setCurrentWeek] = useState(0);
   const [mealPlans, setMealPlans] = useState([]);
-  const [recipes, setRecipes] = useState([]);
   const [userData, setUserData] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDayMeals, setSelectedDayMeals] = useState(null);
@@ -244,23 +243,17 @@ export default function Home() {
         const uid = user.uid;
 
         try {
-          // Fetch meal plans and recipes in parallel
-          const [mealPlansResponse, recipesResponse] = await Promise.all([
-            fetch(`${SERVER_URL}/api/meal_plans/${uid}`, {
+          // Fetch meal plans
+          const mealPlansResponse = await fetch(
+            `${SERVER_URL}/api/meal_plans/${uid}`,
+            {
               method: "GET",
               headers: {
                 Authorization: `Bearer ${idToken}`,
               },
-            }),
-            fetch(`${SERVER_URL}/api/recipes/${uid}`, {
-              method: "GET",
-              headers: {
-                Authorization: `Bearer ${idToken}`,
-              },
-            }),
-          ]);
+            }
+          );
 
-          // Process meal plans response
           let mealPlans = [];
           if (mealPlansResponse.status !== 404) {
             mealPlans = await mealPlansResponse.json();
@@ -273,23 +266,10 @@ export default function Home() {
             });
           }
 
-          // Extract unique recipe IDs from meal plans
-          const mealRecipeIds = new Set();
-          mealPlans?.forEach((day) =>
-            day.meals?.forEach((meal) => mealRecipeIds.add(meal.id))
-          );
-
-          // Process recipes response
-          let recipeList = [];
-          if (recipesResponse.status !== 404) {
-            recipeList = await recipesResponse.json();
-          }
-
           // Update state
           setMealPlans(mealPlans);
-          setRecipes(recipeList);
         } catch (error) {
-          console.error("Error fetching data:", error);
+          console.error("Error fetching meal plans:", error);
         } finally {
           setLoading(false);
         }
@@ -501,9 +481,9 @@ export default function Home() {
           <h6 className="home-ingredient-list-title">Ingredient List</h6>
           <ul className="home-ingredient-list-items two-columns">
             {selectedDayMeals?.flatMap((meal) =>
-              meal.ingredients.map((ingredient, index) => (
+              meal.ingredients?.map((ingredient, index) => (
                 <li
-                  key={`${meal.id}-${index}`}
+                  key={`${meal.mealInstanceId}-${index}`}
                   className="home-ingredient-list-item body-s"
                 >
                   {ingredient}
