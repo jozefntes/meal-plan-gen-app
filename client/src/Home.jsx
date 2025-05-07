@@ -308,7 +308,6 @@ export default function Home({ recipes }) {
 
     if (selectedDayRecords) {
       const mealsWithRecipes = selectedDayRecords.meals.map((meal) => {
-        console.log(recipes);
         const recipe = recipes.find((r) => r.id === meal.id);
 
         return recipe ? { ...meal, ...recipe } : { ...meal, ...defaultRecipe };
@@ -377,7 +376,6 @@ export default function Home({ recipes }) {
       };
 
       setSelectedDayMeals(mealsWithRecipes);
-      console.log("Selected day meals: ", selectedDayMeals);
       setSelectedDayProgress(progress); // Dynamically calculate progress
     } else {
       setSelectedDayMeals(null);
