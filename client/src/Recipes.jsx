@@ -16,6 +16,7 @@ export default function Recipes({
   recipes,
   loading,
   onAddRecipe,
+  onDeleteRecipe,
   errorMessage,
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -123,6 +124,7 @@ export default function Recipes({
                 return updatedRecipes;
               });
             } else {
+              onDeleteRecipe(recipeIdForDeletion);
               console.log("Recipe deleted successfully");
             }
           } catch (error) {

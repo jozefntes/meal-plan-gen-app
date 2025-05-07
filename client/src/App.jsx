@@ -72,6 +72,12 @@ function App() {
     );
   };
 
+  const handleDeleteRecipe = (recipeId) => {
+    setRecipes((prevRecipes) =>
+      prevRecipes.filter((recipe) => recipe.id !== recipeId)
+    );
+  };
+
   useEffect(() => {
     page("/", () => setRoute("home"));
     page("/generate", () => setRoute("generate"));
@@ -118,6 +124,7 @@ function App() {
             recipes={recipes}
             loadingRecipes={loadingRecipes}
             onAddRecipe={handleAddRecipe}
+            onDeleteRecipe={handleDeleteRecipe}
             errorMessage={errorMessage}
           />
         </ProtectedRoute>
