@@ -86,6 +86,22 @@ async function verifyToken(req, res, next) {
   }
 }
 
+async function generateSignedUrl(fileName) {
+  try {
+    const file = bucket.file(fileName);
+
+    const [url] = await file.getSignedUrl({
+      action: "read",
+      expires: Date.now() + 60 * 60 * 1 * 1000,
+    });
+
+    return url;
+  } catch (error) {
+    console.error("Error generating signed URL:", error);
+    throw error;
+  }
+}
+
 app.get("/", (req, res) => {
   const name = process.env.NAME || "World";
   res.send(`Hello ${name}!`);
@@ -112,9 +128,15 @@ app.get("/api/recipes/:uid", verifyToken, async (req, res) => {
     }
 
     const recipes = [];
-    querySnapshot.forEach((doc) => {
-      recipes.push({ id: doc.id, ...doc.data() });
-    });
+    for (const doc of querySnapshot.docs) {
+      const recipe = { id: doc.id, ...doc.data() };
+
+      if (recipe.imageName) {
+        recipe.image = await generateSignedUrl(recipe.imageName);
+      }
+
+      recipes.push(recipe);
+    }
 
     res.status(200).json(recipes);
   } catch (error) {
@@ -468,12 +490,8 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
             },
           });
 
-          const [url] = await file.getSignedUrl({
-            action: "read",
-            expires: "03-01-2500",
-          });
-
-          recipe.image = url;
+          recipe.imageName = fileName;
+          recipe.image = await generateSignedUrl(fileName);
           break;
         }
       }
