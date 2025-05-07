@@ -86,6 +86,24 @@ async function verifyToken(req, res, next) {
   }
 }
 
+const ONE_HOUR_IN_MS = 60 * 60 * 1000;
+
+async function generateSignedUrl(fileName) {
+  try {
+    const file = bucket.file(fileName);
+
+    const [url] = await file.getSignedUrl({
+      action: "read",
+      expires: Date.now() + ONE_HOUR_IN_MS,
+    });
+
+    return url;
+  } catch (error) {
+    console.error("Error generating signed URL:", error);
+    throw error;
+  }
+}
+
 app.get("/", (req, res) => {
   const name = process.env.NAME || "World";
   res.send(`Hello ${name}!`);
@@ -111,10 +129,17 @@ app.get("/api/recipes/:uid", verifyToken, async (req, res) => {
       return res.status(404).json({ error: "No recipes found for this user" });
     }
 
-    const recipes = [];
-    querySnapshot.forEach((doc) => {
-      recipes.push({ id: doc.id, ...doc.data() });
-    });
+    const recipes = await Promise.all(
+      querySnapshot.docs.map(async (doc) => {
+        const recipe = { id: doc.id, ...doc.data() };
+
+        if (recipe.imageName) {
+          recipe.image = await generateSignedUrl(recipe.imageName);
+        }
+
+        return recipe;
+      })
+    );
 
     res.status(200).json(recipes);
   } catch (error) {
@@ -468,12 +493,8 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
             },
           });
 
-          const [url] = await file.getSignedUrl({
-            action: "read",
-            expires: "03-01-2500",
-          });
-
-          recipe.image = url;
+          recipe.imageName = fileName;
+          recipe.image = await generateSignedUrl(fileName);
           break;
         }
       }
