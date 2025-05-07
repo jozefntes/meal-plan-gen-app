@@ -86,6 +86,8 @@ async function verifyToken(req, res, next) {
   }
 }
 
+const ONE_HOUR_IN_MS = 60 * 60 * 1000;
+
 async function generateSignedUrl(fileName) {
   try {
     const file = bucket.file(fileName);
@@ -101,8 +103,6 @@ async function generateSignedUrl(fileName) {
     throw error;
   }
 }
-
-const ONE_HOUR_IN_MS = 60 * 60 * 1000;
 
 app.get("/", (req, res) => {
   const name = process.env.NAME || "World";
