@@ -308,7 +308,7 @@ export default function Home({ recipes }) {
       );
 
       if (selectedDayRecords) {
-        const mealsWithRecipes = selectedDayRecords?.meals.map((meal) => {
+        const mealsWithRecipes = selectedDayRecords.meals.map((meal) => {
           const recipe = recipes.find((r) => r.id === meal.id);
 
           return recipe
