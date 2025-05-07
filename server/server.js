@@ -92,7 +92,7 @@ async function generateSignedUrl(fileName) {
 
     const [url] = await file.getSignedUrl({
       action: "read",
-      expires: Date.now() + 60 * 60 * 1 * 1000,
+      expires: Date.now() + ONE_HOUR_IN_MS,
     });
 
     return url;
@@ -101,6 +101,8 @@ async function generateSignedUrl(fileName) {
     throw error;
   }
 }
+
+const ONE_HOUR_IN_MS = 60 * 60 * 1000;
 
 app.get("/", (req, res) => {
   const name = process.env.NAME || "World";
@@ -127,16 +129,17 @@ app.get("/api/recipes/:uid", verifyToken, async (req, res) => {
       return res.status(404).json({ error: "No recipes found for this user" });
     }
 
-    const recipes = [];
-    for (const doc of querySnapshot.docs) {
-      const recipe = { id: doc.id, ...doc.data() };
+    const recipes = await Promise.all(
+      querySnapshot.docs.map(async (doc) => {
+        const recipe = { id: doc.id, ...doc.data() };
 
-      if (recipe.imageName) {
-        recipe.image = await generateSignedUrl(recipe.imageName);
-      }
+        if (recipe.imageName) {
+          recipe.image = await generateSignedUrl(recipe.imageName);
+        }
 
-      recipes.push(recipe);
-    }
+        return recipe;
+      })
+    );
 
     res.status(200).json(recipes);
   } catch (error) {
