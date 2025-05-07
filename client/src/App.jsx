@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import useTheme from "./hooks/useTheme";
 import page from "page";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { SERVER_URL } from "./constants";
 
 import Home from "./Home";
 import MealPlanGenerator from "./MealPlanGenerator";
@@ -16,10 +18,59 @@ import Sidenav from "./components/Sidenav";
 function App() {
   const [route, setRoute] = useState("home");
   const { theme, toggleTheme } = useTheme();
+  const [recipes, setRecipes] = useState([]);
+  const [loadingRecipes, setLoadingRecipes] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
+
+  useEffect(() => {
+    const auth = getAuth();
+
+    // Listen for authentication state changes
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const idToken = await user.getIdToken();
+        const uid = user.uid;
+
+        try {
+          const response = await fetch(`${SERVER_URL}/api/recipes/${uid}`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${idToken}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to fetch recipes");
+          }
+
+          const data = await response.json();
+          setRecipes(data);
+        } catch (error) {
+          setErrorMessage("Error fetching recipes");
+          console.error("Error fetching recipes:", error);
+        } finally {
+          setLoadingRecipes(false);
+        }
+      } else {
+        // If no user is signed in, clear recipes and set loading to false
+        setRecipes([]);
+        setLoadingRecipes(false);
+      }
+    });
+
+    // Cleanup the listener on component unmount
+    return () => unsubscribe();
+  }, []);
+
+  const handleAddRecipe = (newRecipe) => {
+    setRecipes((prevRecipes) =>
+      prevRecipes ? [...prevRecipes, newRecipe] : [newRecipe]
+    );
+  };
 
   useEffect(() => {
     page("/", () => setRoute("home"));
@@ -41,7 +92,7 @@ function App() {
       {route === "home" && (
         <ProtectedRoute>
           <Sidenav onToggleTheme={toggleTheme} />
-          <Home />
+          <Home recipes={recipes} loading={loadingRecipes} />
         </ProtectedRoute>
       )}
       {route === "profile" && (
@@ -53,13 +104,22 @@ function App() {
       {route === "generate" && (
         <ProtectedRoute>
           <Sidenav onToggleTheme={toggleTheme} />
-          <MealPlanGenerator />
+          <MealPlanGenerator
+            recipes={recipes}
+            loading={loadingRecipes}
+            onAddRecipes={handleAddRecipe}
+          />
         </ProtectedRoute>
       )}
       {route === "myrecipes" && (
         <ProtectedRoute>
           <Sidenav onToggleTheme={toggleTheme} />
-          <Recipes />
+          <Recipes
+            recipes={recipes}
+            loadingRecipes={loadingRecipes}
+            onAddRecipes={handleAddRecipe}
+            errorMessage={errorMessage}
+          />
         </ProtectedRoute>
       )}
       {route === "signin" && <SignIn />}

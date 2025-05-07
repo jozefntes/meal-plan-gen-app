@@ -16,39 +16,17 @@ export default function ReplaceRecipeModal({
     (recipe) => recipe.id === currentRecipeId
   );
 
-  // If no matching recipe is found, display a fallback message
-  if (!currentRecipe) {
-    return (
-      <div
-        className="modal-overlay"
-        onClick={(e) => e.target === e.currentTarget && onClose()}
-      >
-        <div className="modal-content">
-          <h4>Replace Recipe</h4>
-          <p className="no-recipes-message body-s">
-            The current recipe could not be found.
-          </p>
-          <div className="modal-footer">
-            <button className="btn btn-close" onClick={onClose}>
-              <span className="btn-text">Close</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const similarRecipes = currentRecipe
+    ? findSimilarRecipes(currentRecipe, invertedIndex, allRecipes)
+    : allRecipes;
 
-  const similarRecipes = findSimilarRecipes(
-    currentRecipe,
-    invertedIndex,
-    allRecipes
-  );
+  const recipesToShow = similarRecipes.length > 0 ? similarRecipes : allRecipes;
 
   const filteredRecipes = searchQuery.trim()
     ? allRecipes.filter((recipe) =>
         recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
       )
-    : similarRecipes;
+    : recipesToShow;
 
   return (
     <div
@@ -66,6 +44,13 @@ export default function ReplaceRecipeModal({
             className="search-bar body-s"
           />
         </div>
+        {!searchQuery.trim() &&
+          currentRecipe &&
+          similarRecipes.length === 0 && (
+            <p className="no-recipes-message body-s">
+              No similar recipes found.
+            </p>
+          )}
         {filteredRecipes.length > 0 ? (
           <ul className="recipe-list">
             {filteredRecipes.map((recipe) => (
@@ -84,16 +69,7 @@ export default function ReplaceRecipeModal({
           </ul>
         ) : (
           <>
-            {!searchQuery.trim() ? (
-              <>
-                <p className="no-recipes-message body-s">
-                  No similar recipes found.
-                </p>
-                <p className="no-recipes-message body-s">
-                  Try searching for a recipe.
-                </p>
-              </>
-            ) : (
+            {searchQuery.trim() && (
               <p className="no-recipes-message body-s">
                 No recipes match your search.
               </p>

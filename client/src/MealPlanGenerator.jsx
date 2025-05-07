@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { getAuth } from "firebase/auth";
 import page from "page";
 
@@ -11,53 +11,22 @@ import { SERVER_URL } from "./constants";
 import "./MealPlanGenerator.css";
 import ShuffleIcon from "./icons/Shuffle";
 
-export default function MealPlanGenerator() {
+export default function MealPlanGenerator({
+  recipes,
+  loadingRecipes,
+  handleAddRecipe,
+}) {
   const [errorMessage, setErrorMessage] = useState(null);
   const [selectedWeek, setSelectedWeek] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMealGroup, setSelectedMealGroup] = useState(null);
-  const [recipes, setRecipes] = useState([]);
   const [selectedRecipes, setSelectedRecipes] = useState({
     breakfast: [],
     lunch: [],
     dinner: [],
     snack: [],
   });
-  const [loadingRecipes, setLoadingRecipes] = useState(true);
   const [generatingMealPlan, setGeneratingMealPlan] = useState(false);
-
-  useEffect(() => {
-    // Fetch initial recipes data from the server
-    (async () => {
-      const auth = getAuth();
-      const user = auth.currentUser;
-
-      if (user) {
-        setLoadingRecipes(true);
-        const idToken = await user.getIdToken();
-        const uid = user.uid;
-
-        fetch(`${SERVER_URL}/api/recipes/${uid}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-          },
-        })
-          .then((response) => {
-            if (response.status === 404) {
-              return [];
-            }
-
-            return response.json();
-          })
-          .then((data) => setRecipes(data))
-          .catch((error) => console.error("Error fetching recipes:", error))
-          .finally(() => setLoadingRecipes(false));
-      } else {
-        console.log("No user is signed in.");
-      }
-    })();
-  }, []);
 
   const handleWeekSelect = (index) => {
     setSelectedWeek(index);
@@ -72,12 +41,6 @@ export default function MealPlanGenerator() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedMealGroup(null);
-  };
-
-  const handleAddRecipe = (newRecipe) => {
-    setRecipes((prevRecipes) =>
-      prevRecipes ? [...prevRecipes, newRecipe] : [newRecipe]
-    );
   };
 
   const handleSelectRecipe = (mealGroup, recipeId, isSelected) => {

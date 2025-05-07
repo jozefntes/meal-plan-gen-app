@@ -12,14 +12,20 @@ import "./Recipes.css";
 import PlusIcon from "./icons/PlusIcon";
 import SearchIcon from "./icons/SearchIcon";
 
-export default function MealPlanGenerator() {
-  const [errorMessage, setErrorMessage] = useState(null);
+export default function MealPlanGenerator({
+  recipes,
+  loading,
+  onAddRecipe,
+  errorMessage,
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [recipes, setRecipes] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [recipeIdForDeletion, setRecipeIdForDeletion] = useState(null);
+
+  useEffect(() => {
+    setFilteredRecipes(recipes); // Initialize filteredRecipes with the recipes prop
+  }, [recipes]);
 
   useEffect(() => {
     const queryString = window.location.search;
@@ -59,55 +65,12 @@ export default function MealPlanGenerator() {
     filterRecipes(query);
   };
 
-  useEffect(() => {
-    // Fetch initial recipes data from the server
-    (async () => {
-      const auth = getAuth();
-      const user = auth.currentUser;
-
-      if (user) {
-        const idToken = await user.getIdToken();
-        const uid = user.uid;
-
-        fetch(`${SERVER_URL}/api/recipes/${uid}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-          },
-        })
-          .then((response) => {
-            if (response.status === 404) {
-              return [];
-            }
-
-            return response.json();
-          })
-          .then((data) => {
-            setRecipes(data);
-            setLoading(false);
-          })
-          .catch((error) => {
-            setErrorMessage("Error fetching recipes");
-            console.error("Error fetching recipes:", error);
-          });
-      } else {
-        console.log("No user is signed in.");
-      }
-    })();
-  }, []);
-
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-  };
-
-  const handleAddRecipe = (newRecipe) => {
-    setRecipes((prevRecipes) =>
-      prevRecipes ? [...prevRecipes, newRecipe] : [newRecipe]
-    );
   };
 
   const promptDeleteConfirmation = (recipeId) => {
@@ -129,7 +92,7 @@ export default function MealPlanGenerator() {
       const recipeToDelete = recipes[recipeIndex];
 
       // Optimistically update the state
-      setRecipes((prevRecipes) =>
+      setFilteredRecipes((prevRecipes) =>
         prevRecipes.filter((recipe) => recipe.id !== recipeIdForDeletion)
       );
 
@@ -154,7 +117,7 @@ export default function MealPlanGenerator() {
             if (!response.ok) {
               console.error("Error deleting recipe");
               // Revert the state if the delete operation fails
-              setRecipes((prevRecipes) => {
+              setFilteredRecipes((prevRecipes) => {
                 const updatedRecipes = [...prevRecipes];
                 updatedRecipes.splice(recipeIndex, 0, recipeToDelete);
                 return updatedRecipes;
@@ -165,7 +128,7 @@ export default function MealPlanGenerator() {
           } catch (error) {
             console.error("Error deleting recipe:", error);
             // Revert the state if an error occurs
-            setRecipes((prevRecipes) => {
+            setFilteredRecipes((prevRecipes) => {
               const updatedRecipes = [...prevRecipes];
               updatedRecipes.splice(recipeIndex, 0, recipeToDelete);
               return updatedRecipes;
@@ -225,10 +188,7 @@ export default function MealPlanGenerator() {
         )}
       </div>
       {isModalOpen && (
-        <CreateRecipe
-          onClose={handleCloseModal}
-          onAddRecipe={handleAddRecipe}
-        />
+        <CreateRecipe onClose={handleCloseModal} onAddRecipe={onAddRecipe} />
       )}
       {recipeIdForDeletion !== null && (
         <ConfirmationModal
