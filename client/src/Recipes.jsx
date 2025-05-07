@@ -12,7 +12,7 @@ import "./Recipes.css";
 import PlusIcon from "./icons/PlusIcon";
 import SearchIcon from "./icons/SearchIcon";
 
-export default function MealPlanGenerator({
+export default function Recipes({
   recipes,
   loading,
   onAddRecipe,

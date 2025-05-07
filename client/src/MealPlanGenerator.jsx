@@ -14,7 +14,7 @@ import ShuffleIcon from "./icons/Shuffle";
 export default function MealPlanGenerator({
   recipes,
   loadingRecipes,
-  handleAddRecipe,
+  onAddRecipe,
 }) {
   const [errorMessage, setErrorMessage] = useState(null);
   const [selectedWeek, setSelectedWeek] = useState(0);
@@ -187,7 +187,7 @@ export default function MealPlanGenerator({
         <CreateRecipe
           onClose={handleCloseModal}
           mealGroup={selectedMealGroup}
-          onAddRecipe={handleAddRecipe}
+          onAddRecipe={onAddRecipe}
         />
       )}
     </>
