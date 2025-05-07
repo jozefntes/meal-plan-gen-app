@@ -30,7 +30,6 @@ export default function MealPlanGenerator({
 
   const handleWeekSelect = (index) => {
     setSelectedWeek(index);
-    console.log(index);
   };
 
   const handleOpenModal = (mealGroup) => {
