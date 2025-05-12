@@ -3,18 +3,7 @@ import { getAuth } from "firebase/auth";
 import { SERVER_URL } from "../constants";
 
 import "./CreateRecipe.css";
-
-const allIngredients = [
-  "Eggs", "Bacon", "Sausage", "Toast", "Bagel", "Pancakes", "Waffles", "Oatmeal", 
-  "Cereal", "Milk", "Yogurt", "Banana", "Apple", "Orange Juice", "Cheese",
-  "Peanut Butter", "Avocado", "Tomato", "Spinach", "Mushrooms", "Chicken", "Rice", 
-  "Pasta", "Turkey", "Beef", "Lettuce", "Onion", "Tuna", "Beans", "Bread", "Mayonnaise", 
-  "Carrots", "Cucumber", "Hummus", "Corn", "Pickles", "Salmon", "Steak", "Pork", "Shrimp", 
-  "Broccoli", "Cauliflower", "Zucchini", "Garlic", "Olive Oil", "Soy Sauce", "Quinoa", 
-  "Potatoes", "Bell Peppers", "Tomato Sauce", "Noodles", "Tofu", "Eggplant", "Almonds", 
-  "Cashews", "Granola", "Dark Chocolate", "Popcorn", "Crackers", "Celery", "Fruit", "Nuts", 
-  "Smoothie", "Protein Bar", "Boiled Eggs", "Cottage Cheese", "Seeds", "Greek Yogurt"
-];
+import allIngredients from "./Ingredient_list";
 
 const CreateRecipe = ({ onClose, onAddRecipe }) => {
   const [loading, setLoading] = useState(false);
