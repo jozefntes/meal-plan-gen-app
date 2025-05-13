@@ -474,7 +474,7 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
 
     // Generate an image for the recipe
     try {
-      const contents = `Generate an image of ${recipe.title}`;
+      const contents = `Generate a realistic image of ${recipe.title}`;
 
       const response = await imageModel.generateContent(contents);
       for (const part of response.response.candidates[0].content.parts) {
