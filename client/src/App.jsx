@@ -43,15 +43,19 @@ function App() {
             },
           });
 
-          if (!response.ok) {
+          if (response.status === 404) {
+            setRecipes([]);
+          } else if (!response.ok) {
             throw new Error("Failed to fetch recipes");
+          } else {
+            const data = await response.json();
+            setRecipes(data);
           }
-
-          const data = await response.json();
-          setRecipes(data);
         } catch (error) {
+          if (error.message !== "Failed to fetch recipes") {
+            console.error("Error fetching recipes:", error);
+          }
           setErrorMessage("Error fetching recipes");
-          console.error("Error fetching recipes:", error);
         } finally {
           setLoadingRecipes(false);
         }
