@@ -29,7 +29,6 @@ function App() {
   useEffect(() => {
     const auth = getAuth();
 
-    // Listen for authentication state changes
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         const idToken = await user.getIdToken();
@@ -60,13 +59,11 @@ function App() {
           setLoadingRecipes(false);
         }
       } else {
-        // If no user is signed in, clear recipes and set loading to false
         setRecipes([]);
         setLoadingRecipes(false);
       }
     });
 
-    // Cleanup the listener on component unmount
     return () => unsubscribe();
   }, []);
 

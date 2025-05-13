@@ -243,7 +243,6 @@ export default function Home({ recipes }) {
         const uid = user.uid;
 
         try {
-          // Fetch meal plans
           const mealPlansResponse = await fetch(
             `${SERVER_URL}/api/meal_plans/${uid}`,
             {
@@ -266,7 +265,6 @@ export default function Home({ recipes }) {
             });
           }
 
-          // Update state
           setMealPlans(mealPlans);
         } catch (error) {
           console.error("Error fetching meal plans:", error);
