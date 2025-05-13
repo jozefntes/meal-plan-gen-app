@@ -12,7 +12,6 @@ export default function MealInfo({ id }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch initial recipes data from the server
     (async () => {
       const auth = getAuth();
       const user = auth.currentUser;
