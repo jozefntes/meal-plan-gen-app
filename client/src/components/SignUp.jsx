@@ -92,7 +92,7 @@ const SignUp = () => {
               type="email"
               id="email"
               value={email}
-              placeholder="Email or Phone Number"
+              placeholder="Enter Email"
               className="body-s"
               onChange={handleEmailChange}
               required
