@@ -28,28 +28,32 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!email || !password) {
       setErrorMessage("Email and password are required.");
       return;
     }
-  
+
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       page("/");
     } catch (error) {
       console.error("Error signing up:", error);
       console.error("Error code:", error.code);
-  
+
       switch (error.code) {
         case "auth/email-already-in-use":
-          setErrorMessage("This email is already in use. Please use a different email.");
+          setErrorMessage(
+            "This email is already in use. Please use a different email."
+          );
           break;
         case "auth/invalid-email":
           setErrorMessage("Invalid email address. Please enter a valid email.");
           break;
         case "auth/weak-password":
-          setErrorMessage("Password is too weak. Please use a stronger password.");
+          setErrorMessage(
+            "Password is too weak. Please use a stronger password."
+          );
           break;
         default:
           setErrorMessage("An error occurred. Please try again.");
@@ -69,7 +73,7 @@ const SignUp = () => {
   return (
     <div className="container">
       <div className="photo-section">
-        <img src="/images/signupimg.jpeg" alt="Meal Prep Photo" />
+        <img src="/images/signupimg.webp" alt="Meal Prep Photo" />
       </div>
       <div className="form-section">
         <div className="header-container">

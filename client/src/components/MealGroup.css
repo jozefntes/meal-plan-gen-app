@@ -85,6 +85,16 @@
     word-wrap: break-word;
 }
 
+.recipe-label p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-wrap: break-word;
+}
+
 .hidden-checkbox {
     position: absolute;
     opacity: 0;

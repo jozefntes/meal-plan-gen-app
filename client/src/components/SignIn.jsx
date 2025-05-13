@@ -26,15 +26,14 @@ const SignIn = () => {
     setShowPassword((prev) => !prev);
   };
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!email || !password) {
       setErrorMessage("Email and password are required.");
       return;
     }
-  
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       page("/");
@@ -54,14 +53,16 @@ const SignIn = () => {
       page("/");
     } catch (error) {
       console.error("Error signing in with Google:", error);
-      setErrorMessage("An error occurred with Google Sign-In. Please try again.");
+      setErrorMessage(
+        "An error occurred with Google Sign-In. Please try again."
+      );
     }
   };
 
   return (
     <div className="container">
       <div className="photo-section">
-        <img src="/images/signupimg.jpeg" alt="Meal Prep Photo" />
+        <img src="/images/signupimg.webp" alt="Meal Prep Photo" />
       </div>
       <div className="form-section">
         <div className="header-container">
