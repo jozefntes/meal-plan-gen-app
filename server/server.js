@@ -94,10 +94,9 @@ async function verifyToken(req, res, next) {
 }
 
 async function populateAndSaveMealPlan(mealPlan, uid, db, weekStartDate) {
-  console.log(weekStartDate);
   const populatedMealPlan = mealPlan.days.map((day, idx) => {
     const date = new Date(weekStartDate);
-    date.setDate(weekStartDate.getDate() + idx);
+    date.setUTCDate(weekStartDate.getUTCDate() + idx);
     const dateStr = date.toISOString().split("T")[0];
     return {
       date: dateStr,
