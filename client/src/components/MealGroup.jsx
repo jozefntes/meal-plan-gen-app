@@ -11,7 +11,10 @@ export default function MealGroup({
 }) {
   return (
     <div className="meal-group">
-      <h6>{title}</h6>
+      <div className="meal-group-title">
+        <h6>{title}</h6>
+        <span className="body-s">Choose 2-3 meals</span>
+      </div>
 
       <div className="picker">
         <div className="create-new-btn" onClick={onCreateNew}>
