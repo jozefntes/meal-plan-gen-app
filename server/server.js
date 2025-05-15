@@ -93,15 +93,21 @@ async function verifyToken(req, res, next) {
   }
 }
 
-async function populateAndSaveMealPlan(mealPlan, uid, db) {
-  const populatedMealPlan = mealPlan.dates.map(({ date, meals }) => ({
-    date: new Date(date).toISOString().split("T")[0],
-    meals: meals.map(({ id }, index) => ({
-      id,
-      mealInstanceId: `${id}-${index}-${date}`,
-      done: false,
-    })),
-  }));
+async function populateAndSaveMealPlan(mealPlan, uid, db, weekStartDate) {
+  console.log(weekStartDate);
+  const populatedMealPlan = mealPlan.days.map((day, idx) => {
+    const date = new Date(weekStartDate);
+    date.setDate(weekStartDate.getDate() + idx);
+    const dateStr = date.toISOString().split("T")[0];
+    return {
+      date: dateStr,
+      meals: day.meals.map(({ id }, mealIdx) => ({
+        id,
+        mealInstanceId: `${id}-${mealIdx}-${dateStr}`,
+        done: false,
+      })),
+    };
+  });
 
   const userDocRef = db.collection("plans").doc(uid);
   const userDoc = await userDocRef.get();
@@ -366,17 +372,12 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
 
   // Calculate the start date based on the weekNumber
   const today = new Date();
-  const dayOfWeek = today.getDay(); // 0 (Sunday) to 6 (Saturday)
-  const diffToMonday = (dayOfWeek + 6) % 7; // Calculate the difference to Monday
+  const dayOfWeek = today.getUTCDay(); // 0 (Sunday) to 6 (Saturday)
+  const diffToMonday = (dayOfWeek + 6) % 7;
   const mondayOfCurrentWeek = new Date(today);
-  mondayOfCurrentWeek.setDate(today.getDate() - diffToMonday);
+  mondayOfCurrentWeek.setUTCDate(today.getUTCDate() - diffToMonday);
   const weekStartDate = new Date(mondayOfCurrentWeek);
   weekStartDate.setDate(mondayOfCurrentWeek.getDate() + weekNumber * 7);
-  const formattedWeekStartDate = weekStartDate.toLocaleDateString("en-US", {
-    month: "2-digit",
-    day: "2-digit",
-    year: "numeric",
-  });
 
   // Get unique meal IDs
   const uniqueMealIds = [...new Set(Object.values(selectedMeals).flat())];
@@ -422,8 +423,7 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
       .map((id) => recipeMap[id])
       .filter((recipe) => recipe !== undefined);
 
-    const prompt = `Generate a meal plan for the week starting on ${formattedWeekStartDate} in MM/DD/YYYY format (a Monday)
-                  using the following meals:
+    const prompt = `Generate a meal plan for 7 days using the following meals:
                   Breakfast - ${breakfastRecipes
                     .map(
                       (r) =>
@@ -449,11 +449,9 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
                     )
                     .join(" | ")}
                   The meal plan should be balanced using the nutritional values included.
-                  The date should be in YYYY-MM-DD format
                   The response should be a JSON object with the following schema:
-                  dates: [
+                  days: [
                     {
-                      date: string,
                       meals: [
                         {
                           id: string,
@@ -467,7 +465,7 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
       const mealPlan = JSON.parse(mealPlanText);
 
       try {
-        await populateAndSaveMealPlan(mealPlan, uid, db);
+        await populateAndSaveMealPlan(mealPlan, uid, db, weekStartDate);
       } catch (error) {
         console.error("Error saving meal plan:", error);
         return res.status(500).json({ error: "Failed to save meal plan" });
@@ -483,7 +481,7 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
         const mealPlan = JSON.parse(mealPlanText);
 
         try {
-          await populateAndSaveMealPlan(mealPlan, uid, db);
+          await populateAndSaveMealPlan(mealPlan, uid, db, weekStartDate);
         } catch (error) {
           console.error("Error saving meal plan:", error);
           return res.status(500).json({ error: "Failed to save meal plan" });
