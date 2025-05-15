@@ -112,13 +112,15 @@ async function populateAndSaveMealPlan(mealPlan, uid, db) {
 
   const datesCollectionRef = userDocRef.collection("dates");
 
-  for (const day of populatedMealPlan) {
-    const dateDocRef = datesCollectionRef.doc(day.date);
-    await dateDocRef.set({
-      date: day.date,
-      meals: day.meals,
-    });
-  }
+  await Promise.all(
+    populatedMealPlan.map(async (day) => {
+      const dateDocRef = datesCollectionRef.doc(day.date);
+      await dateDocRef.set({
+        date: day.date,
+        meals: day.meals,
+      });
+    })
+  );
 }
 
 async function generateAndSaveRecipe({
