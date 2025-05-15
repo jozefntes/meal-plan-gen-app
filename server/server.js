@@ -23,6 +23,13 @@ const model = genAI.getGenerativeModel({
   },
 });
 
+const backupModel = genAI.getGenerativeModel({
+  model: "gemini-1.5-flash",
+  generationConfig: {
+    response_mime_type: "application/json",
+  },
+});
+
 const imageModel = genAI.getGenerativeModel({
   model: "gemini-2.0-flash-exp-image-generation",
   generationConfig: {
@@ -84,6 +91,102 @@ async function verifyToken(req, res, next) {
     console.error("Error verifying token:", error);
     return res.status(401).json({ error: "Unauthorized" });
   }
+}
+
+async function populateAndSaveMealPlan(mealPlan, uid, db) {
+  const populatedMealPlan = mealPlan.dates.map(({ date, meals }) => ({
+    date: new Date(date).toISOString().split("T")[0],
+    meals: meals.map(({ id }, index) => ({
+      id,
+      mealInstanceId: `${id}-${index}-${date}`,
+      done: false,
+    })),
+  }));
+
+  const userDocRef = db.collection("plans").doc(uid);
+  const userDoc = await userDocRef.get();
+
+  if (!userDoc.exists) {
+    await userDocRef.set({ uid });
+  }
+
+  const datesCollectionRef = userDocRef.collection("dates");
+
+  for (const day of populatedMealPlan) {
+    const dateDocRef = datesCollectionRef.doc(day.date);
+    await dateDocRef.set({
+      date: day.date,
+      meals: day.meals,
+    });
+  }
+}
+
+async function generateAndSaveRecipe({
+  model,
+  prompt,
+  uid,
+  db,
+  bucket,
+  generateSignedUrl,
+}) {
+  const result = await model.generateContent(prompt);
+  const recipeText = await result.response.text();
+
+  const parsedRecipe = JSON.parse(recipeText);
+  let recipe;
+
+  // Check if returned recipe is an array or object and extract recipe
+  if (Array.isArray(parsedRecipe)) {
+    recipe = parsedRecipe[0];
+  } else {
+    recipe = parsedRecipe;
+  }
+
+  recipe.uid = uid;
+  recipe.image = null;
+
+  // Generate an image for the recipe
+  try {
+    const contents = `Generate a realistic image of ${recipe.title}`;
+    const response = await imageModel.generateContent(contents);
+    for (const part of response.response.candidates[0].content.parts) {
+      if (part.inlineData) {
+        const imageData = part.inlineData.data;
+        const buffer = Buffer.from(imageData, "base64");
+
+        const fileName = `images/${uuidv4()}.png`;
+        const file = bucket.file(fileName);
+        await file.save(buffer, {
+          metadata: {
+            contentType: "image/png",
+            metadata: {
+              description: recipe.title,
+            },
+          },
+        });
+
+        recipe.imageName = fileName;
+        recipe.image = await generateSignedUrl(fileName);
+        break;
+      }
+    }
+  } catch (error) {
+    console.error("Error generating content:", error);
+    if (error.response) {
+      console.error("Response status:", error.response.status);
+      console.error("Response data:", error.response.data);
+    }
+  }
+
+  // Save recipe to database
+  try {
+    const docRef = await db.collection("recipes").add(recipe);
+    recipe.id = docRef.id;
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+
+  return recipe;
 }
 
 const ONE_HOUR_IN_MS = 60 * 60 * 1000;
@@ -317,85 +420,52 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
       .map((id) => recipeMap[id])
       .filter((recipe) => recipe !== undefined);
 
-    console.log("Breakfast Recipes:", breakfastRecipes);
-    console.log("Lunch Recipes:", lunchRecipes);
-    console.log("Dinner Recipes:", dinnerRecipes);
-    console.log("Snack Recipes:", snackRecipes);
-
+    const prompt = `Generate a meal plan for the week starting on ${formattedWeekStartDate} in MM/DD/YYYY format (a Monday)
+                  using the following meals:
+                  Breakfast - ${breakfastRecipes
+                    .map(
+                      (r) =>
+                        `${r.id}: ${r.title} (${r.nutrition.calories}cal, ${r.nutrition.protein}p, ${r.nutrition.carbs}c, ${r.nutrition.fat}f)`
+                    )
+                    .join(" | ")}
+                  Lunch - ${lunchRecipes
+                    .map(
+                      (r) =>
+                        `${r.id}: ${r.title} (${r.nutrition.calories}cal, ${r.nutrition.protein}p, ${r.nutrition.carbs}c, ${r.nutrition.fat}f)`
+                    )
+                    .join(" | ")}
+                  Dinner - ${dinnerRecipes
+                    .map(
+                      (r) =>
+                        `${r.id}: ${r.title} (${r.nutrition.calories}cal, ${r.nutrition.protein}p, ${r.nutrition.carbs}c, ${r.nutrition.fat}f)`
+                    )
+                    .join(" | ")}
+                  Snack - ${snackRecipes
+                    .map(
+                      (r) =>
+                        `${r.id}: ${r.title} (${r.nutrition.calories}cal, ${r.nutrition.protein}p, ${r.nutrition.carbs}c, ${r.nutrition.fat}f)`
+                    )
+                    .join(" | ")}
+                  The meal plan should be balanced using the nutritional values included.
+                  The date should be in YYYY-MM-DD format
+                  The response should be a JSON object with the following schema:
+                  dates: [
+                    {
+                      date: string,
+                      meals: [
+                        {
+                          id: string,
+                        }
+                      ]
+                    }
+                  ]`;
     try {
-      const prompt = `Generate a meal plan for the week starting on ${formattedWeekStartDate} in MM/DD/YYYY format (a Monday)
-                    using the following meals:
-                    Breakfast - ${breakfastRecipes
-                      .map(
-                        (r) =>
-                          `${r.id}: ${r.title} (${r.nutrition.calories}cal, ${r.nutrition.protein}p, ${r.nutrition.carbs}c, ${r.nutrition.fat}f)`
-                      )
-                      .join(" | ")}
-                    Lunch - ${lunchRecipes
-                      .map(
-                        (r) =>
-                          `${r.id}: ${r.title} (${r.nutrition.calories}cal, ${r.nutrition.protein}p, ${r.nutrition.carbs}c, ${r.nutrition.fat}f)`
-                      )
-                      .join(" | ")}
-                    Dinner - ${dinnerRecipes
-                      .map(
-                        (r) =>
-                          `${r.id}: ${r.title} (${r.nutrition.calories}cal, ${r.nutrition.protein}p, ${r.nutrition.carbs}c, ${r.nutrition.fat}f)`
-                      )
-                      .join(" | ")}
-                    Snack - ${snackRecipes
-                      .map(
-                        (r) =>
-                          `${r.id}: ${r.title} (${r.nutrition.calories}cal, ${r.nutrition.protein}p, ${r.nutrition.carbs}c, ${r.nutrition.fat}f)`
-                      )
-                      .join(" | ")}
-                    The meal plan should be balanced using the nutritional values included.
-                    The date should be in YYYY-MM-DD format
-                    The response should be a JSON object with the following schema:
-                    dates: [
-                      {
-                        date: string,
-                        meals: [
-                          {
-                            id: string,
-                          }
-                        ]
-                      }
-                    ]`;
-
       const result = await model.generateContent(prompt);
       const mealPlanText = await result.response.text();
-
       const mealPlan = JSON.parse(mealPlanText);
 
-      const populatedMealPlan = mealPlan.dates.map(({ date, meals }) => ({
-        date: new Date(date).toISOString().split("T")[0],
-        meals: meals.map(({ id }, index) => ({
-          id,
-          mealInstanceId: `${id}-${index}-${date}`,
-          done: false,
-        })),
-      }));
-
-      // Save meal plan to Firebase
       try {
-        const userDocRef = db.collection("plans").doc(uid);
-        const userDoc = await userDocRef.get();
-
-        if (!userDoc.exists) {
-          await userDocRef.set({ uid });
-        }
-
-        const datesCollectionRef = userDocRef.collection("dates");
-
-        for (const day of populatedMealPlan) {
-          const dateDocRef = await datesCollectionRef.doc(day.date);
-
-          await dateDocRef.set({
-            date: day.date,
-            meals: day.meals,
-          });
-        }
+        await populateAndSaveMealPlan(mealPlan, uid, db);
       } catch (error) {
         console.error("Error saving meal plan:", error);
         return res.status(500).json({ error: "Failed to save meal plan" });
@@ -405,8 +475,27 @@ app.post("/api/generate_meal_plan", verifyToken, async (req, res) => {
         message: "Meal plan generated successfully",
       });
     } catch (error) {
-      console.error("Error generating meal plan:", error);
-      res.status(500).json({ error: "Failed to generate meal plan" });
+      try {
+        const result = await backupModel.generateContent(prompt);
+        const mealPlanText = await result.response.text();
+        const mealPlan = JSON.parse(mealPlanText);
+
+        try {
+          await populateAndSaveMealPlan(mealPlan, uid, db);
+        } catch (error) {
+          console.error("Error saving meal plan:", error);
+          return res.status(500).json({ error: "Failed to save meal plan" });
+        }
+
+        res.status(200).json({
+          message: "Meal plan generated successfully",
+        });
+      } catch (error) {
+        console.error("Error generating meal plan with backup model:", error);
+        return res.status(500).json({
+          error: "Failed to generate meal plan",
+        });
+      }
     }
   } catch (error) {
     console.error("Error fetching recipes:", error);
@@ -438,90 +527,56 @@ app.post("/api/generate_recipe", verifyToken, async (req, res) => {
     return res.status(403).json({ error: "Forbidden" });
   }
 
+  const prompt = `Generate a recipe using the following ingredients: ${ingredients}. The recipe should have at least ${minProtein} g of protein, and as much as ${maxCarbs} g of carbs, and ${maxFat} g of fat. Using this JSON schema:
+  
+    Recipe = {
+      title: string,
+      readyInMinutes: number,
+      ingredients: string[],
+      instructions: string[],
+      nutrition: {
+        calories: number,
+        protein: number,
+        carbs: number,
+        fat: number
+      }
+    }
+    Return: Recipe
+  `;
+
   try {
-    const prompt = `Generate a recipe using the following ingredients: ${ingredients}. The recipe should have at least ${minProtein} g of protein, and as much as ${maxCarbs} g of carbs, and ${maxFat} g of fat. Using this JSON schema:
-    
-      Recipe = {
-        title: string,
-        readyInMinutes: number,
-        ingredients: string[],
-        instructions: string[],
-        nutrition: {
-          calories: number,
-          protein: number,
-          carbs: number,
-          fat: number
-        }
-      }
-      Return: Recipe
-    `;
-
-    const result = await model.generateContent(prompt);
-    const recipeText = await result.response.text();
-
-    const parsedRecipe = JSON.parse(recipeText);
-    let recipe;
-
-    // Check if returned recipe is an array or object and extract recipe
-    if (Array.isArray(parsedRecipe)) {
-      recipe = parsedRecipe[0];
-    } else {
-      recipe = parsedRecipe;
-    }
-
-    recipe.uid = uid;
-    recipe.image = null;
-
-    // Generate an image for the recipe
-    try {
-      const contents = `Generate a realistic image of ${recipe.title}`;
-
-      const response = await imageModel.generateContent(contents);
-      for (const part of response.response.candidates[0].content.parts) {
-        if (part.inlineData) {
-          const imageData = part.inlineData.data;
-          const buffer = Buffer.from(imageData, "base64");
-
-          const fileName = `images/${uuidv4()}.png`;
-          const file = bucket.file(fileName);
-          await file.save(buffer, {
-            metadata: {
-              contentType: "image/png",
-              metadata: {
-                description: recipe.title,
-              },
-            },
-          });
-
-          recipe.imageName = fileName;
-          recipe.image = await generateSignedUrl(fileName);
-          break;
-        }
-      }
-    } catch (error) {
-      console.error("Error generating content:", error);
-      if (error.response) {
-        console.error("Response status:", error.response.status);
-        console.error("Response data:", error.response.data);
-      }
-    }
-
-    // Save recipe to database
-    try {
-      const docRef = await db.collection("recipes").add(recipe);
-      recipe.id = docRef.id;
-      console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-      console.error("Error adding document: ", e);
-    }
+    const recipe = await generateAndSaveRecipe({
+      model,
+      prompt,
+      uid,
+      db,
+      bucket,
+      generateSignedUrl,
+    });
 
     res.status(200).json({
       message: "Recipe generated successfully",
       recipe,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to create recipe" });
+    try {
+      const recipe = await generateAndSaveRecipe({
+        model: backupModel,
+        prompt,
+        uid,
+        db,
+        bucket,
+        generateSignedUrl,
+      });
+
+      res.status(200).json({
+        message: "Recipe generated successfully",
+        recipe,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to create recipe" });
+    }
   }
 });
 
